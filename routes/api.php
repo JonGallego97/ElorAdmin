@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\API\CycleController;
+
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ModuleController;
 
@@ -23,7 +25,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resources([
     'departments' => DepartmentController::class,
     'roles' => RoleController::class,
+    'cycles' => CycleController::class,
     'modules' => ModuleController::class,
+
+
 ]);
 
 
