@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::resources([
     'departments' => DepartmentController::class,
+    'roles' => RoleController::class,
 ]);
 
 
