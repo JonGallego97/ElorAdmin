@@ -26,7 +26,7 @@ class DepartmentSeeder extends Seeder
           
         ]);
         DB::table('departments')->insert([
-            'name' => 'Dirección',
+            'name' => 'Direccion',
             "created_at" => now(),
             "updated_at" => now(),
           
@@ -38,7 +38,7 @@ class DepartmentSeeder extends Seeder
           
         ]);
         DB::table('departments')->insert([
-            'name' => 'Secretaría',
+            'name' => 'Secretaria',
             "created_at" => now(),
             "updated_at" => now(),
           
