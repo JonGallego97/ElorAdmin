@@ -62,6 +62,8 @@ class CycleController extends Controller
     public function update(Request $request, Cycle $cycle)
     {
         $cycle->name = $request['name'];
+        $cycle->updated_at = now();
+        $cycle->department_id = $request['department_id'];
 
         $updated = $cycle->save();
         if($updated) {

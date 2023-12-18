@@ -2,11 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\API\DepartmentController;
 use App\Http\Controllers\API\CycleController;
 
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\API\RoleController;
+use App\Http\Controllers\API\ModuleController;
 
 /*
 |--------------------------------------------------------------------------

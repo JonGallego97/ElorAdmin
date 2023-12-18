@@ -15,20 +15,15 @@ class ModuleController extends Controller
     public function index()
     {
         $modules = Module::orderBy('name','asc')->get();
-        if(!is_null($modules)) {
-            return response()->json(['modules'=>$modules])->setStatusCode(Response::HTTP_OK);
-        } else {
-            return response()->json(['modules'=>$modules])->setStatusCode(Response::HTTP_NO_CONTENT);
-        }
+        return view('modules.index',['modules'=>$modules]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('modules.create');
     }
+
+ 
 
     /**
      * Store a newly created resource in storage.
@@ -42,9 +37,7 @@ class ModuleController extends Controller
 
         $created = $module->save();
         if($created) {
-            return response()->json(['module'=>$module])->setStatusCode(Response::HTTP_CREATED);
-        } else {
-            return response()->json(['module'=>$module])->setStatusCode(Response::HTTP_BAD_REQUEST);
+            return redirect()->route('modules.index');
         }
     }
 
@@ -53,20 +46,13 @@ class ModuleController extends Controller
      */
     public function show(Module $module)
     {
-        if($module) {
-            return response()->json(['module'=>$module])->setStatusCode(Response::HTTP_OK);
-        } else {
-            return response()->json(['module'=>$module])->setStatusCode(Response::HTTP_NO_CONTENT);
-        }
+       return view('modules.show',['module'=>$module]);
+    }
+    public function edit()
+    {
+        return view('modules.create');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Module $module)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -79,9 +65,7 @@ class ModuleController extends Controller
 
         $updated = $module->save();
         if($updated) {
-            return response()->json(['module'=>$module])->setStatusCode(Response::HTTP_OK);
-        } else {
-            return response()->json(['module'=>$module])->setStatusCode(Response::HTTP_BAD_REQUEST);
+            return redirect()->route('modules.index');
         }
     }
 
@@ -90,11 +74,7 @@ class ModuleController extends Controller
      */
     public function destroy(Module $module)
     {
-        $deleted = $module->delete();
-        if($deleted) {
-            return response()->json(['module'=>$module])->setStatusCode(Response::HTTP_OK);
-        } else {
-            return response()->json(['module'=>$module])->setStatusCode(Response::HTTP_BAD_REQUEST);
-        }
+        $module->delete();
+        return redirect()->route('modules.index');
     }
 }
