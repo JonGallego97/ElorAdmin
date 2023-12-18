@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('department_id')
             ->constrained("departments")
             ->onDelete('restrict')
-            ->onUpdate('restrict')
+            ->onUpdate('cascade')
             ->nullable(false);
         });
     }

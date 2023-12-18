@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class DepartmentController extends Controller
 {
@@ -13,19 +12,10 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::orderBy('name')->get();
-        return response()->json(['departments' => $departments])
-        ->setStatusCode(Response::HTTP_OK);
+        $departments = Department::orderBy('name', 'asc')->get();
+        return view('departments.index', ['departments' => $departments]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request)
-    {
-       
-        
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -36,11 +26,7 @@ class DepartmentController extends Controller
         $deparment->name = $request->name;
         $created = $deparment->save();
         if ($created) {
-            return response()->json(['message' => 'Departamento creado correctamente'])
-            ->setStatusCode(Response::HTTP_CREATED);
-        } else {
-            return response()->json(['message' => 'Error al crear el departamento'])
-            ->setStatusCode(Response::HTTP_BAD_REQUEST);
+            return redirect()->route('departments.index');
         }
     }
 
@@ -49,22 +35,14 @@ class DepartmentController extends Controller
      */
     public function show(Department $department)
     {
-        if ($department) {
-            return response()->json(['department' => $department])
-            ->setStatusCode(Response::HTTP_OK);
-        } else {
-            return response()->json(['message' => 'Departamento no encontrado'])
-            ->setStatusCode(Response::HTTP_NOT_FOUND);
-        }
+        return view('departments.show', ['department' => $department]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Department $department)
+    public function edit()
     {
-        
+        return view('departments.create');
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -72,14 +50,8 @@ class DepartmentController extends Controller
     public function update(Request $request, Department $department)
     {
         $department->name = $request->name;
-        $updated = $department->save();
-        if ($updated) {
-            return response()->json(['message' => 'Departamento actualizado correctamente'])
-            ->setStatusCode(Response::HTTP_OK);
-        } else {
-            return response()->json(['message' => 'Error al actualizar el departamento'])
-            ->setStatusCode(Response::HTTP_BAD_REQUEST);
-        }
+        $department->save();
+        return redirect()->route('departments.index');
     }
 
     /**
@@ -87,13 +59,7 @@ class DepartmentController extends Controller
      */
     public function destroy(Department $department)
     {
-        $deleted = $department->delete();
-        if ($deleted) {
-            return response()->json(['message' => 'Departamento eliminado correctamente'])
-            ->setStatusCode(Response::HTTP_OK);
-        } else {
-            return response()->json(['message' => 'Error al eliminar el departamento'])
-            ->setStatusCode(Response::HTTP_BAD_REQUEST);
-        }
+        $department->delete();
+        return redirect()->route('departments.index');
     }
 }
