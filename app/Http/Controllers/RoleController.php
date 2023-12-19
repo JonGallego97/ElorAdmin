@@ -67,7 +67,11 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        $role->delete();
-        return redirect()->route('roles.index');
+        if($role->name != 'ADMINISTRADOR' && $role->name!= 'ALUMNO' && $role->name!= 'PROFESOR'){
+            $role->delete();
+            return redirect()->route('roles.index');
+        }else{
+            return message('No se puede eliminar el rol ADMINISTRADOR o ALUMNO o PROFES');
+        }
     }
 }

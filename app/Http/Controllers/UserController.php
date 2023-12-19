@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\RoleUser;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -21,7 +22,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('cycles.create');
+        return view('users.create');
     }
 
     /**
@@ -29,32 +30,72 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $cycle = new Cycle();
-        $cycle->name = $request->name;
-        $cycle->save();
-        return redirect()->route('cycles.index');
+        if($request->role != 'ALUMNO' && $request->department_id == null) {
+            return message('Debes seleccionar un departamento');
+        }
+        if($request->role == 'ALUMNO' && $request->department_id != null) {
+            return message('Un alumno no puede tener un departamento');
+        }
+
+
+        $request->varidate([
+            'email' =>'required|string',
+            'password' => '<PASSWORD>',
+            'name' =>'required|string',
+            'surname1' =>'required|string',
+            'surname2' =>'required|string',
+            'DNI' =>'required|string',
+            'address' =>'required|string',
+            'phoneNumber1' =>'required|integer',
+            'phoneNumber2' =>'required|integer',
+
+        ]);
+        $request->firstLogin = true;
+
+        $user = new User();
+        $user->email = $request->email;
+        $user->password = ($request->password);
+        $user->name = $request->name;
+        $user->surname1 = $request->surname1;
+        $user->surname2 = $request->surname2;
+        $user->DNI = $request->DNI;
+        $user->address = $request->address;
+        $user->phoneNumber1 = $request->phoneNumber1;
+        $user->phoneNumber2 = $request->phoneNumber2;
+        $user->firstLogin = $request->firstLogin;
+        $user->year = $request->year;
+        $user->department_id = $request->department;
+
+        $user->save();
+
+        $role_user = new RoleUser();
+        $role_user->role_id = $request->role;
+        $role_user->user_id = $user->id;
+        $role_user->save();
+
+        return redirect()->route('users.index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Cycle $cycle)
+    public function show(Cycle $user)
     {
-        return view('cycles.show',['cycle'=>$cycle]);
+        return view('users.show',['user'=>$user]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Cycle $cycle)
+    public function edit(Cycle $user)
     {
-        return view('cycles.create');
+        return view('users.create');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cycle $cycle)
+    public function update(Request $request, Cycle $user)
     {
         $cycle->name = $request->name;
         $cycle->save();

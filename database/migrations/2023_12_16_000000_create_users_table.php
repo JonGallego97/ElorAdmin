@@ -23,12 +23,15 @@ return new class extends Migration
             $table->integer('phoneNumber1')->nullable();
             $table->integer('phoneNumber2')->nullable();
             $table->longText('image')->nullable();
-            $table->string('dual')->nullable();
+            $table->boolean('dual')->nullable();
             $table->boolean('firstLogin')->nullable();
             $table->integer('year')->nullable();
             $table->rememberToken();
             $table->unsignedBigInteger('role_id')->nullable();
+            $table->unsignedBigInteger('department_id')->nullable();
+            $table->foreign('department_id')->references('id')->on('departments');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

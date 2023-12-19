@@ -138,7 +138,7 @@ class RoleController extends Controller
                 return response()->json(['role'=>$role])->setStatusCode(Response::HTTP_CREATED);
             } else {
                 return response()->json(['role'=>$role])->setStatusCode(Response::HTTP_BAD_REQUEST);
-            } 
+            }
     }
 
     /*
@@ -166,11 +166,15 @@ class RoleController extends Controller
     */
     public function destroy(Role $role)
     {
-        $deleted = $role->delete();
-        if ($deleted) {
-            return response()->json(['role'=>$role])->setStatusCode(Response::HTTP_NO_CONTENT);
-        } else {
-            return response()->json(['role'=>$role])->setStatusCode(Response::HTTP_BAD_REQUEST);
+        if($role->name != 'ADMINISTRADOR' && $role->name!= 'ALUMNO' && $role->name!= 'PROFESOR'){
+            $deleted = $role->delete();
+            if ($deleted) {
+                return response()->json(['role'=>$role])->setStatusCode(Response::HTTP_NO_CONTENT);
+            } else {
+                return response()->json(['role'=>$role])->setStatusCode(Response::HTTP_BAD_REQUEST);
+            }
+        }else {
+            return response()->json(['error' => 'El rol '. $role->name . ' no se puede eliminar'], Response::HTTP_BAD_REQUEST);
         }
     }
 }
