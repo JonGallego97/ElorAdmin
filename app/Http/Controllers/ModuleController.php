@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Module;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 
 class ModuleController extends Controller

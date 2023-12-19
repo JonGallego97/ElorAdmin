@@ -15,7 +15,7 @@ class ModuleController extends Controller
      */
     public function index()
     {
-        $modules = Module::orderBy('name','asc')->get();
+        $modules = Module::with('cycles')->orderBy('name','asc')->get();
         if(!is_null($modules)) {
             return response()->json(['modules'=>$modules])->setStatusCode(Response::HTTP_OK);
         } else {
