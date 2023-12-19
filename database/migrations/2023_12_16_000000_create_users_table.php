@@ -13,11 +13,21 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('name');
+            $table->string('surname1');
+            $table->string('surname2');
+            $table->string('DNI');
+            $table->string('address')->nullable();
+            $table->integer('phoneNumber1')->nullable();
+            $table->integer('phoneNumber2')->nullable();
+            $table->longText('image')->nullable();
+            $table->string('dual')->nullable();
+            $table->boolean('firstLogin')->nullable();
+            $table->integer('year')->nullable();
             $table->rememberToken();
+            $table->unsignedBigInteger('role_id')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +37,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('role_users');
         Schema::dropIfExists('users');
     }
 };

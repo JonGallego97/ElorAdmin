@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\API\CycleController;
+use App\Http\Controllers\API\UserController;
 
 
 /*
@@ -23,6 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resources([
     'departments' => DepartmentController::class,
     'cycles' => CycleController::class,
+    'users' => UserController::class
 ]);
 
+Route::put('users/{user}/update-password', UserController::class.'@updatePassword');
 
