@@ -46,7 +46,7 @@ class UserFactory extends Factory
             'phoneNumber1' => $fakerSpain->numerify('#########'),
             'phoneNumber2' => $fakerSpain->numerify('#########'),
             'image' => "",
-            'dual' => $fakerSpain->word,
+            'dual' => null,
             'firstLogin' => $fakerSpain->boolean,
             'year' => $year,
             'created_at' => now(),
@@ -60,7 +60,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $state(fn (array $attributes) => [
+       return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

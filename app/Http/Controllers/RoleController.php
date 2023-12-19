@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Mail\Message;
 
 class RoleController extends Controller
 {
@@ -71,7 +72,7 @@ class RoleController extends Controller
             $role->delete();
             return redirect()->route('roles.index');
         }else{
-            return message('No se puede eliminar el rol ADMINISTRADOR o ALUMNO o PROFES');
+            return ('No se puede eliminar el rol ADMINISTRADOR o ALUMNO o PROFES');
         }
     }
 }
