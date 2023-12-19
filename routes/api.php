@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\DepartmentController;
 use App\Http\Controllers\API\CycleController;
+use App\Http\Controllers\API\UserController;
 
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\ModuleController;
@@ -26,9 +27,11 @@ Route::resources([
     'departments' => DepartmentController::class,
     'roles' => RoleController::class,
     'cycles' => CycleController::class,
-    'modules' => ModuleController::class,
+    'users' => UserController::class,
+    'modules' => ModuleController::class
 
 
 ]);
 
+Route::put('users/{user}/update-password', UserController::class.'@updatePassword');
 
