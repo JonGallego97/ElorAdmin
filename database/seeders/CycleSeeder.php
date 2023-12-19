@@ -16,14 +16,25 @@ class CycleSeeder extends Seeder
             [
                 'id' => 1,
                 'name' => 'TÉCNICO EN SISTEMAS MICROINFORMÁTICOS Y REDES',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'department_id' => 1,
             ],
             [
                 'id' => 2,
                 'name' => 'TÉCNICO SUPERIOR EN DESARROLLO DE APLICACIONES MULTIPLATAFORMA',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'department_id' => 1,
+
             ],
             [
                 'id' => 3,
                 'name' => 'TÉCNICO SUPERIOR EN DESARROLLO DE APLICACIONES WEB',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'department_id' => 1,
+
             ],
         ];
 

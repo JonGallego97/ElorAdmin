@@ -10,17 +10,19 @@ use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
-    {
-       $this->call([
-           DepartmentSeeder::class,
-           RoleSeeder::class,
-           UserSeeder::class,
-        RoleUserSeeder::class,
-        ]);
+        /**
+         * Seed the application's database.
+         */
+        public function run(): void
+        {
+                $this->call([
+                        DepartmentSeeder::class,
+                        RoleSeeder::class,
+                        UserSeeder::class,
+                        RoleUserSeeder::class,
+                        CycleSeeder::class,
+                        ModuleSeeder::class,
 
-    }
+                ]);
+        }
 }

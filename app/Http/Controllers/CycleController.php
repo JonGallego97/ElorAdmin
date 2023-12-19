@@ -46,7 +46,7 @@ class CycleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Cycle $cycle)
+    public function edit()
     {
         return view('cycles.create');
     }
