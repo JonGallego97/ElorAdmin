@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\RoleUser;
 use Illuminate\Http\Request;
+use App\Models\Cycle;
+
 
 class UserController extends Controller
 {
@@ -31,14 +33,14 @@ class UserController extends Controller
     public function store(Request $request)
     {
         if($request->role != 'ALUMNO' && $request->department_id == null) {
-            return message('Debes seleccionar un departamento');
+            return('Debes seleccionar un departamento');
         }
         if($request->role == 'ALUMNO' && $request->department_id != null) {
-            return message('Un alumno no puede tener un departamento');
+            return ('Un alumno no puede tener un departamento');
         }
 
 
-        $request->varidate([
+        $request->validate([
             'email' =>'required|string',
             'password' => '<PASSWORD>',
             'name' =>'required|string',
@@ -50,7 +52,7 @@ class UserController extends Controller
             'phoneNumber2' =>'required|integer',
 
         ]);
-        $request->firstLogin = true;
+        // $request->firstLogin = true;
 
         $user = new User();
         $user->email = $request->email;
@@ -95,7 +97,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cycle $user)
+    public function update(Request $request, Cycle $cycle)
     {
         $cycle->name = $request->name;
         $cycle->save();
