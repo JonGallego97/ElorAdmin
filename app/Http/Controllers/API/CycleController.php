@@ -15,8 +15,16 @@ class CycleController extends Controller
      */
     public function index()
     {
-            $cycles = Cycle::orderBy('id')->get();
+            $cycles = Cycle::with('modules')
+                ->orderBy('id')->get();
             if(!is_null($cycles)) {
+                foreach ($cycles as $cycle) {
+                    $cycle->modules;
+                    foreach ($cycle->modules as $module) {
+                        $module->pivot = null;
+                    }
+
+                }
                 return response()->json(['cycles'=>$cycles])->setStatusCode(Response::HTTP_OK);
             } else {
                 return response()->json(['cycles'=>$cycles])->setStatusCode(Response::HTTP_NO_CONTENT);
@@ -45,7 +53,7 @@ class CycleController extends Controller
     public function show(int $id)
     {
         $cycle = new Cycle();
-        $cycle = Cycle::where('id', $id)->first();
+        $cycle = Cycle::with('modules')->find($id);
         if (optional($cycle)->id !== null) {
             return response()->json(['cycle' => $cycle])
                 ->setStatusCode(Response::HTTP_OK);
