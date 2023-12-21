@@ -34,4 +34,5 @@ Route::resources([
 ]);
 
 Route::put('users/{user}/update-password', UserController::class.'@updatePassword');
+Route::post('/users/{userId}/enroll/{cycleId}', [UserController::class, 'enrollStudentInCycle']);
 

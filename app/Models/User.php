@@ -48,4 +48,19 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class, 'role_users');
     }
+    //Relacion con Modulos (Profesores)
+    public function modules()
+    {
+        return $this->belongsToMany(Module::class, 'module_users', 'user_id', 'module_id');
+    }
+
+    //Relacion con Ciclos (Alumnos)
+    public function cycles()
+    {
+        return $this->belongsToMany(Cycle::class, 'cycle_users', 'user_id', 'cycle_id');
+    }
+    public function hasRole($role)
+    {
+        return $this->roles->where('name', $role)->isNotEmpty();
+    }
 }
