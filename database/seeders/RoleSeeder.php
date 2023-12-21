@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -14,25 +13,25 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         DB::table('roles')->insert(
-            ['name'=>'ADMINISTRADOR','created_at'=>now()]
+            ['name'=>'ADMINISTRADOR','created_at'=>now(),'updated_at'=>now()]
         );
         DB::table('roles')->insert(
-            ['name'=>'PROFESOR','created_at'=>now()]
+            ['name'=>'PROFESOR','created_at'=>now(),'updated_at'=>now()]
         );
         DB::table('roles')->insert(
-            ['name'=>'ALUMNO','created_at'=>now()],
+            ['name'=>'ALUMNO','created_at'=>now(),'updated_at'=>now()],
         );
         DB::table('roles')->insert(
-            ['name'=>'JEFE DE ESTUDIOS','created_at'=>now()]
+            ['name'=>'JEFE DE ESTUDIOS','created_at'=>now(),'updated_at'=>now()]
         );
         DB::table('roles')->insert(
-            ['name'=>'DIRECCIÓN','created_at'=>now()]
+            ['name'=>'DIRECCIÓN','created_at'=>now(),'updated_at'=>now()]
         );
         DB::table('roles')->insert(
-            ['name'=>'BEDEL','created_at'=>now()]
+            ['name'=>'BEDEL','created_at'=>now(),'updated_at'=>now()]
         );
         DB::table('roles')->insert(
-            ['name'=>'LIMPIEZA','created_at'=>now()]
+            ['name'=>'LIMPIEZA','created_at'=>now(),'updated_at'=>now()]
         );
 
     }
