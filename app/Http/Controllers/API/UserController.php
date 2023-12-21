@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Cycle;
+use App\Models\Module;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('roles')->orderBy('id', 'desc')->get();
+        $users = User::with('roles','cycles.modules')->orderBy('id', 'desc')->get();
 
         if ($users->isNotEmpty()) {
             return response()->json(['users' => $users])->setStatusCode(Response::HTTP_OK);
@@ -31,7 +33,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**
@@ -40,7 +42,7 @@ class UserController extends Controller
     public function show(int $id)
     {
         $user = new User();
-        $user = User::with('roles')->where('id', $id)->first();
+        $user = User::with('roles','cycles.modules')->where('id', $id)->first();
         if (optional($user)->id!== null) {
             return response()->json(['user' => $user])
                 ->setStatusCode(Response::HTTP_OK);
@@ -126,4 +128,52 @@ class UserController extends Controller
     {
         //
     }
+
+    public function enrollStudentInCycle($userId, $cycleId)
+    {
+        $user = User::findOrFail($userId);
+        $cycle = Cycle::findOrFail($cycleId);
+    
+        if ($user->hasRole('ALUMNO')) {
+            // Asociar al estudiante con el ciclo
+            $user->cycles()->attach($cycle->id);
+    
+            // Obtener los módulos asociados al ciclo
+            $modules = $cycle->modules;
+    
+            // Enrollar al estudiante en cada módulo
+            $user->modules()->attach($modules);
+            
+    
+            return response()->json(['message' => 'Estudiante matriculado en el ciclo y sus módulos.']);
+        } else {
+            // Si el usuario no es un estudiante, retornar un mensaje de error o realizar otras acciones según sea necesario
+            return response()->json(['error' => 'Solo los estudiantes pueden ser matriculados en ciclos.']);
+        }
+    }
+    
+    public function enrollTeacherInModule($userId, $moduleId)
+    {
+        $user = User::findOrFail($userId);
+        $module = Module::findOrFail($moduleId);
+    
+        if ($user->hasRole('PROFESOR')) {
+            // Validar que el profesor no esté ya asignado al módulo
+            if (!$user->modules->contains($module->id)) {
+                // Asociar al profesor con el módulo
+                $user->modules()->attach($module->id);
+    
+                return response()->json(['message' => 'Profesor asignado al módulo.']);
+            } else {
+                return response()->json(['error' => 'El profesor ya está asignado a este módulo.']);
+            }
+        } else {
+            // Si el usuario no es un profesor, retornar un mensaje de error que incluya los roles del usuario
+            return response()->json(['error' => "Solo los profesores pueden ser asignados a módulos."]);
+        }
+    }
+
+  
+
+
 }

@@ -15,11 +15,12 @@ class CycleController extends Controller
      */
     public function index()
     {
-            $cycles = Cycle::with('modules')
+            $cycles = Cycle::with('modules', 'department')
                 ->orderBy('id')->get();
             if(!is_null($cycles)) {
                 foreach ($cycles as $cycle) {
                     $cycle->modules;
+                    $cycle->department;
                     foreach ($cycle->modules as $module) {
                         $module->pivot = null;
                     }
@@ -53,7 +54,7 @@ class CycleController extends Controller
     public function show(int $id)
     {
         $cycle = new Cycle();
-        $cycle = Cycle::with('modules')->find($id);
+        $cycle = Cycle::with('modules','department')->find($id);
         if (optional($cycle)->id !== null) {
             return response()->json(['cycle' => $cycle])
                 ->setStatusCode(Response::HTTP_OK);
