@@ -21,7 +21,7 @@ class UserController extends Controller
         $users = User::with('roles','cycles.modules')->orderBy('id', 'desc')->get();
 
         if ($users->isNotEmpty()) {
-            return response()->json(['users' => $users])->setStatusCode(Response::HTTP_OK);
+            return response()->json(['users' => $users, 'count' => $users->count()] )->setStatusCode(Response::HTTP_OK);
         } else {
             return response()->json(['users' => $users])->setStatusCode(Response::HTTP_NO_CONTENT);
         }
