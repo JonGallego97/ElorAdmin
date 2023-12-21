@@ -13,8 +13,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::orderBy('name', 'asc')->get(['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
-        return view('users.index',['users'=>$users]);
+        //$users = User::orderBy('name', 'asc')->get(['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
+        return view('home.index');
     }
 
     /**
@@ -35,10 +35,10 @@ class UserController extends Controller
         }
         if($request->role == 'ALUMNO' && $request->department_id != null) {
             return message('Un alumno no puede tener un departamento');
+
         }
 
-
-        $request->varidate([
+        $request->validate([
             'email' =>'required|string',
             'password' => '<PASSWORD>',
             'name' =>'required|string',
