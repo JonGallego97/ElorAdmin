@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\RoleUser;
+use App\Models\Module;
 use Illuminate\Http\Request;
+use App\Models\Cycle;
+
 
 class UserController extends Controller
 {
@@ -13,8 +16,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        //$users = User::orderBy('name', 'asc')->get(['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
-        return view('home.index');
+        $users = User::orderBy('name', 'asc')->get(['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
+        return view('users.index',['users'=>$users]);
     }
 
     /**
@@ -31,12 +34,12 @@ class UserController extends Controller
     public function store(Request $request)
     {
         if($request->role != 'ALUMNO' && $request->department_id == null) {
-            return message('Debes seleccionar un departamento');
+            return('Debes seleccionar un departamento');
         }
         if($request->role == 'ALUMNO' && $request->department_id != null) {
-            return message('Un alumno no puede tener un departamento');
-
+            return ('Un alumno no puede tener un departamento');
         }
+
 
         $request->validate([
             'email' =>'required|string',
@@ -50,11 +53,11 @@ class UserController extends Controller
             'phoneNumber2' =>'required|integer',
 
         ]);
-        $request->firstLogin = true;
+        // $request->firstLogin = true;
 
         $user = new User();
         $user->email = $request->email;
-        $user->password = ($request->password);
+        $user->password = bcrypt($request->password);
         $user->name = $request->name;
         $user->surname1 = $request->surname1;
         $user->surname2 = $request->surname2;
@@ -95,7 +98,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cycle $user)
+    public function update(Request $request, Cycle $cycle)
     {
         $cycle->name = $request->name;
         $cycle->save();
@@ -110,5 +113,48 @@ class UserController extends Controller
     {
         $cycle->delete();
         return redirect()->route('cycles.index');
+    }
+
+    public function enrollStudentInCycle($userId, $cycleId)
+    {
+        $user = User::findOrFail($userId);
+        $cycle = Cycle::findOrFail($cycleId);
+    
+        if ($user->hasRole('ALUMNO')) {
+            // Asociar al estudiante con el ciclo
+            $user->cycles()->attach($cycle->id);
+    
+            // Obtener los módulos asociados al ciclo
+            $modules = $cycle->modules;
+    
+            // Enrollar al estudiante en cada módulo
+            $user->modules()->attach($modules);
+    
+            return response()->json(['message' => 'Estudiante matriculado en el ciclo y sus módulos.']);
+        } else {
+            // Si el usuario no es un estudiante, retornar un mensaje de error o realizar otras acciones según sea necesario
+            return response()->json(['error' => 'Solo los estudiantes pueden ser matriculados en ciclos.']);
+        }
+    }
+    
+    public function enrollTeacherInModule($userId, $moduleId)
+    {
+        $user = User::findOrFail($userId);
+        $module = Module::findOrFail($moduleId);
+    
+        if ($user->hasRole('PROFESOR')) {
+            // Validar que el profesor no esté ya asignado al módulo
+            if (!$user->modules->contains($module->id)) {
+                // Asociar al profesor con el módulo
+                $user->modules()->attach($module->id);
+    
+                return response()->json(['message' => 'Profesor asignado al módulo.']);
+            } else {
+                return response()->json(['error' => 'El profesor ya está asignado a este módulo.']);
+            }
+        } else {
+            // Si el usuario no es un profesor, retornar un mensaje de error que incluya los roles del usuario
+            return response()->json(['error' => "Solo los profesores pueden ser asignados a módulos."]);
+        }
     }
 }
