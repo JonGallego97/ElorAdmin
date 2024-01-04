@@ -7,6 +7,9 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\RoleUser;
+use App\Models\User;
+use App\Models\Department;
+
 
 class UserSeeder extends Seeder
 {
@@ -15,8 +18,17 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        RoleUser::factory()->count(13)->create(['role_id' => "3"]); //Rol 3 alumno tienen que ser 1000
-        RoleUser::factory()->count(4)->create(['role_id' => "2"]); //Rol 2 profesor tienen que ser 80
+        RoleUser::factory()->count(100)->create(['role_id' => "3"]); //Rol 3 alumno tienen que ser 1000
+        RoleUser::factory()->count(15)->create(['role_id' => "2"]); //Rol 2 profesor tienen que ser 80
+
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('id', 2);
+        })->get();
+
+        foreach($users as $user){
+            $departmentId = Department::inRandomOrder()->value('id');
+            $user->update(['department_id' => $departmentId]);
+        }
 
         DB::table('users')->insert([
             'id' => '0',

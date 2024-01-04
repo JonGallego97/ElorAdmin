@@ -2,16 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->is('admin*')) {
+            $perPage = $request->input('per_page', 10);
+            $departments = Department::orderBy('name', 'asc')->paginate($perPage);
+            foreach ($departments as $department) {
+                $department->count_people = DB::table('users')->where('department_id', $department->id)->count();
+            }
+            $departments->totalDepartments = Department::count();
+            return view('admin.departments.index', compact('departments'));
+        }else {
+            //si no es admin
+
+        }
         $departments = Department::orderBy('name', 'asc')->get();
         return view('departments.index', ['departments' => $departments]);
     }
@@ -33,9 +47,12 @@ class DepartmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Department $department)
+    public function show(Request $request, Department $department)
     {
-        return view('departments.show', ['department' => $department]);
+        $perPage = $request->input('per_page', 10);
+        $department->users = User::where('department_id', $department->id)->paginate($perPage);
+
+        return view('admin.departments.show', ['department' => $department]);
     }
 
     public function edit()
@@ -57,9 +74,20 @@ class DepartmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Department $department)
+    public function destroy(Request $request, $departmentId)
     {
-        $department->delete();
-        return redirect()->route('departments.index');
+        $redirectRoute = 'departments.index';
+
+        if ($request->is('admin*')) {
+            //si es admin
+            $department = Department::find($departmentId);
+            if ($department) {
+                $department->delete();
+                return redirect()->route($redirectRoute)->with('success', 'Usuario eliminado exitosamente.');
+            } else {
+                return redirect()->back()->with('error', 'Departamento no encontrado.');
+            }
+        }else {
+        }
     }
 }

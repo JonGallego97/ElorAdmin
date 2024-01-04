@@ -3,7 +3,7 @@
 
 <div class="row align-items-md-stretch mb-4">
     <div class="col-md-6">
-        <a href="{{ route('admin.index') }} " style="text-decoration: none; color: inherit;">
+        <a href="{{ route('admin.students.index') }} " style="text-decoration: none; color: inherit;">
             <div class="h-100 p-5 bg-body-tertiary border rounded-3 shadow">
                 <h2>{{__('Students')}}</h2>
 
@@ -12,7 +12,7 @@
                         <p><h5><b>{{__('Total students')}} {{ $students }}</b></h5></p>
                     </div>
                     <div class="col-auto">
-                        <img src="images/admin/alumno/black.png" style="width: 100px" alt="Student">
+                        <img src="{{ asset('images/admin/alumno/black.png') }}" style="width: 100px" alt="Student">
                     </div>
                 </div>
                 <button class="btn btn-outline-secondary" type="button">{{__('View more')}}</button>
@@ -21,7 +21,7 @@
     </div>
 
     <div class="col-md-6">
-        <a href="{{ route('admin.index') }} " style="text-decoration: none; color: inherit;">
+        <a href="{{ route('admin.teachers.index') }} " style="text-decoration: none; color: inherit;">
             <div class="h-100 p-5 bg-body-tertiary border rounded-3 shadow">
                 <h2>{{__('Teachers')}}</h2>
                 <div class="row align-items-center">
@@ -29,7 +29,7 @@
                         <p><h5><b>{{__('Total teachers')}} {{ $teachers }}</b></h5></p>
                     </div>
                     <div class="col-auto">
-                        <img src="images/admin/profesor/black.png" style="width: 100px" alt="Teacher">
+                        <img src="{{ asset('images/admin/profesor/black.png') }}" style="width: 100px" alt="Teacher">
                     </div>
                 </div>
                 <button class="btn btn-outline-secondary" type="button">{{__('View more')}}</button>
@@ -39,7 +39,7 @@
 </div>
 <div class="row align-items-md-stretch mb-4">
     <div class="col-md-6">
-        <a href="{{ route('admin.index') }} " style="text-decoration: none; color: inherit;">
+        <a href="{{ route('departments.index') }} " style="text-decoration: none; color: inherit;">
             <div class="h-100 p-5 bg-body-tertiary border rounded-3 shadow">
                 <h2>{{__('Departments')}}</h2>
                 <div class="row align-items-center">
@@ -47,7 +47,7 @@
                         <p><h5><b>{{__('Total departments')}} {{ $departments }}</b></h5></p>
                     </div>
                     <div class="col-auto">
-                        <img src="images/admin/departamento/black.png" style="width: 100px" alt="Department">
+                        <img src="{{ asset('images/admin/departamento/black.png') }}" style="width: 100px" alt="Department">
                     </div>
                 </div>
                 <button class="btn btn-outline-secondary" type="button">{{__('View more')}}</button>
@@ -55,7 +55,7 @@
         </a>
     </div>
     <div class="col-md-6">
-        <a href="{{ route('admin.index') }} " style="text-decoration: none; color: inherit;">
+        <a href="{{ route('cycles.index') }} " style="text-decoration: none; color: inherit;">
             <div class="h-100 p-5 bg-body-tertiary border rounded-3 shadow">
                 <h2>{{__('Cycles')}}</h2>
                 <div class="row align-items-center">
@@ -63,7 +63,7 @@
                         <p><h5><b>{{__('Total cycles')}} {{ $cycles }}</b></h5></p>
                     </div>
                     <div class="col-auto">
-                        <img src="images/admin/ciclo/black.png" style="width: 100px" alt="Cycle">
+                        <img src="{{ asset('images/admin/ciclo/black.png') }}" style="width: 100px" alt="Cycle">
                     </div>
                 </div>
                 <button class="btn btn-outline-secondary" type="button">{{__('View more')}}</button>
@@ -73,3 +73,4 @@
 </div>
 
 @endsection
+

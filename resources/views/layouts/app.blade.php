@@ -14,9 +14,12 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
+    <!-- Aquí se incluirán los scripts específicos de cada vista -->
+    @yield('scripts')
 </head>
 <body>
     <div id="app">
@@ -34,9 +37,23 @@
                     <ul class="navbar-nav me-auto">
 
                     </ul>
+                    <ul class="navbar-nav ms-auto">
 
+
+                    </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ strtoupper(app()->getLocale()) }}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="languageDropdown">
+                                @foreach(config('languages') as $locale => $data)
+                                    <a class="dropdown-item" href="{{ route('set_language', $locale) }}">{{ strtoupper($locale) }} - {{ $data['language'] }}</a>
+                                @endforeach
+                            </div>
+                        </div>
+
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))

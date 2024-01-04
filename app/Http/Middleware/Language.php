@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Middleware;
-
+use App\Http\Controllers\LanguageController;
 use Closure;
 
 final class Language
