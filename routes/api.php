@@ -29,8 +29,6 @@ Route::resources([
     'cycles' => CycleController::class,
     'users' => UserController::class,
     'modules' => ModuleController::class
-
-
 ]);
 
 Route::put('users/{user}/update-password', UserController::class.'@updatePassword');

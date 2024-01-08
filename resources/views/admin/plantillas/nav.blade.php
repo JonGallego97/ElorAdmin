@@ -11,44 +11,42 @@
                     <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
                         <ul class="nav flex-column mb-auto">
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('admin.index') }}">
+                                <a class="nav-link" href="{{ route('admin.index') }}">
                                     {{__('Dashboard')}}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                {{--<a class="nav-link d-flex align-items-center gap-2" href="{{route('admin.users.index')}}">--}}
-
-                                <a class="nav-link" data-toggle="collapse" href="#usuariosCollapse" role="button" aria-expanded="ture" aria-controls="usuariosCollapse">
+                                <a class="nav-link d-flex align-items-center gap-2">
                                     {{__('Users')}}
-                                    </a>
-                                    <div class="collapse" id="usuariosCollapse">
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item">
-                                                <a class="nav-link ml-3 small" href="#">{{__('Students')}}</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link ml-3 small" href="#">{{__('Teachers')}}</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                </a>
+                                <div id="usuariosCollapse">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item">
+                                            <a class="nav-link ml-3 small" href="{{ route('admin.students.index') }}">{{__('Students')}}</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link ml-3 small" href="{{ route('admin.teachers.index') }}">{{__('Teachers')}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('home') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('roles.index') }}">
                                     {{__('Rols')}}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('home') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('departments.index') }}">
                                     {{__('Departments')}}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('home') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('cycles.index') }}">
                                     {{__('Cycles')}}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('home') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('modules.index') }}">
                                     {{__('Modules')}}
                                 </a>
                             </li>

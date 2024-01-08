@@ -14,4 +14,9 @@ class Module extends Model
     {
         return $this->belongsToMany(Cycle::class);
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

@@ -18,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('roles','cycles.modules')->orderBy('id', 'desc')->get();
+        $users = User::with('roles','cycles.modules.users')->orderBy('id', 'desc')->get();
 
         if ($users->isNotEmpty()) {
             return response()->json(['users' => $users, 'count' => $users->count()] )->setStatusCode(Response::HTTP_OK);
@@ -33,7 +33,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        
+
     }
 
     /**
@@ -42,7 +42,7 @@ class UserController extends Controller
     public function show(int $id)
     {
         $user = new User();
-        $user = User::with('roles','cycles.modules')->where('id', $id)->first();
+        $user = User::with('roles','cycles.modules.users')->where('id', $id)->first();
         if (optional($user)->id!== null) {
             return response()->json(['user' => $user])
                 ->setStatusCode(Response::HTTP_OK);
@@ -133,36 +133,36 @@ class UserController extends Controller
     {
         $user = User::findOrFail($userId);
         $cycle = Cycle::findOrFail($cycleId);
-    
+
         if ($user->hasRole('ALUMNO')) {
             // Asociar al estudiante con el ciclo
             $user->cycles()->attach($cycle->id);
-    
+
             // Obtener los módulos asociados al ciclo
             $modules = $cycle->modules;
-    
+
             // Enrollar al estudiante en cada módulo
             $user->modules()->attach($modules);
-            
-    
+
+
             return response()->json(['message' => 'Estudiante matriculado en el ciclo y sus módulos.']);
         } else {
             // Si el usuario no es un estudiante, retornar un mensaje de error o realizar otras acciones según sea necesario
             return response()->json(['error' => 'Solo los estudiantes pueden ser matriculados en ciclos.']);
         }
     }
-    
+
     public function enrollTeacherInModule($userId, $moduleId)
     {
         $user = User::findOrFail($userId);
         $module = Module::findOrFail($moduleId);
-    
+
         if ($user->hasRole('PROFESOR')) {
             // Validar que el profesor no esté ya asignado al módulo
             if (!$user->modules->contains($module->id)) {
                 // Asociar al profesor con el módulo
                 $user->modules()->attach($module->id);
-    
+
                 return response()->json(['message' => 'Profesor asignado al módulo.']);
             } else {
                 return response()->json(['error' => 'El profesor ya está asignado a este módulo.']);
@@ -173,7 +173,7 @@ class UserController extends Controller
         }
     }
 
-  
+
 
 
 }
