@@ -8,7 +8,7 @@
                 </h1>
             </div>
             <div class="col text-end">
-                <a href="{{ route('roles.index') }}" class="me-2" role="button">
+                <a href="{{ route('modules.index') }}" class="me-2" role="button">
                     <i class="bi bi-arrow-90deg-left fs-3"></i>
                 </a>
 
@@ -53,7 +53,7 @@
                                     <a href="{{ route('users.edit', $user) }}" class="me-2" role="button">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteUserModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" id="openModalBtn">
+                                    <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="modules/destroyModuleUser" data-type="" data-id="{{ $module->id }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $module->name }}" id="openModalBtn">
                                         <i class="bi bi-trash3"></i>
                                     </button>
 
@@ -64,7 +64,7 @@
                 </tbody>
             </table>
             <div class="row">
-                @if ($module->students->total() > 10)
+                @if ($module->teachers->total() > 10)
                 <div class="form-inline col">
                     <form class="form-inline" method="GET" id="perPageForm">
                         <label class="mr-2" for="per_page">{{__('Show')}}{{__('Colon')}}</label>
@@ -138,26 +138,6 @@
             </div>
         </div>
 
-    </div>
-    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="deleteUserModalLabel">{{__('confirm_deletion')}}</h1>
-                </div>
-                <div class="modal-body">
-                    {{__('are_you_sure_delete')}} {{$user->name}} {{__('Question')}}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                    <form action="{{ route('users.destroy', $user) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-primary" >{{__('delete')}}</button>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
 
 @endsection

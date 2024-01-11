@@ -38,7 +38,7 @@
                             <a href="{{ route('cycles.edit', $cycle) }}" class="me-2" role="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteCycleModal" data-Cycle-id="{{ $cycle->id }}" data-cycle-name="{{ $cycle->name }}" id="openModalBtn">
+                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="cycles/destroy" data-type="{{__('cycle')}}" data-id="{{ $cycle->id }}" data-name="{{ $cycle->name }}" id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
                             </button>
 
@@ -73,29 +73,4 @@
                 {!! $cycles->links() !!}
             </div>
         </div>
-
-        <div class="modal fade" id="deleteCycleModal" tabindex="-1" aria-labelledby="deleteCycleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="deleteCycleModalLabel">{{__('confirm_deletion')}}</h1>
-                    </div>
-                    <div class="modal-body">
-                        {{__('are_you_sure_delete')}} <span id="cycleName"></span>{{__('Question')}}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                        <form action="{{ route('cycles.destroy', $cycles) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-primary" >{{__('delete')}}</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
         @endsection
-
-    @section('scripts')
-        <script src="{{ asset('js/admin/cycles/delete.js') }}"></script>
-    @endsection

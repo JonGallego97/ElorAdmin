@@ -40,6 +40,23 @@ class UserController extends Controller
         return view('admin.users.index',compact('users'));
     }
 
+
+    public function index(Request $request)
+    {
+
+        if ($request->is('admin*')) {
+            //si es admin
+            $perPage = $request->input('per_page', 10);
+            $users = User::orderBy('name', 'asc')
+            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
+        }else {
+            //si no es admin
+
+        }
+
+        return view('admin.users.index',compact('users'));
+    }
+
     public function indexTeacher(Request $request)
     {
 
@@ -144,17 +161,18 @@ class UserController extends Controller
             if(optional(User::find($user->id)->roles->first())->id == 2){
                 //Si es profesor
 
-                $user = User::with('roles','cycles.modules.users')->where('id', $user->id)->first();
+                $user = User::with('roles','cycles.modules', 'modules')->where('id', $user->id)->first();
                 return view('admin.users.teachers.show', ['user' => $user]);
             }else if(optional(User::find($user->id)->roles->first())->id == 3){
-                $user = User::with('roles', 'cycles.modules')->where('id', $user->id)->first();
+                $user = User::with('roles', 'cycles.modules', 'modules')->where('id', $user->id)->first();
                 return view('admin.users.students.show', ['user' => $user]);
-
-
 
                 // Puedes examinar o hacer algo con el usuario modificado
 
                 return view('admin.users.students.show',['user'=>$user]);
+            }else{
+                $user = User::with('roles', 'cycles.modules', 'modules')->where('id', $user->id)->first();
+                return view('admin.users.show', ['user' => $user]);
             }
 
 
