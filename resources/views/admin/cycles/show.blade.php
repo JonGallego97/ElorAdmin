@@ -56,7 +56,7 @@
                                     <a href="{{ route('modules.edit', $module) }}" class="me-2" role="button">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModuleModal" data-module-id="{{ $module->id }}" data-module-name="{{ $module->name }}" id="openModalBtn">
+                                    <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="cycles/destroyCycleModule" data-type="" data-id="{{ $cycle->id }}/{{ $module->id}}" data-name="{{ $module->name }} {{__('from')}} {{ $cycle->name }}" id="openModalBtn">
                                         <i class="bi bi-trash3"></i>
                                     </button>
 

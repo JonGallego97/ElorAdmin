@@ -36,7 +36,7 @@
                             <a href="{{ route('departments.edit', $department) }}" class="me-2" Department="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteDepartmentModal" data-department-id="{{ $department->id }}" data-department-name="{{ $department->name }}" id="openModalBtn">
+                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments/destroy" data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
                             </button>
 
@@ -72,27 +72,5 @@
             </div>
         </div>
 
-        <div class="modal fade" id="deleteDepartmentModal" tabindex="-1" aria-labelledby="deleteDepartmentModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="deleteDepartmentModalLabel">{{__('confirm_deletion')}}</h1>
-                    </div>
-                    <div class="modal-body">
-                        {{__('are_you_sure_delete')}} <span id="departmentName"></span>{{__('Question')}}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                        <form action="{{ route('departments.destroy', $department) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-primary" >{{__('delete')}}</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         @endsection
-    @section('scripts')
-        <script src="{{ asset('js/admin/departments/delete.js') }}"></script>
-    @endsection

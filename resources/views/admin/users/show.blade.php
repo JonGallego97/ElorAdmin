@@ -5,11 +5,11 @@
         <div class="row p-3 mb-2 bg-secondary-subtle rounded-pill">
             <div class="col">
                 <h1>
-                    <h1>{{__('Teachers')}}</h1>
+                    <h1>{{__('User')}}</h1>
                 </h1>
             </div>
             <div class="col text-end">
-                <a href="{{ route('admin.teachers.index') }}" class="me-2" role="button">
+                <a href="{{ route('admin.users.index') }}" class="me-2" role="button">
                     <i class="bi bi-arrow-90deg-left fs-3"></i>
                 </a>
 
@@ -33,30 +33,6 @@
                         <!-- Otros detalles del rol o año -->
                     </div>
                 </div>
-
-                <hr>
-
-                <h3>{{__('Cycles')}}</h3>
-                @foreach ($user['cycles'] as $cycle)
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <a href="{{route('cycles.show', $cycle)}}" role="button">
-                                <h4>{{ $cycle['name'] }}</h4>
-                            </a>
-                        </div>
-                        <div class="card-body">
-                            <h5>{{__('Modules')}}</h5>
-                            <ul>
-                                @foreach ($cycle['modules'] as $module)
-                                    @if (in_array($module->id, $user['modules']->pluck('id')->toArray()))
-
-                                        <li>{{ $module['code'] }} - <a href="{{ route('modules.show', $module) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
-                                    @endif
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                @endforeach
             </div>
         </div>
     </div>
