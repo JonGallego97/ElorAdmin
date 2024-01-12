@@ -44,6 +44,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
 
+
       /*$adminRole = Role::select('id','name')->where('name','ADMINISTRADOR')->first();
         //dd($adminRole);
         $rolesArray = Auth::user()->roles;
@@ -53,6 +54,8 @@ class UserController extends Controller
         }
         */
 
+
+
         if ($request->is('admin*')) {
             //si es admin
             $perPage = $request->input('per_page', 10);
@@ -60,7 +63,9 @@ class UserController extends Controller
             ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
         }else {
             //si no es admin
+
             return view('teacher.index',compact('users'));
+
 
         }
 
