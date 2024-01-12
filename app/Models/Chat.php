@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Department extends Model
+class Chat extends Model
 {
     use HasFactory;
 
-    public function cycles()
+    public function messages()
     {
-        return $this->hasMany(Cycle::class);
+        return $this->hasMany(Message::class);
     }
 
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class, 'user_chat', 'user_id', 'chat_id');
     }
-    
-
 }
+
+

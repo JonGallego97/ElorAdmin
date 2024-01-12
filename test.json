@@ -1,190 +1,158 @@
 {
     "user": {
-        "id": 6,
-        "email": "Clara.VelaEc@elorrieta-errekamari.com",
-        "name": "Clara",
-        "surname1": "Vela",
-        "surname2": "Echevarria",
-        "DNI": "55420170",
-        "address": "Passeig Andrea, 77, 51º A, 97145, L' Esquibel de la Sierra",
-        "phoneNumber1": 680709279,
-        "phoneNumber2": 345299330,
+        "id": 1,
+        "email": "Claudia.EnriquezOc@elorrieta-errekamari.com",
+        "name": "Claudia",
+        "surname1": "Enriquez",
+        "surname2": "Ochoa",
+        "DNI": "22991705",
+        "address": "Avinguda López, 217, 2º E, 43782, O Castillo",
+        "phoneNumber1": 892413041,
+        "phoneNumber2": 653527493,
         "image": "",
         "dual": null,
-        "firstLogin": 1,
+        "firstLogin": 0,
         "year": 2,
         "role_id": null,
-        "department_id": null,
-        "created_at": "2023-12-20T16:31:32.000000Z",
-        "updated_at": "2023-12-20T16:31:32.000000Z",
+        "created_at": "2024-01-12T17:46:39.000000Z",
+        "updated_at": "2024-01-12T17:46:39.000000Z",
         "deleted_at": null,
+        "department_id": 1,
+        "department": {
+            "id": 1,
+            "name": "Informatica",
+            "created_at": "2024-01-12T17:46:39.000000Z",
+            "updated_at": "2024-01-12T17:46:39.000000Z"
+        },
         "roles": [
             {
                 "id": 3,
                 "name": "ALUMNO",
-                "created_at": "2023-12-20T16:31:31.000000Z",
-                "updated_at": "2023-12-20T16:31:31.000000Z",
+                "created_at": "2024-01-12T17:46:39.000000Z",
+                "updated_at": "2024-01-12T17:46:39.000000Z",
                 "pivot": {
-                    "user_id": 6,
+                    "user_id": 1,
                     "role_id": 3
                 }
             }
         ],
-        "cycles": [
+        "cycles": [],
+        "chats": [
             {
                 "id": 1,
-                "created_at": "2023-12-20T16:31:39.000000Z",
-                "updated_at": "2023-12-20T16:31:39.000000Z",
-                "name": "TÉCNICO EN SISTEMAS MICROINFORMÁTICOS Y REDES",
-                "department_id": 1,
+                "name": "Home",
+                "is_Public": 1,
+                "created_at": "2024-01-12T17:46:45.000000Z",
+                "updated_at": "2024-01-12T17:46:45.000000Z",
                 "pivot": {
-                    "user_id": 6,
-                    "cycle_id": 1,
-                    "matriculation_date": null
+                    "user_id": 1,
+                    "chat_id": 1
                 },
-                "modules": [
-                    {
-                        "id": 9,
-                        "code": 100,
-                        "name": "Inglés técnico",
-                        "hours": 33,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
-                        "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 9
-                        }
-                    },
-                    {
-                        "id": 10,
-                        "code": 229,
-                        "name": "Formación y orientación laboral",
-                        "hours": 105,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
-                        "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 10
-                        }
-                    },
-                    {
-                        "id": 11,
-                        "code": 230,
-                        "name": "Empresa e iniciativa Emprendedora",
-                        "hours": 63,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
-                        "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 11
-                        }
-                    },
-                    {
-                        "id": 12,
-                        "code": 231,
-                        "name": "Formación en centros de trabajo",
-                        "hours": 380,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
-                        "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 12
-                        }
-                    },
+                "messages": [
                     {
                         "id": 1,
-                        "code": 221,
-                        "name": "Montaje y mantenimiento de equipos",
-                        "hours": 231,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
+                        "content": "Bienvenido a la aplicación de Elorrieta-Errekamari",
+                        "dataType": "TEXT",
+                        "created_at": "2024-01-12T17:46:45.000000Z",
+                        "updated_at": "2024-01-12T17:46:45.000000Z",
+                        "chat_id": 1,
+                        "user_id": 1
+                    },
+                    {
+                        "id": 2,
+                        "content": "Gracias por la bienvenida",
+                        "dataType": "TEXT",
+                        "created_at": "2024-01-12T17:46:45.000000Z",
+                        "updated_at": "2024-01-12T17:46:45.000000Z",
+                        "chat_id": 1,
+                        "user_id": 2
+                    }
+                ],
+                "users": [
+                    {
+                        "id": 1,
+                        "email": "Claudia.EnriquezOc@elorrieta-errekamari.com",
+                        "name": "Claudia",
+                        "surname1": "Enriquez",
+                        "surname2": "Ochoa",
+                        "DNI": "22991705",
+                        "address": "Avinguda López, 217, 2º E, 43782, O Castillo",
+                        "phoneNumber1": 892413041,
+                        "phoneNumber2": 653527493,
+                        "image": "",
+                        "dual": null,
+                        "firstLogin": 0,
+                        "year": 2,
+                        "role_id": null,
+                        "created_at": "2024-01-12T17:46:39.000000Z",
+                        "updated_at": "2024-01-12T17:46:39.000000Z",
+                        "deleted_at": null,
+                        "department_id": 1,
                         "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 1
+                            "user_id": 1,
+                            "chat_id": 1
                         }
                     },
                     {
                         "id": 2,
-                        "code": 222,
-                        "name": "Sistemas operativos monopuesto",
-                        "hours": 165,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
+                        "email": "Jose Manuel.AlcarazAv@elorrieta-errekamari.com",
+                        "name": "Jose Manuel",
+                        "surname1": "Alcaraz",
+                        "surname2": "Aviles",
+                        "DNI": "6012435",
+                        "address": "Plaça Arenas, 597, 79º B, 06565, L' Rosario Baja",
+                        "phoneNumber1": 673469624,
+                        "phoneNumber2": 449527517,
+                        "image": "",
+                        "dual": null,
+                        "firstLogin": 0,
+                        "year": 2,
+                        "role_id": null,
+                        "created_at": "2024-01-12T17:46:39.000000Z",
+                        "updated_at": "2024-01-12T17:46:39.000000Z",
+                        "deleted_at": null,
+                        "department_id": null,
                         "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 2
+                            "user_id": 1,
+                            "chat_id": 2
                         }
-                    },
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "name": "Public",
+                "is_Public": 1,
+                "created_at": "2024-01-12T17:46:45.000000Z",
+                "updated_at": "2024-01-12T17:46:45.000000Z",
+                "pivot": {
+                    "user_id": 1,
+                    "chat_id": 2
+                },
+                "messages": [],
+                "users": [
                     {
-                        "id": 3,
-                        "code": 223,
-                        "name": "Aplicaciones ofimáticas",
-                        "hours": 231,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
+                        "id": 1,
+                        "email": "Claudia.EnriquezOc@elorrieta-errekamari.com",
+                        "name": "Claudia",
+                        "surname1": "Enriquez",
+                        "surname2": "Ochoa",
+                        "DNI": "22991705",
+                        "address": "Avinguda López, 217, 2º E, 43782, O Castillo",
+                        "phoneNumber1": 892413041,
+                        "phoneNumber2": 653527493,
+                        "image": "",
+                        "dual": null,
+                        "firstLogin": 0,
+                        "year": 2,
+                        "role_id": null,
+                        "created_at": "2024-01-12T17:46:39.000000Z",
+                        "updated_at": "2024-01-12T17:46:39.000000Z",
+                        "deleted_at": null,
+                        "department_id": 1,
                         "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 3
-                        }
-                    },
-                    {
-                        "id": 4,
-                        "code": 224,
-                        "name": "Sistemas operativos en red",
-                        "hours": 168,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
-                        "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 4
-                        }
-                    },
-                    {
-                        "id": 5,
-                        "code": 225,
-                        "name": "Redes locales",
-                        "hours": 231,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
-                        "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 5
-                        }
-                    },
-                    {
-                        "id": 6,
-                        "code": 226,
-                        "name": "Seguridad informática",
-                        "hours": 99,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
-                        "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 6
-                        }
-                    },
-                    {
-                        "id": 7,
-                        "code": 227,
-                        "name": "Servicios en red",
-                        "hours": 189,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
-                        "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 7
-                        }
-                    },
-                    {
-                        "id": 8,
-                        "code": 228,
-                        "name": "Aplicaciones web",
-                        "hours": 105,
-                        "created_at": "2023-12-20T16:31:39.000000Z",
-                        "updated_at": "2023-12-20T16:31:39.000000Z",
-                        "pivot": {
-                            "cycle_id": 1,
-                            "module_id": 8
+                            "user_id": 2,
+                            "chat_id": 1
                         }
                     }
                 ]

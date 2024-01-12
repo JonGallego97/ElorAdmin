@@ -59,8 +59,19 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Cycle::class, 'cycle_users', 'user_id', 'cycle_id');
     }
+
     public function hasRole($role)
     {
         return $this->roles->where('name', $role)->isNotEmpty();
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function chats()
+    {
+        return $this->belongsToMany(Chat::class, 'user_chat', 'user_id', 'chat_id');
     }
 }

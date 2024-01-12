@@ -18,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('roles','cycles.modules.users')->orderBy('id', 'desc')->get();
+        $users = User::with('roles','cycles.modules.users','chats')->orderBy('id', 'desc')->get();
 
         if ($users->isNotEmpty()) {
             return response()->json(['users' => $users, 'count' => $users->count()] )->setStatusCode(Response::HTTP_OK);
@@ -42,7 +42,7 @@ class UserController extends Controller
     public function show(int $id)
     {
         $user = new User();
-        $user = User::with('roles','cycles.modules.users')->where('id', $id)->first();
+        $user = User::with('department','roles','cycles.modules.users', 'chats.messages','chats.users')->where('id', $id)->first();
         if (optional($user)->id!== null) {
             return response()->json(['user' => $user])
                 ->setStatusCode(Response::HTTP_OK);
