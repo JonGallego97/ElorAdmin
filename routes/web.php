@@ -68,4 +68,7 @@ Route::prefix('teacher')->middleware(['auth', 'checkRole'])->group(function () {
 
     Route::get('/', [UserController::class, 'index'])->name('teacher.index');
     });
+Auth::routes();
 
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
