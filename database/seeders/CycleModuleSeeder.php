@@ -66,16 +66,11 @@ class CycleModuleSeeder extends Seeder
             ['cycle_id' => 2, 'module_id' => 29, 'created_at' => now(), 'updated_at' => now()],
             ['cycle_id' => 2, 'module_id' => 30, 'created_at' => now(), 'updated_at' => now()],
             ['cycle_id' => 2, 'module_id' => 31, 'created_at' => now(), 'updated_at' => now()],
-            
-
-
-
-
-
-
-
-
+        
         ]);
+
+        
+        
         
     }
 }

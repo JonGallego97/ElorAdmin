@@ -8,7 +8,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\CycleController;
-
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +68,4 @@ Route::prefix('teacher')->middleware(['auth', 'checkRole'])->group(function () {
 
     Route::get('/', [UserController::class, 'index'])->name('teacher.index');
     });
-Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

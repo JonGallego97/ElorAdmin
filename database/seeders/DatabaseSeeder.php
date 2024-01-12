@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             CycleModuleSeeder::class,
             CycleUserSeeder::class,
             ModuleUserSeeder::class,
+            UserChatMessageSeeder::class,
         ]);
     }
 }
