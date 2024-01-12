@@ -90,4 +90,23 @@ class DepartmentController extends Controller
         }else {
         }
     }
+
+    public function destroyDepartmentUser(Request $request, $departmentId, $userId){
+        $redirectRoute = 'admin.departments.show';
+        if ($request->is('admin*')) {
+            $user = User::find($userId);
+            if ($user) {
+                $user->department_id = null;
+                $user->save();
+                $department = Department::find($departmentId);
+                $perPage = $request->input('per_page', 10);
+                $department->users = User::where('department_id', $department->id)->paginate($perPage);
+                return view('admin.departments.show',['department'=>$department]);
+            } else {
+
+            }
+
+        }else {
+        }
+    }
 }

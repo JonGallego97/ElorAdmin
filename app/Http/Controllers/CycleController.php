@@ -61,35 +61,13 @@ class CycleController extends Controller
     public function show(Request $request, Cycle $cycle)
     {
         if ($request->is('admin*')) {
-            $perPage = $request->input('per_page', 10);
+
             $cycleId = $cycle->id;
-
-            $cycle->count_students = Cycle::join('cycle_users', 'cycles.id', '=', 'cycle_users.cycle_id')
-                ->join('users', 'cycle_users.user_id', '=', 'users.id')
-                ->join('role_users', 'users.id', '=', 'role_users.user_id')
-                ->where('role_users.role_id', '=', 3)
-                ->where('cycles.id', '=', $cycleId)
-                ->count();
-
-            $cycle->modules = Module::join('cycle_module', 'modules.id', '=', 'cycle_module.module_id')
-                ->where('cycle_module.cycle_id', $cycleId)
-                ->select('modules.*')
-                ->paginate($perPage);
-
+            $cycle->count_students = $this->cycleCountStudents($cycleId);
+            $cycle->modules = $this->cycleModule($request, $cycleId);
             foreach ($cycle->modules as $module) {
-                $module->count_teachers = Module::join('module_user', 'modules.id', '=', 'module_user.module_id')
-                    ->join('users', 'module_user.user_id', '=', 'users.id')
-                    ->join('role_users', 'users.id', '=', 'role_users.user_id')
-                    ->where('role_users.role_id', '=', 2)
-                    ->where('modules.id', '=', $module->id)
-                    ->count();
-                $module->count_students = Module::join('module_user', 'modules.id', '=', 'module_user.module_id')
-                    ->join('users', 'module_user.user_id', '=', 'users.id')
-                    ->join('role_users', 'users.id', '=', 'role_users.user_id')
-                    ->where('role_users.role_id', '=', 3)
-                    ->where('modules.id', '=', $module->id)
-                    ->count();
-
+                $module->count_teachers = $this->moduleTachersCount($module->id);
+                $module->count_students = $this->moduleStudentsCount($module->id);
             }
             $cycle->department = Department::find($cycle->department_id);
             return view('admin.cycles.show', compact('cycle'));
@@ -99,6 +77,41 @@ class CycleController extends Controller
         }
 
         return view('cycles.show',['cycle'=>$cycle]);
+    }
+
+    private function cycleCountStudents($cycleId){
+        return Cycle::join('cycle_users', 'cycles.id', '=', 'cycle_users.cycle_id')
+        ->join('users', 'cycle_users.user_id', '=', 'users.id')
+        ->join('role_users', 'users.id', '=', 'role_users.user_id')
+        ->where('role_users.role_id', '=', 3)
+        ->where('cycles.id', '=', $cycleId)
+        ->count();
+    }
+
+    private function cycleModule(Request $request, $cycleId){
+        $perPage = $request->input('per_page', 10);
+        return Module::join('cycle_module', 'modules.id', '=', 'cycle_module.module_id')
+        ->where('cycle_module.cycle_id', $cycleId)
+        ->select('modules.*')
+        ->paginate($perPage);
+    }
+
+    private function moduleTachersCount($moduleId){
+        return Module::join('module_user', 'modules.id', '=', 'module_user.module_id')
+        ->join('users', 'module_user.user_id', '=', 'users.id')
+        ->join('role_users', 'users.id', '=', 'role_users.user_id')
+        ->where('role_users.role_id', '=', 2)
+        ->where('modules.id', '=', $moduleId)
+        ->count();
+    }
+
+    private function moduleStudentsCount($moduleId){
+        return Module::join('module_user', 'modules.id', '=', 'module_user.module_id')
+        ->join('users', 'module_user.user_id', '=', 'users.id')
+        ->join('role_users', 'users.id', '=', 'role_users.user_id')
+        ->where('role_users.role_id', '=', 3)
+        ->where('modules.id', '=', $moduleId)
+        ->count();
     }
 
     /**
@@ -136,6 +149,27 @@ class CycleController extends Controller
             } else {
                 return redirect()->back()->with('error', 'Usuario no encontrado.');
             }
+        }else {
+        }
+    }
+    public function destroyCycleModule(Request $request, $cycleId, $moduleId){
+        $redirectRoute = 'admin.cycles.show';
+        if ($request->is('admin*')) {
+            $cycle = Cycle::find($cycleId);
+            if ($cycle) {
+                $cycle->modules()->detach($moduleId);
+                $cycle->count_students = $this->cycleCountStudents($cycleId);
+                $cycle->modules = $this->cycleModule($request, $cycleId);
+                foreach ($cycle->modules as $module) {
+                    $module->count_teachers = $this->moduleTachersCount($module->id);
+                    $module->count_students = $this->moduleStudentsCount($module->id);
+                }
+                $cycle->department = Department::find($cycle->department_id);
+                return view('admin.cycles.show',['cycle'=>$cycle]);
+            } else {
+
+            }
+
         }else {
         }
     }

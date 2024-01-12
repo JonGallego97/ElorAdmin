@@ -50,7 +50,7 @@
                                     <a href="{{ route('users.edit', $user) }}" class="me-2" role="button">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteUserModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" id="openModalBtn">
+                                    <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="roles/destroyRoleUser" data-type="" data-id="{{ $role->id }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $role->name }}" id="openModalBtn">
                                         <i class="bi bi-trash3"></i>
                                     </button>
 
@@ -79,27 +79,5 @@
                 </div>
             </div>
         </div>
-
     </div>
-    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="deleteUserModalLabel">{{__('confirm_deletion')}}</h1>
-                </div>
-                <div class="modal-body">
-                    {{__('are_you_sure_delete')}} {{$user->name}} {{__('Question')}}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                    <form action="{{ route('users.destroy', $user) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-primary" >{{__('delete')}}</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
 @endsection

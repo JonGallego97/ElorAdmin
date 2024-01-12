@@ -47,19 +47,27 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::resource('users', UserController::class);
     //Roles
+    Route::delete('roles/destroyRoleUser/{roleId}/{userId}', [RoleController::class, 'destroyRoleUser'])->name('roles.destroyRoleUser');
     Route::delete('roles/destroy/{roleId}', [RoleController::class, 'destroy'])->name('roles.destroy');
     Route::resource('roles', RoleController::class);
     //Departaments
+    Route::delete('departments/destroyDepartmentUser/{departmentId}/{userId}', [DepartmentController::class, 'destroyDepartmentUser'])->name('departments.destroyDepartmentUser');
     Route::delete('departments/destroy/{departmentId}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
     Route::resource('departments', DepartmentController::class);
     //Modules
+    Route::delete('modules/destroyModuleUser/{moduleId}/{userId}', [ModuleController::class, 'destroyModuleUser'])->name('modules.destroyModuleUser');
     Route::delete('modules/destroy/{moduleId}', [ModuleController::class, 'destroy'])->name('modules.destroy');
     Route::resource('modules', ModuleController::class);
     //Cycles
+    Route::delete('cycles/destroyCycleModule/{cycleId}/{userId}', [CycleController::class, 'destroyCycleModule'])->name('cycles.destroyCycleModule');
     Route::delete('cycles/destroy/{cycleId}', [CycleController::class, 'destroy'])->name('cycles.destroy');
     Route::resource('cycles', CycleController::class);
 });
 
+Route::prefix('teacher')->middleware(['auth', 'checkRole'])->group(function () {
+
+    Route::get('/', [UserController::class, 'index'])->name('teacher.index');
+    });
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

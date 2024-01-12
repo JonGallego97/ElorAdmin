@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Module;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 
@@ -44,7 +45,8 @@ class ModuleController extends Controller
 
     public function create()
     {
-        return view('modules.create');
+        $module = new Module();
+        return view('admin.modules.create', ['module' => $module]);
     }
 
 
@@ -54,6 +56,21 @@ class ModuleController extends Controller
      */
     public function store(Request $request)
     {
+        $messages = [
+            'name.required' => __('errorMessageNameEmpty'),
+            'name.unique' => __('errorMessageNameUnique'),
+            'code.required' => __('errorMessageCodeEmpty'),
+            'code.integer' => __('errorMessageCodeInteger'),
+            'hours.required' => __('errorMessageHoursEmpty'),
+            'hours.integer' => __('errorMessageHoursInteger'),
+        ];
+
+        $request->validate([
+            'name' => 'required|unique:roles',
+            'code' => 'required|integer',
+            'hours' => 'required|integer',
+        ], $messages);
+
         $module = new Module();
         $module->code = $request->code;
         $module->name = $request->name;
@@ -61,7 +78,9 @@ class ModuleController extends Controller
 
         $created = $module->save();
         if($created) {
-            return redirect()->route('modules.index');
+            $module->teachers = $this->teachers($request, $module);;
+            $module->students = $this->students($request, $module);;
+            return view('admin.modules.show', ['module' => $module]);
         }
     }
 
@@ -70,26 +89,33 @@ class ModuleController extends Controller
      */
     public function show(Request $request, Module $module)
     {
+        $module->teachers = $this->teachers($request, $module);
+        $module->students = $this->students($request, $module);
+        return view('admin.modules.show',['module'=>$module]);
+    }
+    public function edit(Module $module)
+    {
+        return view('admin.modules.create', ['module' => $module]);
+    }
+
+    private function teachers(Request $request, Module $module){
         $perPage = $request->input('per_page', 10);
-        $teachers = User::join('module_user', 'users.id', '=', 'module_user.user_id')
+        return $teachers = User::join('module_user', 'users.id', '=', 'module_user.user_id')
             ->join('role_users', 'users.id', '=', 'role_users.user_id')
             ->where('role_users.role_id', 2)
             ->where('module_user.module_id', $module->id)
             ->select('users.*')
             ->paginate($perPage);
-        $students = User::join('module_user', 'users.id', '=', 'module_user.user_id')
+    }
+
+    private function students(Request $request, Module $module){
+        $perPage = $request->input('per_page', 10);
+        return $students = User::join('module_user', 'users.id', '=', 'module_user.user_id')
             ->join('role_users', 'users.id', '=', 'role_users.user_id')
             ->where('role_users.role_id', 3)
             ->where('module_user.module_id', $module->id)
             ->select('users.*')
             ->paginate($perPage);
-        $module->teachers = $teachers;
-        $module->students = $students;
-       return view('admin.modules.show',['module'=>$module]);
-    }
-    public function edit()
-    {
-        return view('modules.create');
     }
 
 
@@ -98,13 +124,29 @@ class ModuleController extends Controller
      */
     public function update(Request $request, Module $module)
     {
+        $messages = [
+            'name.required' => __('errorMessageNameEmpty'),
+            'name.unique' => __('errorMessageNameUnique'),
+            'code.required' => __('errorMessageCodeEmpty'),
+            'code.integer' => __('errorMessageCodeInteger'),
+            'hours.integer' => __('errorMessageHoursInteger'),
+        ];
+
+        $request->validate([
+            'name' => 'required|unique:roles',
+            'code' => 'required|integer',
+            'hours' => 'integer',
+        ], $messages);
+
         $module->code = $request->code;
         $module->name = $request->name;
         $module->hours = $request->hours;
 
         $updated = $module->save();
         if($updated) {
-            return redirect()->route('modules.index');
+            $module->teachers = $this->teachers($request, $module);
+            $module->students = $this->students($request, $module);
+            return view('admin.modules.show', ['module' => $module]);
         }
     }
 
@@ -124,6 +166,23 @@ class ModuleController extends Controller
             } else {
                 return redirect()->back()->with('error', 'Departamento no encontrado.');
             }
+        }else {
+        }
+    }
+
+    public function destroyModuleUser(Request $request, $moduleId, $userId){
+        $redirectRoute = 'admin.modules.show';
+        if ($request->is('admin*')) {
+            $module = Module::find($moduleId);
+            if ($module) {
+                $module->users()->detach($userId);
+                $module->teachers = $this->teachers($request, $module);
+                $module->students = $this->students($request, $module);
+                return view('admin.modules.show',['module'=>$module]);
+            } else {
+
+            }
+
         }else {
         }
     }

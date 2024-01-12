@@ -18,4 +18,9 @@ class Cycle extends Model
     {
         return $this->belongsToMany(Module::class);
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'cycle_users', 'user_id', 'cycle_id');
+    }
 }

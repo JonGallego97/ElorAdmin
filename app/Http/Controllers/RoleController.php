@@ -34,7 +34,8 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('admin.roles.create');
+        $role = new Role();
+        return view('admin.roles.create', ['role' => $role]);
     }
 
     /**
@@ -42,10 +43,28 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
+
+        $messages = [
+            'name.unique' => __('errorMessageCreateRole'),
+        ];
+
+        $request->validate([
+            'name' => 'required|unique:roles',
+        ], $messages);
+
         $role = new Role();
         $role->name = $request->name;
         $role->save();
-        return redirect()->route('roles.index');
+        $role->users = $this->getRoleUsers($request, $role);
+        return view('admin.roles.show', ['role' => $role]);
+    }
+
+
+    private function getRoleUsers(Request $request, Role $role){
+        $perPage = $request->input('per_page', 10);
+        return $users = User::whereHas('roles', function ($query) use ($role) {
+            $query->where('id', $role->id);
+        })->paginate($perPage);
     }
 
     /**
@@ -53,12 +72,7 @@ class RoleController extends Controller
      */
     public function show(Request $request, Role $role)
     {
-        $perPage = $request->input('per_page', 10);
-        $users = User::whereHas('roles', function ($query) use ($role) {
-            $query->where('id', $role->id);
-        })->paginate($perPage);
-
-        $role->users = $users;
+        $role->users = $this->getRoleUsers($request, $role);
         return view('admin.roles.show',['role'=>$role]);
     }
 
@@ -67,7 +81,23 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        return view('roles.create');
+        return view('admin.roles.create', ['role' => $role]);
+    }
+
+    public function destroyRoleUser(Request $request, $roleId, $userId){
+        $redirectRoute = 'admin.roles.show';
+        if ($request->is('admin*')) {
+            $role = Role::find($roleId);
+            if ($role) {
+                $role->users()->detach($userId);
+                $role->users = $this->getRoleUsers($request, $role);
+                return view('admin.roles.show',['role'=>$role]);
+            } else {
+
+            }
+
+        }else {
+        }
     }
 
     /**
@@ -75,10 +105,21 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
+        $messages = [
+            'name.required' => __('errorMessageNameEmpty'),
+            'name.unique' => __('errorMessageCreateRole'),
+            'id.not_in' => __('errorMessageRoleCanNotBeUpdated'),
+        ];
+        $request->validate([
+            'name' => 'required|unique:roles',
+        ], $messages);
+        if (in_array($role->id, [1, 2, 3])) {
+            return redirect()->back()->withErrors(['id' => __('errorMessageRoleCanNotBeUpdated')]);
+        }
         $role->name = $request->name;
         $role->save();
-
-        return view('roles.show',['role'=>$role]);
+        $role->users = $this->getRoleUsers($request, $role);
+        return view('admin.roles.show',['role'=>$role]);
     }
 
     /**

@@ -49,7 +49,9 @@
                             <h5>{{__('Modules')}}</h5>
                             <ul>
                                 @foreach ($cycle['modules'] as $module)
-                                    <li>{{ $module['code'] }} - {{ $module['name'] }}  ({{ $module['hours'] }} {{__('Hours')}})</li>
+                                    @if (in_array($module->id, $user['modules']->pluck('id')->toArray()))
+                                        <li>{{ $module['code'] }} - {{ $module['name'] }} ({{ $module['hours'] }} {{__('Hours')}})</li>
+                                    @endif
                                 @endforeach
                             </ul>
                         </div>

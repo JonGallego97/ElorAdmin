@@ -36,7 +36,7 @@
                             <a href="{{ route('roles.edit', $role) }}" class="me-2" role="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteRoleModal" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" id="openModalBtn">
+                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="roles/destroy" data-type="{{__('role')}}" data-id="{{ $role->id }}" data-name="{{ $role->name }}" id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
                             </button>
 
@@ -48,7 +48,6 @@
         </table>
         <div class="row">
             @if ($roles->total() > 10)
-
             <div class="form-inline col">
                 <form
                     @if(request()->is('admin/students*'))
@@ -69,27 +68,6 @@
             @endif
             <div class="d-flex justify-content-end col">
                 {!! $roles->links() !!}
-            </div>
-        </div>
-
-        <div class="modal fade" id="deleteRoleModal" tabindex="-1" aria-labelledby="deleteRoleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="deleteRoleModalLabel">{{__('confirm_deletion')}}</h1>
-                    </div>
-                    <div class="modal-body">
-                        {{__('are_you_sure_delete')}} <span id="roleName"></span>{{__('Question')}}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                        <form action="{{ route('roles.destroy', $role) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-primary" >{{__('delete')}}</button>
-                        </form>
-                    </div>
-                </div>
             </div>
         </div>
         @if(session('error'))
@@ -117,8 +95,4 @@
                 });
             </script>
         @endif
-
         @endsection
-    @section('scripts')
-        <script src="{{ asset('js/admin/roles/delete.js') }}"></script>
-    @endsection

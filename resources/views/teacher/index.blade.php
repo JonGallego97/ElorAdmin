@@ -15,16 +15,6 @@
                     @endif
 
                     {{ __('You are logged in!') }}
-
-                    @auth
-                    @if(Auth::user()->hasRole('ADMINISTRADOR'))
-                        <a href="{{ route('admin.index') }}">Go to Admin Users</a>
-                    @elseif (Auth::user()->hasRole('PROFESOR'))
-                        <a href="{{ route('teacher.index') }}">Go to profesor Users</a>
-
-                    @endif
-
-                @endauth
                 </div>
             </div>
         </div>
