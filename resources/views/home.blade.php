@@ -21,6 +21,8 @@
                         <a href="{{ route('admin.index') }}">Go to Admin Users</a>
                     @elseif (Auth::user()->hasRole('PROFESOR'))
                         <a href="{{ route('teacher.index') }}">Go to profesor Users</a>
+                    @elseif (Auth::user()->hasRole('ALUMNO'))
+                        <a href="{{ route('alum.index') }}">Go to profesor Users</a>
 
                     @endif
 
