@@ -64,4 +64,8 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     Route::resource('cycles', CycleController::class);
 });
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::prefix('teacher')->middleware(['auth', 'checkRole'])->group(function () {
+
+    Route::get('/', [UserController::class, 'index'])->name('teacher.index');
+    });
+
