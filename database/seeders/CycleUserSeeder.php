@@ -25,7 +25,8 @@ class CycleUserSeeder extends Seeder
         // Itera sobre los usuarios y asigna ciclos aleatorios a cada uno
         $usersWithRoleTwo->each(function ($user) use ($cycles) {
             $user->cycles()->attach(
-                $cycles->random(rand(1, $cycles->count()))->pluck('id')->toArray()
+                $cycles->random(rand(1, $cycles->count()))->pluck('id')->toArray(),
+                ['cycle_registration_number' => rand(1, 1000000000000000000)]
             );
         });
 

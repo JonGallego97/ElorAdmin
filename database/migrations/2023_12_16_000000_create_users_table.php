@@ -24,12 +24,9 @@ return new class extends Migration
             $table->integer('phoneNumber2')->nullable();
             $table->longText('image')->nullable();
             $table->boolean('dual')->nullable();
-            $table->boolean('firstLogin')->nullable();
+            $table->boolean('firstLogin')->default(true);
             $table->integer('year')->nullable();
             $table->rememberToken();
-            $table->unsignedBigInteger('department_id')->nullable();
-            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
-
             $table->timestamps();
             $table->softDeletes();
         });
