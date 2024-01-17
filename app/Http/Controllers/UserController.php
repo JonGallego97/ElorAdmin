@@ -61,20 +61,20 @@ class UserController extends Controller
             $perPage = $request->input('per_page', 10);
             $users = User::orderBy('name', 'asc')
             ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
-        }else {
+        }else if($request->role == 'PROFESOR'){
             //si no es admin
 
-            return view('teacher.index',compact('users'));
-
+        }else{
+            return view('person.index',compact('users'));
 
         }
+
 
         return view('admin.users.index',compact('users'));
     }
 
     public function indexTeacher(Request $request)
     {
-
         if ($request->is('admin*')){
             $perPage = $request->input('per_page', 10);
             $users = User::whereHas('roles', function ($query) {
