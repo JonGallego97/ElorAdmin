@@ -24,11 +24,7 @@ return new class extends Migration
             $table->integer('phone_number2')->nullable();
             $table->longText('image')->nullable();
             $table->boolean('dual')->nullable();
-<<<<<<< HEAD
             $table->boolean('firstLogin')->default(true);
-=======
-            $table->boolean('first_login')->nullable();
->>>>>>> b523b751771660b057b02bf19b3759a259343f22
             $table->integer('year')->nullable();
             $table->rememberToken();
             $table->timestamps();
