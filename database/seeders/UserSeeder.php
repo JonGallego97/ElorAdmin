@@ -39,11 +39,16 @@ class UserSeeder extends Seeder
             'surname2' => 'Admin',
             'DNI' => '12345678A',
             'address' => 'Dirección',
-            'phoneNumber1' => 123456789,
-            'phoneNumber2' => 987654321,
+            'phone_number1' => 123456789,
+            'phone_number2' => 987654321,
             'image' => '',
+<<<<<<< HEAD
             'dual' => false,
             'firstLogin' => false,
+=======
+            'dual' => null,
+            'first_login' => false,
+>>>>>>> b523b751771660b057b02bf19b3759a259343f22
             'year' => null,
             'created_at' => now(),
             'updated_at' => now(),

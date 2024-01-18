@@ -20,11 +20,15 @@ return new class extends Migration
             $table->string('surname2');
             $table->string('DNI');
             $table->string('address')->nullable();
-            $table->integer('phoneNumber1')->nullable();
-            $table->integer('phoneNumber2')->nullable();
+            $table->integer('phone_number1')->nullable();
+            $table->integer('phone_number2')->nullable();
             $table->longText('image')->nullable();
             $table->boolean('dual')->nullable();
+<<<<<<< HEAD
             $table->boolean('firstLogin')->default(true);
+=======
+            $table->boolean('first_login')->nullable();
+>>>>>>> b523b751771660b057b02bf19b3759a259343f22
             $table->integer('year')->nullable();
             $table->rememberToken();
             $table->timestamps();

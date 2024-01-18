@@ -43,11 +43,16 @@ class UserFactory extends Factory
             'email' => $name . "." . $surname1 . substr($surname2, 0, 2) . '@elorrieta-errekamari.com',
             'DNI' => $fakerSpain->unique()->randomNumber(8),
             'address' => $fakerSpain->address,
-            'phoneNumber1' => $fakerSpain->numerify('#########'),
-            'phoneNumber2' => $fakerSpain->numerify('#########'),
+            'phone_number1' => $fakerSpain->numerify('#########'),
+            'phone_number2' => $fakerSpain->numerify('#########'),
             'image' => "",
+<<<<<<< HEAD
             'dual' => false,
             'firstLogin' => $fakerSpain->boolean,
+=======
+            'dual' => null,
+            'first_login' => $fakerSpain->boolean,
+>>>>>>> b523b751771660b057b02bf19b3759a259343f22
             'year' => $year,
             'created_at' => now(),
             'updated_at' => now(),

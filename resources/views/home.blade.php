@@ -17,16 +17,26 @@
                     {{ __('You are logged in!') }}
 
                     @auth
-                    @if(Auth::user()->hasRole('ADMINISTRADOR'))
-                        <a href="{{ route('admin.index') }}">Go to Admin Users</a>
-                    @elseif (Auth::user()->hasRole('PROFESOR'))
-                        <a href="{{ route('teacher.index') }}">Go to profesor Users</a>
-                    @elseif (Auth::user()->hasRole('ALUMNO'))
-                        <a href="{{ route('alum.index') }}">Go to profesor Users</a>
+                        @if(Auth::user()->hasRole('ADMINISTRADOR'))
+                            <a href="{{ route('admin.index') }}">Go to Admin Users</a>
+                        @elseif (Auth::user()->hasRole('PROFESOR'))
+                            <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to Teacher Users</a>
+                        @elseif (Auth::user()->hasRole('ALUMNO'))
+                        <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to alumno Users</a>
+                        @elseif (Auth::user()->hasRole('JEFE DE ESTUDIOS'))
+                        <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to jefe de estudios Users</a>
+                        @elseif (Auth::user()->hasRole('DIRECCIÓN'))
+                        <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to direccion Users</a>
+                        @elseif (Auth::user()->hasRole('BEDEL'))
+                        <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to bedel Users</a>
+                        @elseif (Auth::user()->hasRole('LIMPIEZA'))
+                        <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to limpieza Users</a>
 
-                    @endif
 
-                @endauth
+
+                        @endif
+
+                    @endauth
                 </div>
             </div>
         </div>
