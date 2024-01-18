@@ -35,13 +35,22 @@ class UserFactory extends Factory
         $surname1 = str_replace(['á', 'é', 'í', 'ó', 'ú', 'ñ'], ['a', 'e', 'i', 'o', 'u', 'n'], $fakerSpain->lastName);
         $surname2 = str_replace(['á', 'é', 'í', 'ó', 'ú', 'ñ'], ['a', 'e', 'i', 'o', 'u', 'n'], $fakerSpain->lastName);
 
+        //Randomiza un numero de 8 digitos, luego divide entre 23 y saca el resto de la division. Luego dependiendo del numero del resto, adjunta la letra
+        //Array del orden de las letras
+        $DNILetterArray = array('T','R','W','A','G','M','Y','F','P','D','X','B','N','J','Z','S','Q','V','H','L','C','K','E');
+
+        $userID = $fakerSpain->unique()->randomNumber(8);
+        $letter = round((float)$userID /23,2);
+        $letter = round(($letter - (int)$letter)*23,0);
+        $userID = $userID . $DNILetterArray[$letter];
+
         return [
             'password' => bcrypt('contraseña'), // Puedes utilizar un método más seguro para generar contraseñas
             'name' => $name,
             'surname1' => $surname1,
             'surname2' => $surname2,
-            'email' => $name . "." . $surname1 . substr($surname2, 0, 2) . '@elorrieta-errekamari.com',
-            'DNI' => $fakerSpain->unique()->randomNumber(8),
+            'email' => strtolower($name . "." . $surname1 . substr($surname2, 0, 2) . '@elorrieta-errekamari.com'),
+            'DNI' => $userID,
             'address' => $fakerSpain->address,
             'phone_number1' => $fakerSpain->numerify('#########'),
             'phone_number2' => $fakerSpain->numerify('#########'),
