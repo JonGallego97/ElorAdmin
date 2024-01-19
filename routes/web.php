@@ -65,10 +65,13 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     Route::resource('cycles', CycleController::class);
 });
 
-
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/person/{user}', [PersonController::class, 'index'])->name('person.index');
+    Route::get('/person/{user}/staff', [PersonController::class, 'staff'])->name('person.staff.index');
+    Route::get('/admin/departments', [DepartmentController::class, 'indexPerson'])->name('person.departments.index');
+    Route::get('/admin/cycles', [CycleController::class, 'indexPerson'])->name('person.cycles.index');
+    Route::get('/person/{user1}/staff/{user2}', [PersonController::class, 'staffShow'])->name('persons.staff.show');
+
 });
 Auth::routes();
 

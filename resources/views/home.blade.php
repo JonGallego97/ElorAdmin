@@ -18,9 +18,10 @@
 
                     @auth
                         @if(Auth::user()->hasRole('ADMINISTRADOR'))
-                            <a href="{{ route('admin.index') }}">Go to Admin Users</a>
+                        <a href="{{ route('admin.index') }}">Go to Admin Users</a>
                         @elseif (Auth::user()->hasRole('PROFESOR'))
-                            <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to Teacher Users</a>
+                        <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to Teacher Users</a>
+
                         @elseif (Auth::user()->hasRole('ALUMNO'))
                         <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to alumno Users</a>
                         @elseif (Auth::user()->hasRole('JEFE DE ESTUDIOS'))

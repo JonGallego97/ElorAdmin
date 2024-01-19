@@ -1,5 +1,6 @@
 @extends('layouts.app')
     @section('content')
+
     <div class="container-fluid">
         <div class="row">
             <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
@@ -8,6 +9,7 @@
                         <h5 class="offcanvas-title" id="sidebarMenuLabel">Company name</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
                     </div>
+
                     <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
                         <ul class="nav flex-column mb-auto">
                             <li class="nav-item">
@@ -16,18 +18,19 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('admin.users.index') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('person.staff.index', ['user' => Auth::user()->id]) }}">
                                     {{__('Personal')}}
                                 </a>
 
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('departments.index') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('person.departments.index') }}">
                                     {{__('Departments')}}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('cycles.index') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('person.cycles.index') }}">
+
                                     {{__('Cycles')}}
                                 </a>
                             </li>
@@ -88,8 +91,10 @@
             @endif
         </div>
     </div>
+
 @endsection
 
 @section('scripts')
     <script src="{{ asset('js/admin/delete.js') }}"></script>
+
 @endsection

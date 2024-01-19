@@ -30,7 +30,14 @@ class DepartmentController extends Controller
         return view('departments.index', ['departments' => $departments]);
     }
 
+    public function indexPerson()
+    {
 
+        $departments = Department::withCount('users')->orderBy('users_count')->get();
+
+        return view('persons.departments.index', ['departments' => $departments]) ;
+
+    }
     /**
      * Store a newly created resource in storage.
      */

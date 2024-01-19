@@ -36,6 +36,16 @@ class CycleController extends Controller
         $cycle = Cycle::orderBy('name','asc')->get();
         return view('cycles.index',['cycles'=>$cycle]);
     }
+    public function indexPerson()
+    {
+         // Obtener todos los ciclos formativos
+         $cycle = Cycle::all();
+
+         // Obtener todos los módulos ordenados alfabéticamente
+         $module = Module::orderBy('name', 'asc')->get();
+
+         return view('persons.cycles.index', compact('cycle', 'module'));
+     }
     /**
      * Show the form for creating a new resource.
      */

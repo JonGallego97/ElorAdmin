@@ -35,7 +35,7 @@
                 @foreach ($users as $user)
                 <tr>
                     <td>
-                        <a href="{{route('users.show', $user)}}" role="button">
+                        <a href="{{ route('person.staff.show', ['user1' => Auth::user()->id, 'user2' => $user->id]) }}" role="button">
                             {{$user->name}}
                         </a>
                     </td>
