@@ -64,8 +64,8 @@ class UserController extends Controller
                 'surname1' => 'required|string',
                 'surname2' => 'required|string',
                 'address' => 'required|string',
-                'phoneNumber1' => 'required|integer',
-                'phoneNumber2' =>'required|integer',
+                'phone_number1' => 'required|integer',
+                'phone_number2' =>'required|integer',
                 'image' =>'required|string',
             ]);
 
@@ -73,7 +73,7 @@ class UserController extends Controller
             $user->surname1 = $request->surname1;
             $user->surname2 = $request->surname2;
             $user->address = $request->address;
-            $user->phoneNumber1 = $request->phoneNumber1;
+            $user->phone_number2 = $request->phone_number2;
             $user->phoneNumber2 = $request->phoneNumber2;
             $user->image = $request->image;
             $user->save();
@@ -106,8 +106,8 @@ class UserController extends Controller
 
             if (!Hash::check($newPassword, $user->password)) {
                 $userData['password'] = bcrypt($newPassword);
-                if ($user->firstLogin) {
-                    $userData['firstLogin'] = false;
+                if ($user->first_login) {
+                    $userData['first_login'] = false;
                 }
             } else {
                 return response()->json(['error' => 'La contraseña no puede ser igual a la anterior'], Response::HTTP_BAD_REQUEST);

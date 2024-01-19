@@ -25,7 +25,7 @@ class UserController extends Controller
                 $query->where('id', 3);
             })
             ->orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
+            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'dual', 'first_login', 'year', 'created_at', 'updated_at']);
 
             $totalUsers = User::whereHas('roles', function ($query) {
                 $query->where('id', 3);
@@ -60,7 +60,7 @@ class UserController extends Controller
             //si es admin
             $perPage = $request->input('per_page', 10);
             $users = User::orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
+            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'dual', 'first_login', 'year', 'created_at', 'updated_at']);
         }else if($request->role == 'PROFESOR'){
             //si no es admin
 
@@ -81,7 +81,7 @@ class UserController extends Controller
                 $query->where('id', 2);
             })
             ->orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
+            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'dual', 'first_login', 'year', 'created_at', 'updated_at']);
             $totalUsers = User::whereHas('roles', function ($query) {
                 $query->where('id', 2);
             })->count();
@@ -136,11 +136,11 @@ class UserController extends Controller
             'surname2' =>'required|string',
             'DNI' =>'required|string',
             'address' =>'required|string',
-            'phoneNumber1' =>'required|integer',
-            'phoneNumber2' =>'required|integer',
+            'phone_number1' =>'required|integer',
+            'phone_number2' =>'required|integer',
 
         ]);
-        // $request->firstLogin = true;
+        // $request->first_login = true;
 
         $user = new User();
         $user->email = $request->email;
@@ -150,9 +150,9 @@ class UserController extends Controller
         $user->surname2 = $request->surname2;
         $user->DNI = $request->DNI;
         $user->address = $request->address;
-        $user->phoneNumber1 = $request->phoneNumber1;
-        $user->phoneNumber2 = $request->phoneNumber2;
-        $user->firstLogin = $request->firstLogin;
+        $user->phone_number1 = $request->phone_number1;
+        $user->phone_number2 = $request->phone_number2;
+        $user->first_login = $request->first_login;
         $user->year = $request->year;
         $user->department_id = $request->department;
 
