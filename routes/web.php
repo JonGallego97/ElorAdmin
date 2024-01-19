@@ -9,8 +9,6 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\CycleController;
 use App\Http\Controllers\PersonController;
-
-
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -79,3 +77,4 @@ Auth::routes();
 
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+

@@ -21,6 +21,7 @@
                         <a href="{{ route('admin.index') }}">Go to Admin Users</a>
                         @elseif (Auth::user()->hasRole('PROFESOR'))
                         <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to Teacher Users</a>
+
                         @elseif (Auth::user()->hasRole('ALUMNO'))
                         <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to alumno Users</a>
                         @elseif (Auth::user()->hasRole('JEFE DE ESTUDIOS'))
@@ -32,9 +33,11 @@
                         @elseif (Auth::user()->hasRole('LIMPIEZA'))
                         <a href="{{ route('person.index', ['user' => Auth::user()->id]) }}">Go to limpieza Users</a>
 
-                    @endif
 
-                @endauth
+
+                        @endif
+
+                    @endauth
                 </div>
             </div>
         </div>

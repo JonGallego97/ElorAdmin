@@ -28,10 +28,8 @@ class ModuleUserSeeder extends Seeder
                     $query->select('cycle_id')
                         ->from('cycle_users')
                         ->where('user_id', $user->id);
-                })
-                ->pluck('module_id')
-                ->toArray();
-
+                })->pluck('cycle_id','module_id')->toArray();
+                
             // Obtén los IDs de los usuarios a los que se les asignarán los módulos
             $userIds = DB::table('cycle_users')
                 ->where('user_id', $user->id)
@@ -39,12 +37,15 @@ class ModuleUserSeeder extends Seeder
                 ->toArray();
 
             // Asigna módulos a usuarios
-            foreach ($modulesForUsers as $module) {
-                DB::table('module_user')->insert([
-                    'user_id' => $user->id,
-                    'module_id' => $module,
-                    // Agrega más columnas si es necesario y ajusta la lógica según tus necesidades
-                ]);
+            foreach ($modulesForUsers as $module => $cycle) {
+                //Pluck devuelve como valor de posicion de array el modulo y como valor el ciclo, por eso le damos la vuelta en el foreach
+                $this->command->info('Cycle: '.$cycle.' - Module: '.$module.' ');
+                    DB::table('module_user_cycle')->insert([
+                        'user_id' => $user->id,
+                        'module_id' => $module,
+                        'cycle_id' => $cycle
+                        // Agrega más columnas si es necesario y ajusta la lógica según tus necesidades
+                    ]);
             }
         }
 

@@ -20,16 +20,13 @@ return new class extends Migration
             $table->string('surname2');
             $table->string('DNI');
             $table->string('address')->nullable();
-            $table->integer('phoneNumber1')->nullable();
-            $table->integer('phoneNumber2')->nullable();
+            $table->integer('phone_number1')->nullable();
+            $table->integer('phone_number2')->nullable();
             $table->longText('image')->nullable();
             $table->boolean('dual')->nullable();
-            $table->boolean('firstLogin')->nullable();
+            $table->boolean('first_login')->default(true);
             $table->integer('year')->nullable();
             $table->rememberToken();
-            $table->unsignedBigInteger('department_id')->nullable();
-            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
-
             $table->timestamps();
             $table->softDeletes();
         });
