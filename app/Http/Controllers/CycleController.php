@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Cycle;
 use App\Models\Module;
 use App\Models\Department;
+use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class CycleController extends Controller
 {
@@ -14,8 +18,8 @@ class CycleController extends Controller
      */
     public function index(Request $request)
     {
-
-        if ($request->is('admin*')) {
+        $adminRoute = (new ControllerFunctions)->checkAdminRoute();
+        if ($adminRoute) {
             $perPage = $request->input('per_page', 10);
             $cycles = Cycle::orderBy('name', 'asc')->paginate($perPage);
             foreach ($cycles as $cycle) {
@@ -41,7 +45,7 @@ class CycleController extends Controller
      */
     public function create()
     {
-        return view('cycles.create');
+        return view('admin.cycles.edit_create');
     }
 
     /**
@@ -60,13 +64,14 @@ class CycleController extends Controller
      */
     public function show(Request $request, Cycle $cycle)
     {
-        if ($request->is('admin*')) {
+        $adminRoute = (new ControllerFunctions)->checkAdminRoute();
+        if ($adminRoute) {
 
             $cycleId = $cycle->id;
             $cycle->count_students = $this->cycleCountStudents($cycleId);
             $cycle->modules = $this->cycleModule($request, $cycleId);
             foreach ($cycle->modules as $module) {
-                $module->count_teachers = $this->moduleTachersCount($module->id);
+                $module->count_teachers = $this->moduleTeachersCount($module->id);
                 $module->count_students = $this->moduleStudentsCount($module->id);
             }
             $cycle->department = Department::find($cycle->department_id);
@@ -96,9 +101,9 @@ class CycleController extends Controller
         ->paginate($perPage);
     }
 
-    private function moduleTachersCount($moduleId){
-        return Module::join('module_user', 'modules.id', '=', 'module_user.module_id')
-        ->join('users', 'module_user.user_id', '=', 'users.id')
+    private function moduleTeachersCount($moduleId){
+        return Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
+        ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
         ->join('role_users', 'users.id', '=', 'role_users.user_id')
         ->where('role_users.role_id', '=', 2)
         ->where('modules.id', '=', $moduleId)
@@ -106,8 +111,8 @@ class CycleController extends Controller
     }
 
     private function moduleStudentsCount($moduleId){
-        return Module::join('module_user', 'modules.id', '=', 'module_user.module_id')
-        ->join('users', 'module_user.user_id', '=', 'users.id')
+        return Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
+        ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
         ->join('role_users', 'users.id', '=', 'role_users.user_id')
         ->where('role_users.role_id', '=', 3)
         ->where('modules.id', '=', $moduleId)
@@ -119,7 +124,14 @@ class CycleController extends Controller
      */
     public function edit()
     {
-        return view('cycles.create');
+        $adminRole = (new ControllerFunctions)->checkAdminRole();
+        $adminRoute = (new ControllerFunctions)->checkAdminRoute();
+        if ($adminRole && $adminRoute) {
+            return view('admin.cycles.edit_create');
+        } else {
+            return view('admin.cycles.edit_create');
+        }
+        
     }
 
     /**
@@ -161,7 +173,7 @@ class CycleController extends Controller
                 $cycle->count_students = $this->cycleCountStudents($cycleId);
                 $cycle->modules = $this->cycleModule($request, $cycleId);
                 foreach ($cycle->modules as $module) {
-                    $module->count_teachers = $this->moduleTachersCount($module->id);
+                    $module->count_teachers = $this->moduleTeachersCount($module->id);
                     $module->count_students = $this->moduleStudentsCount($module->id);
                 }
                 $cycle->department = Department::find($cycle->department_id);

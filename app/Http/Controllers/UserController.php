@@ -7,6 +7,7 @@ use App\Models\RoleUser;
 use App\Models\Role;
 use App\Models\Module;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Cycle;
 
 
@@ -25,7 +26,7 @@ class UserController extends Controller
                 $query->where('id', 3);
             })
             ->orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
+            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'dual', 'first_login', 'year', 'created_at', 'updated_at']);
 
             $totalUsers = User::whereHas('roles', function ($query) {
                 $query->where('id', 3);
@@ -60,7 +61,7 @@ class UserController extends Controller
             //si es admin
             $perPage = $request->input('per_page', 10);
             $users = User::orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
+            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'dual', 'first_login', 'year', 'created_at', 'updated_at']);
         }else if($request->role == 'PROFESOR'){
             //si no es admin
 
@@ -81,7 +82,7 @@ class UserController extends Controller
                 $query->where('id', 2);
             })
             ->orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
+            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'dual', 'first_login', 'year', 'created_at', 'updated_at']);
             $totalUsers = User::whereHas('roles', function ($query) {
                 $query->where('id', 2);
             })->count();
@@ -171,22 +172,29 @@ class UserController extends Controller
      */
     public function show(User $user, Request $request)
     {
+
         if ($request->is('admin*')) {
             //si es admin
             if(optional(User::find($user->id)->roles->first())->id == 2){
                 //Si es profesor
-
-                $user = User::with('roles','cycles.modules', 'modules')->where('id', $user->id)->first();
-                return view('admin.users.teachers.show', ['user' => $user]);
+                $user = User::with('roles','cycles.modules')->where('id', $user->id)->first();
+                //$image = (new ControllerFunctions)->createImageFromBase64($user->image);
+                $imageData = base64_decode($user->image);
+                $fileName = $user->dni . '.png';
+                $filePath = public_path('images/' . $fileName);
+                if(!file_exists($filePath)) {
+                    file_put_contents($filePath,$imageData);
+                }
+                return view('admin.users.teachers.show', ['user' => $user])->with('imagePath','images/'.$fileName);
             }else if(optional(User::find($user->id)->roles->first())->id == 3){
-                $user = User::with('roles', 'cycles.modules', 'modules')->where('id', $user->id)->first();
+                $user = User::with('roles', 'cycles.modules')->where('id', $user->id)->first();
                 return view('admin.users.students.show', ['user' => $user]);
 
                 // Puedes examinar o hacer algo con el usuario modificado
 
                 return view('admin.users.students.show',['user'=>$user]);
             }else{
-                $user = User::with('roles', 'cycles.modules', 'modules')->where('id', $user->id)->first();
+                $user = User::with('roles', 'cycles.modules')->where('id', $user->id)->first();
                 return view('admin.users.show', ['user' => $user]);
             }
 
@@ -211,8 +219,12 @@ class UserController extends Controller
                 $roles = Role::all();
                 $cycles_modules = Cycle::with('modules')->get();
                 return view('admin.users.teachers.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
-            }else if($user->role->id == 3){
+            }else if(optional(User::find($user->id)->roles->first())->id == 3){
+                //Si es profesor
 
+                $roles = Role::all();
+                $cycles_modules = Cycle::with('modules')->get();
+                return view('admin.users.teachers.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
             }
 
 
@@ -320,13 +332,16 @@ class UserController extends Controller
         $cyclesArray = explode(',', $cycleList);
 
 
+        // $cycles = Cycle::whereIn('id', $cyclesArray)
+        //     ->with(['modules' => function ($query) use ($user) {
+        //         $query->whereHas('users', function ($query) use ($user) {
+        //             $query->where('user_id', $user->id);
+        //         });
+        //     }])
+        //     ->get();
         $cycles = Cycle::whereIn('id', $cyclesArray)
-            ->with(['modules' => function ($query) use ($user) {
-                $query->whereHas('users', function ($query) use ($user) {
-                    $query->where('user_id', $user->id);
-                });
-            }])
-            ->get();
+        ->with('modules')
+        ->get();
         $user->cycles = $cycles;
         $roles = Role::all();
         $cycles_modules = Cycle::with('modules')->get();

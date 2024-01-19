@@ -40,7 +40,7 @@ Route::get('/set_language/{language}', [LanguageController::class, 'setLanguage'
 Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     //Users
     Route::get('users/{user}/editRoles', [UserController::class, 'editRoles'])->name('users.editRoles');
-    Route::get('users/{user}/editCycles', [UserController::class, 'editCycles'])->name('users.editCycles');
+    Route::put('users/{user}/editCycles', [UserController::class, 'editCycles'])->name('users.editCycles');
     Route::delete('users/destroy/{userId}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/students', [UserController::class, 'indexStudent'])->name('admin.students.index');
@@ -54,15 +54,22 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     //Departaments
     Route::delete('departments/destroyDepartmentUser/{departmentId}/{userId}', [DepartmentController::class, 'destroyDepartmentUser'])->name('departments.destroyDepartmentUser');
     Route::delete('departments/destroy/{departmentId}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
+    Route::post('departments/create', [DepartmentController::class,'create'])->name('departments.edit_create');
     Route::resource('departments', DepartmentController::class);
     //Modules
     Route::delete('modules/destroyModuleUser/{moduleId}/{userId}', [ModuleController::class, 'destroyModuleUser'])->name('modules.destroyModuleUser');
     Route::delete('modules/destroy/{moduleId}', [ModuleController::class, 'destroy'])->name('modules.destroy');
     Route::resource('modules', ModuleController::class);
     //Cycles
-    Route::delete('cycles/destroyCycleModule/{cycleId}/{userId}', [CycleController::class, 'destroyCycleModule'])->name('cycles.destroyCycleModule');
-    Route::delete('cycles/destroy/{cycleId}', [CycleController::class, 'destroy'])->name('cycles.destroy');
-    Route::resource('cycles', CycleController::class);
+    Route::resource('cycles', CycleController::class)->except(['delete','create']);
+    Route::controller(CycleController::class)->group(function () {
+        Route::get('cycles/create','create')->name('cycles.edit_create');
+        Route::delete('cycles/destroyCycleModule/{cycleId}/{userId}','destroyCycleModule')->name('cycles.destroyCycleModule');
+        Route::delete('cycles/destroy/{cycleId}','destroy')->name('cycles.destroy');
+    });
+    // Route::delete('cycles/destroyCycleModule/{cycleId}/{userId}', [CycleController::class, 'destroyCycleModule'])->name('cycles.destroyCycleModule');
+    // Route::delete('cycles/destroy/{cycleId}', [CycleController::class, 'destroy'])->name('cycles.destroy');
+    // Route::resource('cycles', CycleController::class);
 });
 
 

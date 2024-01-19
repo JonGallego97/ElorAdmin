@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Module;
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
@@ -18,17 +19,21 @@ class ModuleController extends Controller
         if ($request->is('admin*')) {
             $perPage = $request->input('per_page', 10);
             $modules = Module::orderBy('name','asc')->paginate($perPage);
+
+            $roleTeacher = Role::where('name','PROFESOR')->first();
+            $roleStudent = Role::where('name','ALUMNO')->first();
+
             foreach ($modules as $module) {
-                $module->count_teachers = Module::join('module_user', 'modules.id', '=', 'module_user.module_id')
-                    ->join('users', 'module_user.user_id', '=', 'users.id')
+                $module->count_teachers = Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
+                    ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
                     ->join('role_users', 'users.id', '=', 'role_users.user_id')
-                    ->where('role_users.role_id', '=', 2)
+                    ->where('role_users.role_id', '=', $roleTeacher->id)
                     ->where('modules.id', '=', $module->id)
                     ->count();
-                $module->count_students = Module::join('module_user', 'modules.id', '=', 'module_user.module_id')
-                    ->join('users', 'module_user.user_id', '=', 'users.id')
+                $module->count_students = Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
+                    ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
                     ->join('role_users', 'users.id', '=', 'role_users.user_id')
-                    ->where('role_users.role_id', '=', 3)
+                    ->where('role_users.role_id', '=', $roleStudent->id)
                     ->where('modules.id', '=', $module->id)
                     ->count();
 
@@ -100,20 +105,20 @@ class ModuleController extends Controller
 
     private function teachers(Request $request, Module $module){
         $perPage = $request->input('per_page', 10);
-        return $teachers = User::join('module_user', 'users.id', '=', 'module_user.user_id')
+        return $teachers = User::join('module_user_cycle', 'users.id', '=', 'module_user_cycle.user_id')
             ->join('role_users', 'users.id', '=', 'role_users.user_id')
             ->where('role_users.role_id', 2)
-            ->where('module_user.module_id', $module->id)
+            ->where('module_user_cycle.module_id', $module->id)
             ->select('users.*')
             ->paginate($perPage);
     }
 
     private function students(Request $request, Module $module){
         $perPage = $request->input('per_page', 10);
-        return $students = User::join('module_user', 'users.id', '=', 'module_user.user_id')
+        return $students = User::join('module_user_cycle', 'users.id', '=', 'module_user_cycle.user_id')
             ->join('role_users', 'users.id', '=', 'role_users.user_id')
             ->where('role_users.role_id', 3)
-            ->where('module_user.module_id', $module->id)
+            ->where('module_user_cycle.module_id', $module->id)
             ->select('users.*')
             ->paginate($perPage);
     }

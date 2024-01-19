@@ -30,6 +30,11 @@ class DepartmentController extends Controller
         return view('departments.index', ['departments' => $departments]);
     }
 
+    public function create(Request $request)
+    {
+        return view('admin.departments.edit_create');
+    }
+
 
     /**
      * Store a newly created resource in storage.

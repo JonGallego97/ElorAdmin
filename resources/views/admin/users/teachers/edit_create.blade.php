@@ -57,11 +57,24 @@
                     value="{{$user->phoneNumber2}}"/>
             </div>
         </div>
-        <div class="form-group mb-3">
-            <label for="titulo" class="form-label">{{__("Address")}}</label>
-            <input type="text" class="form-control" id="titulo" name="titulo" required
-                value="{{$user->address}}"/>
+        @if($user['roles'][0]['name'] == "ALUMNO")
+        <div class="row">
+            <div class="col form-group mb-3">
+                <label for="year" class="form-label">{{__("Year")}}</label>
+                <input type="text" class="form-control" id="year" name="year" required
+                    value="{{$user->year}}"/>
+            </div>
+            <div class="form-group mb-3">
+                <label for="dual" class="form-label">{{__("Dual")}}</label>
+                <select class="form-control" name="dual">
+                    <option value="true"{{ $user->dual == true ? 'selected' : ''}}>{{__("Yes")}}</option>
+                    <option value="false"{{ $user->dual == false ? 'selected' : '' }}>{{__("No")}}</option>
+                </select>
+            </div>
         </div>
+        @endif
+    
+
 
         <hr class="my-4">
 
@@ -135,10 +148,14 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                        <form id="editRolesForm" action="{{ route('users.editRoles', $user) }}" method="GET" style="display: none;">
+                        <form id="editRolesForm" action="{{ route('users.editRoles', $user) }}" method="POST" style="display: none;">
+                        @method('PUT')
+                        @csrf
                         </form>
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="editRolesBtn">{{__('Edit')}}</button>
-                        <form id="editRolesForm" action="{{ route('users.editRoles', $user) }}" method="GET">
+                        <form id="editRolesForm" action="{{ route('users.editRoles', $user) }}" method="POST">
+                        @method('PUT')
+                        @csrf
                             <input type="hidden" name="selectedRoles" id="selectedRolesInput" value="">
                             <button type="submit" id="editListDeRoles" class="btn btn-primary" style="display: none;">{{__('Edit')}}</button>
                         </form>
@@ -169,7 +186,9 @@
                         </form>
                         <button type="button" class="btn btn-primary" id="editCyclesBtn">{{__('Edit')}}</button>
 
-                        <form id="editCyclesFormSubmit" action="{{ route('users.editCycles', $user) }}" method="GET">
+                        <form id="editCyclesFormSubmit" action="{{ route('users.editCycles', $user) }}" method="POST">
+                            @method('PUT')
+                            @csrf
                             <input type="hidden" name="selectedCycles" id="selectedCyclesInput" value="">
                             <button type="submit" id="editListDeCycles" class="btn btn-primary" style="display: none;">{{__('Edit')}}</button>
                         </form>
