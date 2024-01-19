@@ -64,7 +64,7 @@ class PersonController extends Controller
             $query->where('id', 2);
         })
             ->orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phoneNumber1', 'phoneNumber2', 'image', 'dual', 'firstLogin', 'year', 'created_at', 'updated_at']);
+            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'dual', 'first_login', 'year', 'created_at', 'updated_at']);
         $totalUsers = User::whereHas('roles', function ($query) {
             $query->where('id', 2);
         })->count();
@@ -88,13 +88,4 @@ class PersonController extends Controller
         // Retornar la vista con los datos de los usuarios
     return view('persons.staff.show', compact('user1Data', 'user2Data'), ['user1' => $user1]);
     }
-}
-
-    public function index(User $user)
-    {
-        //dd($user);
-        $user = User::with('roles', 'cycles.modules', 'modules')->where('id', $user->id)->first();
-        return view('persons.index', ['user'=>$user]);
-    }
-
 }
