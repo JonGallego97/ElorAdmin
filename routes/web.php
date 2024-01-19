@@ -8,6 +8,9 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\CycleController;
+use App\Http\Controllers\PersonController;
+
+
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -64,10 +67,14 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     Route::resource('cycles', CycleController::class);
 });
 
-Route::prefix('teacher')->middleware(['auth', 'checkRole'])->group(function () {
+Route::middleware(['auth'])->group(function () {
+    Route::get('/person/{user}', [PersonController::class, 'index'])->name('person.index');
+    Route::get('/person/{user}/staff', [PersonController::class, 'staff'])->name('person.staff.index');
+    Route::get('/admin/departments', [DepartmentController::class, 'indexPerson'])->name('person.departments.index');
+    Route::get('/admin/cycles', [CycleController::class, 'indexPerson'])->name('person.cycles.index');
+    Route::get('/person/{user1}/staff/{user2}', [PersonController::class, 'staffShow'])->name('persons.staff.show');
 
-    Route::get('/', [UserController::class, 'index'])->name('teacher.index');
-    });
+});
 Auth::routes();
 
 
