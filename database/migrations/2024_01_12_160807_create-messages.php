@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->binary('content');
-            $table->enum('dataType', ['TEXT', 'IMAGE', 'FILE', 'GPS']);
+            $table->enum('data_type', ['TEXT', 'IMAGE', 'FILE', 'GPS']);
             $table->timestamps();
             $table->foreignId('chat_id')->constrained('chats')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();

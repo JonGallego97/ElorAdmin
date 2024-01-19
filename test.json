@@ -1,162 +1,142 @@
 {
-    "user": {
-        "id": 1,
-        "email": "Claudia.EnriquezOc@elorrieta-errekamari.com",
-        "name": "Claudia",
-        "surname1": "Enriquez",
-        "surname2": "Ochoa",
-        "DNI": "22991705",
-        "address": "Avinguda López, 217, 2º E, 43782, O Castillo",
-        "phoneNumber1": 892413041,
-        "phoneNumber2": 653527493,
-        "image": "",
-        "dual": null,
-        "firstLogin": 0,
-        "year": 2,
-        "role_id": null,
-        "created_at": "2024-01-12T17:46:39.000000Z",
-        "updated_at": "2024-01-12T17:46:39.000000Z",
-        "deleted_at": null,
-        "department_id": 1,
-        "department": {
+    "id": 0,
+    "email": "admin@elorrieta-errekamari.com",
+    "name": "Admin",
+    "surname1": "Admin",
+    "surname2": "Admin",
+    "address": "Dirección",
+    "phoneNumber1": 123456789,
+    "phoneNumber2": 987654321,
+    "dual": null,
+    "firstLogin": false,
+    "roles": [
+        {
             "id": 1,
-            "name": "Informatica",
-            "created_at": "2024-01-12T17:46:39.000000Z",
-            "updated_at": "2024-01-12T17:46:39.000000Z"
-        },
-        "roles": [
-            {
-                "id": 3,
-                "name": "ALUMNO",
-                "created_at": "2024-01-12T17:46:39.000000Z",
-                "updated_at": "2024-01-12T17:46:39.000000Z",
-                "pivot": {
-                    "user_id": 1,
-                    "role_id": 3
+            "name": "ADMINISTRADOR"
+        }
+    ],
+    "department": {
+        "id": 1,
+        "name": "Informatica"
+    },
+    "listChats": [
+        {
+            "id": 1,
+            "name": "Home",
+            "listMessages": [
+                {
+                    "id": 1,
+                    "dataType": "TEXT",
+                    "content": null,
+                    "createdAt": "2024-01-18T17:59:29.000+00:00",
+                    "userId": {
+                        "id": 1,
+                        "email": "Gabriel.VicenteAl@elorrieta-errekamari.com",
+                        "name": "Gabriel",
+                        "surname1": "Vicente",
+                        "surname2": "Alcala",
+                        "address": "Camiño Javier, 2, Ático 1º, 53509, Munguía de San Pedro",
+                        "phoneNumber1": 277797267,
+                        "phoneNumber2": 185006964,
+                        "dual": null,
+                        "firstLogin": true,
+                        "roles": [
+                            {
+                                "id": 3,
+                                "name": "ALUMNO"
+                            }
+                        ],
+                        "department": null,
+                        "listChats": null,
+                        "enabled": true,
+                        "accountNonLocked": true,
+                        "username": "Gabriel.VicenteAl@elorrieta-errekamari.com",
+                        "authorities": null,
+                        "dni": "57222385",
+                        "password": null,
+                        "credentialsNonExpired": true,
+                        "accountNonExpired": true
+                    }
+                },
+                {
+                    "id": 2,
+                    "dataType": "TEXT",
+                    "content": null,
+                    "createdAt": "2024-01-18T17:59:29.000+00:00",
+                    "userId": {
+                        "id": 2,
+                        "email": "Ainhoa.GuardadoCa@elorrieta-errekamari.com",
+                        "name": "Ainhoa",
+                        "surname1": "Guardado",
+                        "surname2": "Carrion",
+                        "address": "Travessera Sotelo, 6, 8º D, 37816, Ramos Baja",
+                        "phoneNumber1": 710114123,
+                        "phoneNumber2": 869609023,
+                        "dual": null,
+                        "firstLogin": false,
+                        "roles": [
+                            {
+                                "id": 3,
+                                "name": "ALUMNO"
+                            }
+                        ],
+                        "department": null,
+                        "listChats": null,
+                        "enabled": true,
+                        "accountNonLocked": true,
+                        "username": "Ainhoa.GuardadoCa@elorrieta-errekamari.com",
+                        "authorities": null,
+                        "dni": "97584010",
+                        "password": null,
+                        "credentialsNonExpired": true,
+                        "accountNonExpired": true
+                    }
                 }
-            }
-        ],
-        "cycles": [],
-        "chats": [
-            {
-                "id": 1,
-                "name": "Home",
-                "is_Public": 1,
-                "created_at": "2024-01-12T17:46:45.000000Z",
-                "updated_at": "2024-01-12T17:46:45.000000Z",
-                "pivot": {
-                    "user_id": 1,
-                    "chat_id": 1
-                },
-                "messages": [
-                    {
-                        "id": 1,
-                        "content": "Bienvenido a la aplicación de Elorrieta-Errekamari",
-                        "dataType": "TEXT",
-                        "created_at": "2024-01-12T17:46:45.000000Z",
-                        "updated_at": "2024-01-12T17:46:45.000000Z",
-                        "chat_id": 1,
-                        "user_id": 1
+            ],
+            "listUsers": [
+                {
+                    "id": {
+                        "chatId": 1,
+                        "userId": 0
                     },
-                    {
-                        "id": 2,
-                        "content": "Gracias por la bienvenida",
-                        "dataType": "TEXT",
-                        "created_at": "2024-01-12T17:46:45.000000Z",
-                        "updated_at": "2024-01-12T17:46:45.000000Z",
-                        "chat_id": 1,
-                        "user_id": 2
-                    }
-                ],
-                "users": [
-                    {
-                        "id": 1,
-                        "email": "Claudia.EnriquezOc@elorrieta-errekamari.com",
-                        "name": "Claudia",
-                        "surname1": "Enriquez",
-                        "surname2": "Ochoa",
-                        "DNI": "22991705",
-                        "address": "Avinguda López, 217, 2º E, 43782, O Castillo",
-                        "phoneNumber1": 892413041,
-                        "phoneNumber2": 653527493,
-                        "image": "",
-                        "dual": null,
-                        "firstLogin": 0,
-                        "year": 2,
-                        "role_id": null,
-                        "created_at": "2024-01-12T17:46:39.000000Z",
-                        "updated_at": "2024-01-12T17:46:39.000000Z",
-                        "deleted_at": null,
-                        "department_id": 1,
-                        "pivot": {
-                            "user_id": 1,
-                            "chat_id": 1
-                        }
+                    "user": {
+                        "id": 0,
+                        "name": "Admin"
                     },
-                    {
-                        "id": 2,
-                        "email": "Jose Manuel.AlcarazAv@elorrieta-errekamari.com",
-                        "name": "Jose Manuel",
-                        "surname1": "Alcaraz",
-                        "surname2": "Aviles",
-                        "DNI": "6012435",
-                        "address": "Plaça Arenas, 597, 79º B, 06565, L' Rosario Baja",
-                        "phoneNumber1": 673469624,
-                        "phoneNumber2": 449527517,
-                        "image": "",
-                        "dual": null,
-                        "firstLogin": 0,
-                        "year": 2,
-                        "role_id": null,
-                        "created_at": "2024-01-12T17:46:39.000000Z",
-                        "updated_at": "2024-01-12T17:46:39.000000Z",
-                        "deleted_at": null,
-                        "department_id": null,
-                        "pivot": {
-                            "user_id": 1,
-                            "chat_id": 2
-                        }
-                    }
-                ]
-            },
-            {
-                "id": 2,
-                "name": "Public",
-                "is_Public": 1,
-                "created_at": "2024-01-12T17:46:45.000000Z",
-                "updated_at": "2024-01-12T17:46:45.000000Z",
-                "pivot": {
-                    "user_id": 1,
-                    "chat_id": 2
+                    "admin": true
                 },
-                "messages": [],
-                "users": [
-                    {
+                {
+                    "id": {
+                        "chatId": 1,
+                        "userId": 1
+                    },
+                    "user": {
                         "id": 1,
-                        "email": "Claudia.EnriquezOc@elorrieta-errekamari.com",
-                        "name": "Claudia",
-                        "surname1": "Enriquez",
-                        "surname2": "Ochoa",
-                        "DNI": "22991705",
-                        "address": "Avinguda López, 217, 2º E, 43782, O Castillo",
-                        "phoneNumber1": 892413041,
-                        "phoneNumber2": 653527493,
-                        "image": "",
-                        "dual": null,
-                        "firstLogin": 0,
-                        "year": 2,
-                        "role_id": null,
-                        "created_at": "2024-01-12T17:46:39.000000Z",
-                        "updated_at": "2024-01-12T17:46:39.000000Z",
-                        "deleted_at": null,
-                        "department_id": 1,
-                        "pivot": {
-                            "user_id": 2,
-                            "chat_id": 1
-                        }
-                    }
-                ]
-            }
-        ]
-    }
+                        "name": "Gabriel"
+                    },
+                    "admin": true
+                },
+                {
+                    "id": {
+                        "chatId": 1,
+                        "userId": 2
+                    },
+                    "user": {
+                        "id": 2,
+                        "name": "Ainhoa"
+                    },
+                    "admin": true
+                }
+            ],
+            "public": true
+        }
+    ],
+    "enabled": true,
+    "accountNonLocked": true,
+    "username": "admin@elorrieta-errekamari.com",
+    "authorities": null,
+    "dni": "12345678A",
+    "password": null,
+    "credentialsNonExpired": true,
+    "accountNonExpired": true
 }
