@@ -67,6 +67,8 @@
     "errorMessageCodeInteger": "El código debe ser un número entero.",
     "errorMessageHoursEmpty": "El número de horas no puede estar vacío.",
     "errorMessageRoleCanNotBeUpdated": "Los roles ADMINISTRADOR, ALUMNOS y PROFESORES no pueden ser modificados.",
-    "from": "de"
+    "from": "de",
+    "FirstYear": "Primero",
+    "SecondYear": "Segundo"
 
 }

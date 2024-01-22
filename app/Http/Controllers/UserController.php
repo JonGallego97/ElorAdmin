@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\RoleUser;
+use App\Models\Department;
 use App\Models\Role;
 use App\Models\Module;
 use Illuminate\Http\Request;
@@ -101,13 +102,19 @@ class UserController extends Controller
     {
         if ($request->is('admin*')) {
             //si es admin
-            if(optional(User::find($user->id)->roles->first())->id == 2){
-                //Si es profesor
-                $user = new User();
-                return view('admin.users.teachers.edit_create', ['user'=>$user]);
-            }else if($user->role->id == 3){
+            $user = new User();
+            $roles = Role::select('id','name')->orderBy("id")->get();
+            $departments = Department::select('id','name')->orderBy("name")->get();
+            $cycles = Cycle::select('id','name')->orderBy('name')->get();
 
-            }
+            return view('admin.users.edit_create', ['user'=>$user,'roles'=>$roles,'departments' => $departments,'cycles' => $cycles]);
+            // if(optional(User::find($user->id)->roles->first())->id == 2){
+            //     //Si es profesor
+            //     $user = new User();
+            //     return view('admin.users.edit_create', ['user'=>$user]);
+            // }else if($user->role->id == 3){
+
+            // }
 
 
         }else {
@@ -121,10 +128,21 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request);
         if($request->role != 'ALUMNO' && $request->department_id == null) {
             return('Debes seleccionar un departamento');
         }
-        if($request->role == 'ALUMNO' && $request->department_id != null) {
+        if($request->role == 'ALUMNO') {
+            switch(true) {
+                case $request->department_id != null:
+
+                break;
+                case $request->roles != null:
+
+                break;
+
+            }
+                
             return ('Un alumno no puede tener un departamento');
         }
 
@@ -139,8 +157,10 @@ class UserController extends Controller
             'address' =>'required|string',
             'phoneNumber1' =>'required|integer',
             'phoneNumber2' =>'required|integer',
-
+            'year' => 'integer|digits_between:1,2',
+            'dual' => 'boolean'
         ]);
+
         // $request->firstLogin = true;
 
         $user = new User();
@@ -153,7 +173,7 @@ class UserController extends Controller
         $user->address = $request->address;
         $user->phoneNumber1 = $request->phoneNumber1;
         $user->phoneNumber2 = $request->phoneNumber2;
-        $user->firstLogin = $request->firstLogin;
+        $user->firstLogin = false;
         $user->year = $request->year;
         $user->department_id = $request->department;
 
@@ -175,9 +195,7 @@ class UserController extends Controller
 
         if ($request->is('admin*')) {
             //si es admin
-            if(optional(User::find($user->id)->roles->first())->id == 2){
-                //Si es profesor
-                $user = User::with('roles','cycles.modules')->where('id', $user->id)->first();
+            $user = User::with('roles','cycles.modules')->where('id', $user->id)->first();
                 //$image = (new ControllerFunctions)->createImageFromBase64($user->image);
                 $imageData = base64_decode($user->image);
                 $fileName = $user->dni . '.png';
@@ -185,18 +203,29 @@ class UserController extends Controller
                 if(!file_exists($filePath)) {
                     file_put_contents($filePath,$imageData);
                 }
-                return view('admin.users.teachers.show', ['user' => $user])->with('imagePath','images/'.$fileName);
-            }else if(optional(User::find($user->id)->roles->first())->id == 3){
-                $user = User::with('roles', 'cycles.modules')->where('id', $user->id)->first();
-                return view('admin.users.students.show', ['user' => $user]);
+                return view('admin.users.show', ['user' => $user])->with('imagePath','images/'.$fileName);
+            // if(optional(User::find($user->id)->roles->first())->id == 2){
+            //     //Si es profesor
+            //     $user = User::with('roles','cycles.modules')->where('id', $user->id)->first();
+            //     //$image = (new ControllerFunctions)->createImageFromBase64($user->image);
+            //     $imageData = base64_decode($user->image);
+            //     $fileName = $user->dni . '.png';
+            //     $filePath = public_path('images/' . $fileName);
+            //     if(!file_exists($filePath)) {
+            //         file_put_contents($filePath,$imageData);
+            //     }
+            //     return view('admin.users.teachers.show', ['user' => $user])->with('imagePath','images/'.$fileName);
+            // }else if(optional(User::find($user->id)->roles->first())->id == 3){
+            //     $user = User::with('roles', 'cycles.modules')->where('id', $user->id)->first();
+            //     return view('admin.users.students.show', ['user' => $user]);
 
-                // Puedes examinar o hacer algo con el usuario modificado
+            //     // Puedes examinar o hacer algo con el usuario modificado
 
-                return view('admin.users.students.show',['user'=>$user]);
-            }else{
-                $user = User::with('roles', 'cycles.modules')->where('id', $user->id)->first();
-                return view('admin.users.show', ['user' => $user]);
-            }
+            //     return view('admin.users.students.show',['user'=>$user]);
+            // }else{
+            //     $user = User::with('roles', 'cycles.modules')->where('id', $user->id)->first();
+            //     return view('admin.users.show', ['user' => $user]);
+            // }
 
 
         }else {
@@ -213,19 +242,24 @@ class UserController extends Controller
     {
         if ($request->is('admin*')) {
             //si es admin
-            if(optional(User::find($user->id)->roles->first())->id == 2){
-                //Si es profesor
-
+            $departments = Department::select('id','name')->orderBy("name")->get();
                 $roles = Role::all();
                 $cycles_modules = Cycle::with('modules')->get();
-                return view('admin.users.teachers.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
-            }else if(optional(User::find($user->id)->roles->first())->id == 3){
-                //Si es profesor
+                return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules,'departments' => $departments]);
+            // if(optional(User::find($user->id)->roles->first())->id == 2){
+            //     //Si es profesor
 
-                $roles = Role::all();
-                $cycles_modules = Cycle::with('modules')->get();
-                return view('admin.users.teachers.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
-            }
+            //     $departments = Department::select('id','name')->orderBy("name")->get();
+            //     $roles = Role::all();
+            //     $cycles_modules = Cycle::with('modules')->get();
+            //     return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules,'departments' => $departments]);
+            // }else if(optional(User::find($user->id)->roles->first())->id == 3){
+            //     //Si es profesor
+
+            //     $roles = Role::all();
+            //     $cycles_modules = Cycle::with('modules')->get();
+            //     return view('admin.users.teachers.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
+            // }
 
 
         }else {
@@ -250,20 +284,18 @@ class UserController extends Controller
      */
     public function destroy(Request $request, $userId)
     {
-        $redirectRoute = '';
-
         if ($request->is('admin*')) {
-            //si es admin
-            if(optional(User::find($userId)->roles->first())->id == 2){
-                //Si es profesor
-                $redirectRoute = 'admin.teachers.index';
-            }else if(optional(User::find($userId)->roles->first())->id == 3){
-                $redirectRoute = 'admin.students.index';
-            }
+            // //si es admin
+            // if(optional(User::find($userId)->roles->first())->id == 2){
+            //     //Si es profesor
+            //     $redirectRoute = 'admin.teachers.index';
+            // }else if(optional(User::find($userId)->roles->first())->id == 3){
+            //     $redirectRoute = 'admin.students.index';
+            // }
             $user = User::find($userId);
-            if ($user) {
+            if ($user && $user->id != 0) {
                 $user->delete();
-                return redirect()->route($redirectRoute)->with('success', 'Usuario eliminado exitosamente.');
+                return redirect()->back()->with('success', 'Usuario eliminado exitosamente.');
             } else {
                 return redirect()->back()->with('error', 'Usuario no encontrado.');
             }
@@ -323,7 +355,7 @@ class UserController extends Controller
         $user->roles = $roles;
         $roles = Role::all();
         $cycles_modules = Cycle::with('modules')->get();
-        return view('admin.users.teachers.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
+        return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
     }
 
     public function editCycles(Request $request, User $user) {
@@ -346,6 +378,6 @@ class UserController extends Controller
         $roles = Role::all();
         $cycles_modules = Cycle::with('modules')->get();
 
-        return view('admin.users.teachers.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
+        return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
     }
 }

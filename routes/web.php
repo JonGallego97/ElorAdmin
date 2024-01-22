@@ -46,6 +46,7 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     Route::get('/students', [UserController::class, 'indexStudent'])->name('admin.students.index');
     Route::get('/teachers', [UserController::class, 'indexTeacher'])->name('admin.teachers.index');
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::post('/admin/users', [UserController::class, 'index'])->name('admin.users.store');
     Route::resource('users', UserController::class);
     //Roles
     Route::delete('roles/destroyRoleUser/{roleId}/{userId}', [RoleController::class, 'destroyRoleUser'])->name('roles.destroyRoleUser');
