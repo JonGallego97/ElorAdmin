@@ -65,7 +65,7 @@ class UserController extends Controller
             //si no es admin
 
         }else{
-            return view('person.index',compact('users'));
+            return view('admin.index',compact('users'));
 
         }
 
