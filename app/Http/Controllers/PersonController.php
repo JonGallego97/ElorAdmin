@@ -27,30 +27,22 @@ class PersonController extends Controller
         }
 
 
-    $usersInRole3ByModule = [];
+    $usersInRole3ByModule;
 
     // Obtener los ciclos y módulos del usuario
     $cycles = $user->cycles;
 
+
     foreach ($cycles as $cycle) {
         foreach ($cycle->modules as $module) {
-            // Verificar si el módulo está asociado al usuario
-            if (in_array($module->id, $user->modules->pluck('id')->toArray())) {
-                // Obtener los usuarios del rol 3 asociados a este módulo
-                $usersInRole3ByModule[$module->id] = User::whereHas('roles', function ($query) {
-                    $query->where('id', 3);
-                })
-                ->whereHas('modules', function ($query) use ($module) {
-                    $query->where('module_id', $module->id);
-                })
-                ->get(['id', 'name', 'email']);
-            }
+
+            $usersInRole3ByModule=$module->users;
         }
     }
 
     // Obtener los datos adicionales del usuario autenticado
     $user = User::with('roles', 'cycles.modules', 'modules')->where('id', $user->id)->first();
-    //dd($cycle);
+
     return view('persons.index', ['user' => $user,'usersInRole3ByModule' => $usersInRole3ByModule,'usera' => $usera], ['cycle' => $cycle]);
     }
 

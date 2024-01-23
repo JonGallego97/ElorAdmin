@@ -1,0 +1,13 @@
+/* Modo claro */
+body[data-bs-theme="light"] {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+
+/* Modo oscuro */
+body[data-bs-theme="dark"] {
+    background-color: #212529;
+    color: #ffffff;
+}
+
