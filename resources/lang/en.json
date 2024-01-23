@@ -29,5 +29,7 @@
     "cancel": "Cancelar",
     "delete": "Eliminar",
     "are_you_sure_delete": "¿Estás seguro de que quieres eliminar el usuario:",
-    "Question": "?"
+    "Question": "?",
+    "Yes": "Yes",
+    "No": "No"
 }

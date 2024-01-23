@@ -69,5 +69,7 @@
     "errorMessageRoleCanNotBeUpdated": "Los roles ADMINISTRADOR, ALUMNOS y PROFESORES no pueden ser modificados.",
     "from": "de",
     "Staff": "Personal",
-    "Registered":"Matriculado"
+    "Registered":"Matriculado",
+    "FirstYear": "Primero",
+    "SecondYear": "Segundo"
 }

@@ -30,9 +30,13 @@ class DepartmentController extends Controller
         return view('departments.index', ['departments' => $departments]);
     }
 
+    public function create(Request $request)
+    {
+        return view('admin.departments.edit_create');
+    }
+
     public function indexPerson()
     {
-
         $departments = Department::withCount('users')->orderBy('users_count')->get();
 
         return view('persons.departments.index', ['departments' => $departments]) ;
