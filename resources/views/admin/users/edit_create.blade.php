@@ -146,7 +146,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h3>{{__("Roles")}}</h3>
                 </div>
-                <select id="roles" name="roles[]" class="form-control mb-3" multiple>
+                <select id="create_roles" name="roles[]" class="form-control mb-3" multiple>
                     @foreach ($roles as $role)
                         @switch(true)
                             @case(str_contains(url()->previous(),'teachers') && $role->name == 'PROFESOR')
@@ -356,6 +356,28 @@
     </form>
 </div>
 
+<script>
+
+    //ajax
+    $.get('input.json', function (data)
+    {
+        $('#item').empty();
+        $('#price').empty();
+
+        $.each(data, function(index, subcatObj)
+        {
+            var prices = subcatObj.price;
+
+            $('#item').append('<option data-price='+prices+' value="'+subcatObj.id+'">'+subcatObj.name+' '+ prices +'</option>');
+        });
+        console.log(data);
+    });
+    $('#create_role').change(function() {
+         var selectedRoles = $(this).find("option:selected").val();
+         selectedRoles.foreach( function(value,index,array) {
+            w
+         });
+ </script>
 
 @endsection
 @section('scripts')

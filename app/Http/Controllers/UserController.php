@@ -10,10 +10,18 @@ use App\Models\Module;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Cycle;
+use App\Http\Controllers\ControllerFunctions;
+use Illuminate\Database\QueryException;
 
 
-class UserController extends Controller
-{
+class UserController extends Controller {
+
+    private $ControllerFunctions;
+
+    function __construct() {
+        $this->ControllerFunctions = new ControllerFunctions;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -135,7 +143,9 @@ class UserController extends Controller
         }
 
         $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
+        $teacherRole = Role::select('id','name')->where('name','PROFESOR')->first();
         $isStudent = in_array($studentRole->id,$userRoles,false);
+        $isTeacher = in_array($teacherRole->id,$userRoles,false);
         
         //No es alumno
         if($isStudent == false && $request->department == 0) {
@@ -171,18 +181,19 @@ class UserController extends Controller
         // $request->firstLogin = true;
 
         //Comprobamos si DNI es real
-        if(!$this->checkDni($request->dni)) {
+        if(!$this->ControllerFunctions->checkDni($request->dni)) {
             return ('El DNI no es correcto.');
         }
 
 
+        dd($request);
         $user = new User();
         // $user->password = bcrypt($request->password);
-        $user->name = ucfirst($request->name);
-        $user->surname1 = ucfirst($request->surname1);
-        $user->surname2 = ucfirst($request->surname2);
+        $user->name = ucfirst(strtolower($request->name));
+        $user->surname1 = ucfirst(strtolower($request->surname1));
+        $user->surname2 = ucfirst(strtolower($request->surname2));
         $user->dni = $request->dni;
-        $user->address = $request->address;
+        $user->address = ucwords($request->address);
         $user->phone_number1 = $request->phone_number1;
         $user->phone_number2 = $request->phone_number2;
         $user->first_login = false;
@@ -214,13 +225,25 @@ class UserController extends Controller
         
         $user->save();
 
-
-        foreach ($userRoles as $role) {
-            $role_user = new RoleUser();
-            $role_user->role_id = $role;
-            $role_user->user_id = $user->id;
-            $role_user->save();
+        try {
+            foreach ($userRoles as $role) {
+                $role_user = new RoleUser();
+                $role_user->role_id = $role;
+                $role_user->user_id = $user->id;
+                $role_user->save();
+            }
+        } catch (QueryException $ex){
+            dd($ex->getMessage());
         }
+
+
+        if($isStudent){
+            $this->enrollStudentInCycle($user->id,$user->cycle);
+        } elseif ($isTeacher) {
+            foreach($modules as $module)
+            $this->enrollTeacherInModule($userId, $module->id);
+        }
+        
         
 
         return redirect()->route('users.index');
@@ -234,15 +257,10 @@ class UserController extends Controller
 
         if ($request->is('admin*')) {
             //si es admin
-            $user = User::with('roles','cycles.modules')->where('id', $user->id)->first();
+            $user = User::with('roles','cycles.modules','department')->where('id', $user->id)->first();
                 //$image = (new ControllerFunctions)->createImageFromBase64($user->image);
-                $imageData = base64_decode($user->image);
-                $fileName = $user->dni . '.png';
-                $filePath = public_path('images/' . $fileName);
-                if(!file_exists($filePath)) {
-                    file_put_contents($filePath,$imageData);
-                }
-                return view('admin.users.show', ['user' => $user])->with('imagePath','images/'.$fileName);
+            $fileName =    $this->ControllerFunctions->createImageFromBase64($user);
+            return view('admin.users.show', ['user' => $user])->with('imagePath','images/'.$fileName);
             // if(optional(User::find($user->id)->roles->first())->id == 2){
             //     //Si es profesor
             //     $user = User::with('roles','cycles.modules')->where('id', $user->id)->first();

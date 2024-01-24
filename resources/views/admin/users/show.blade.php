@@ -43,7 +43,16 @@
         </div>
         <div class="card">
             <div class="card-header">
-                <h2>{{ $user['name'] }} {{ $user['surname1'] }} {{ $user['surname2'] }}</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h2>{{ $user['name'] }} {{ $user['surname1'] }} {{ $user['surname2'] }}</h2>
+                    </div>
+                    <div class="col-md-4">
+                        @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
+                        <h2>{{ $user['department']['name'] }}</h2>
+                        @endif
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -56,17 +65,11 @@
                         @if(in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
                         <p><strong>{{__('Year')}}{{__('Colon')}}</strong> {{ $user['year'] }}</p>
                         <p><strong>{{__('Dual')}}{{__('Colon')}}</strong> {{ $user['dual'] ? __('Yes') : __('No') }}</p>
+                        @else
+                        <p><strong>{{__('Department')}}{{__('Colon')}}</strong> {{ $user['department']['name'] }}</p>
                         @endif
                         <!-- Otros detalles del usuario -->
                     </div>
-                    <!-- <div class="col-md-4">
-                        <p><strong>{{__('Rol')}}{{__('Colon')}}</strong> {{ $user['roles'][0]['name'] }}</p>
-                        <p><strong>{{__('PhoneNumber1')}}{{__('Colon')}}</strong> {{ $user['phone_number1'] }}</p>
-                        <p><strong>{{__('PhoneNumber2')}}{{__('Colon')}}</strong> {{ $user['phone_number2'] }}</p>
-                        @if(in_array('STUDENT',$user->roles->pluck('name')->toArray()))
-                        <p><strong>{{__('Dual')}}{{__('Colon')}}</strong> {{ $user['dual'] ? __('Yes') : __('No') }}</p>
-                        @endif
-                    </div> -->
                     <div class="col-md-4">
                         <!-- photo -->
                         <img src="{{ asset($imagePath) }}" alt="Imagen" />

@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Request;
 
 class ControllerFunctions {
+
     
     public function checkAdminRole(){
         $roleAdmin = Role::where('name','ADMINISTRADOR')->first();
@@ -30,14 +32,16 @@ class ControllerFunctions {
         }
     }
 
-    function createImageFromBase64(String $imageString)
+    public function createImageFromBase64(User $user)
     {
-        $image = imagecreatefromstring(base64_decode($imageString));
-        header('Content-type: image/png');
-        return imagejpeg($image);
+        $imageData = base64_decode($user->image);
+        $fileName = $user->dni . '.png';
+        $filePath = public_path('images/' . $fileName);
+        file_put_contents($filePath,$imageData);
+        return $fileName;
     }
 
-    function checkDNI(String $dni)
+    public function checkDNI(String $dni)
     {
         $DNILetterArray = array('T','R','W','A','G','M','Y','F','P','D','X','B','N','J','Z','S','Q','V','H','L','C','K','E');
 
