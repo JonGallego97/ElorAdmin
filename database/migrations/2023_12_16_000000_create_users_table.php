@@ -18,14 +18,14 @@ return new class extends Migration
             $table->string('name');
             $table->string('surname1');
             $table->string('surname2');
-            $table->string('DNI');
+            $table->string('dni');
             $table->string('address')->nullable();
             $table->integer('phone_number1')->nullable();
             $table->integer('phone_number2')->nullable();
             $table->longText('image')->nullable();
-            $table->boolean('dual')->nullable();
+            $table->boolean('dual')->nullable()->default(null);
             $table->boolean('first_login')->default(true);
-            $table->integer('year')->nullable();
+            $table->integer('year')->nullable()->default(null);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

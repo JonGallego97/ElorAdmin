@@ -4,17 +4,17 @@
 
 <div class="container">
     <div id="user_data" data-user={{$user->roles}}></div>
-    <form class="mt-2" name="create_platform" action="
+    <form class="mt-2" name="edit_create_platform" action=
         @if(Route::currentRouteName() == 'users.edit')
-            {{route('users.update',$user)}}
+            "{{ route('users.update',$user) }}"
         @else
-            {{route('users.store',$user)}}
+            "{{ route('users.store',$user) }}"
         @endif
-        "method="POST" enctype="multipart/form-data">
+        method="POST">
         @if(Route::currentRouteName() == 'users.edit')
-        @csrf
         @method('PUT')
         @endif
+        @csrf
         <div class="form-group mb-3">
             <h1>
                 @if(Route::currentRouteName() == 'users.edit')
@@ -23,50 +23,57 @@
                 {{__("Create")}}
                 @endif
                 @switch(true)
-                        @case(str_contains(url()->previous(),'users'))
-                            {{__('User')}}
-                            @break
-                        @case(str_contains(url()->previous(),'teachers'))
-                            {{__('Teachers')}}
-                            @break
-                        @case(str_contains(url()->previous(),'students'))
-                            {{__('Students')}}
-                            @break
-                    @endswitch
+                    @case(str_contains(url()->previous(),'users'))
+                        {{__('User')}}
+                        @break
+                    @case(str_contains(url()->previous(),'teachers'))
+                        {{__('Teachers')}}
+                        @break
+                    @case(str_contains(url()->previous(),'students'))
+                        {{__('Students')}}
+                        @break
+                @endswitch
             </h1>
         </div>
         <div class="row">
             <div class="col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("Name")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
+                <label for="name" class="form-label">{{__("Name")}}</label>
+                <input type="text" class="form-control" id="name" name="name" required
                     value="{{$user->name}}"/>
             </div>
             <div class=" col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("Surname1")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
+                <label for="surname1" class="form-label">{{__("Surname1")}}</label>
+                <input type="text" class="form-control" id="surname1" name="surname1" required
                     value="{{$user->surname1}}"/>
             </div>
             <div class="col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("Surname2")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
+                <label for="surname2" class="form-label">{{__("Surname2")}}</label>
+                <input type="text" class="form-control" id="surname2" name="surname2" required
                     value="{{$user->surname2}}"/>
             </div>
         </div>
         <div class="row">
             <div class="col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("DNI")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
+                <label for="dni" class="form-label">{{__("DNI")}}</label>
+                <input type="text" class="form-control" id="dni" name="dni" required
                     value="{{$user->DNI}}"/>
             </div>
             <div class="col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("PhoneNumber1")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
+                <label for="phone_number1" class="form-label">{{__("PhoneNumber1")}}</label>
+                <input type="text" class="form-control" id="phone_number1" name="phone_number1" required
                     value="{{$user->phone_number1}}"/>
             </div>
             <div class="col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("PhoneNumber2")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
+                <label for="phone_number2" class="form-label">{{__("PhoneNumber2")}}</label>
+                <input type="text" class="form-control" id="phone_number2" name="phone_number2" required
                     value="{{$user->phone_number2}}"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col form-group mb-3">
+                <label for="address" class="form-label">{{__("Address")}}</label>
+                <input type="text" class="form-control" id="address" name="address" required
+                    value="{{$user->address}}"/>
             </div>
         </div>
         <!-- Solo para editar si es alumno -->
@@ -91,7 +98,7 @@
             @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()) == false)
                 <div class="col form-group mb-3">
                     <label for="department" class="form-label">{{__("Department")}}</label>
-                    <select class="form-control" name="department">
+                    <select class="form-control" name="department" multiple>
                         @foreach ($departments as $department)
                         <option value={{$department->id}}
                         @if ($user->department == $department->id)
@@ -108,7 +115,7 @@
                 <p>Solo para personal del centro</p>
                 <label for="department" class="form-label">{{__("Department")}}</label>
                 <select class="form-control" name="department">
-                    <option value="null">{{__("Department")}}</option>
+                    <option value="0">{{__("Department")}}</option>
                     @foreach ($departments as $department)
                     <option value={{$department->id}}>{{$department->name}}
                     </option>

@@ -37,6 +37,21 @@ class ControllerFunctions {
         return imagejpeg($image);
     }
 
+    function checkDNI(String $dni)
+    {
+        $DNILetterArray = array('T','R','W','A','G','M','Y','F','P','D','X','B','N','J','Z','S','Q','V','H','L','C','K','E');
+
+        $numbers = substr($dni,0,-1);
+        $letter = round((float)$numbers /23,2);
+        $letter = round(($letter - (int)$letter)*23,0);
+        $userID = $numbers . $DNILetterArray[$letter];
+        if($userID == $dni) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
 
 

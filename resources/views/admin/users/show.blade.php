@@ -48,7 +48,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-5">
-                        <p><strong>{{__('DNI')}}{{__('Colon')}}</strong> {{ $user['DNI'] }}</p>
+                        <p><strong>{{__('DNI')}}{{__('Colon')}}</strong> {{ $user['dni'] }}</p>
                         <p><strong>{{__('Mail')}}{{__('Colon')}}</strong> {{ $user['email'] }}</p>
                         <p><strong>{{__('Address')}}{{__('Colon')}}</strong> {{ $user['address'] }}</p>
                         <p><strong>{{__('PhoneNumber1')}}{{__('Colon')}}</strong> {{ $user['phone_number1'] }}</p>
