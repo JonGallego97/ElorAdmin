@@ -47,16 +47,16 @@
                     <div class="col-md-4">
                         <h2>{{ $user['name'] }} {{ $user['surname1'] }} {{ $user['surname2'] }}</h2>
                     </div>
+                    @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()) && !in_array('ADMINISTRADOR',$user->roles->pluck('name')->toArray()))
                     <div class="col-md-4">
-                        @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
                         <h2>{{ $user['department']['name'] }}</h2>
-                        @endif
                     </div>
+                    @endif
                 </div>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <p><strong>{{__('DNI')}}{{__('Colon')}}</strong> {{ $user['dni'] }}</p>
                         <p><strong>{{__('Mail')}}{{__('Colon')}}</strong> {{ $user['email'] }}</p>
                         <p><strong>{{__('Address')}}{{__('Colon')}}</strong> {{ $user['address'] }}</p>
@@ -65,14 +65,10 @@
                         @if(in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
                         <p><strong>{{__('Year')}}{{__('Colon')}}</strong> {{ $user['year'] }}</p>
                         <p><strong>{{__('Dual')}}{{__('Colon')}}</strong> {{ $user['dual'] ? __('Yes') : __('No') }}</p>
-                        @else
+                        @elseif(!in_array('ADMINISTRADOR',$user->roles->pluck('name')->toArray()))
                         <p><strong>{{__('Department')}}{{__('Colon')}}</strong> {{ $user['department']['name'] }}</p>
                         @endif
                         <!-- Otros detalles del usuario -->
-                    </div>
-                    <div class="col-md-4">
-                        <!-- photo -->
-                        <img src="{{ asset($imagePath) }}" alt="Imagen" />
                     </div>
                     <div class="col-md-3">
                         <div class="d-flex justify-content-between align-items-center">
@@ -85,6 +81,10 @@
                                 </option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="col-md-2">
+                        <!-- photo -->
+                        <img src="{{ asset($imagePath) }}" alt="Imagen" />
                     </div>
                 </div>
                 <hr>

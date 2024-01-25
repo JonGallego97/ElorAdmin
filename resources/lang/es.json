@@ -71,5 +71,6 @@
     "Staff": "Personal",
     "Registered":"Matriculado",
     "FirstYear": "Primero",
-    "SecondYear": "Segundo"
+    "SecondYear": "Segundo",
+    "ExtraCreate": "Datos extra del Usuario"
 }

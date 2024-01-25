@@ -8,7 +8,7 @@
         @if(Route::currentRouteName() == 'users.edit')
             "{{ route('users.update',$user) }}"
         @else
-            "{{ route('users.store',$user) }}"
+            "{{ route('admin.users.extra_create',$user) }}"
         @endif
         method="POST">
         @if(Route::currentRouteName() == 'users.edit')
@@ -76,25 +76,8 @@
                     value="{{$user->address}}"/>
             </div>
         </div>
-        <!-- Solo para editar si es alumno -->
-        @if(in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
-        <div class="row">
-            <div class="col form-group mb-3">
-                <label for="year" class="form-label">{{__("Year")}}</label>
-                <input type="text" class="form-control" id="year" name="year" required
-                    value="{{$user->year}}"/>
-            </div>
-            <div class="form-group mb-3">
-                <label for="dual" class="form-label">{{__("Dual")}}</label>
-                <select class="form-control" name="dual">
-                    <option value="true"{{ $user->dual == true ? 'selected' : ''}}>{{__("Yes")}}</option>
-                    <option value="false"{{ $user->dual == false ? 'selected' : '' }}>{{__("No")}}</option>
-                </select>
-            </div>
-        </div>
-        @endif
         <hr>
-        <div class="row">
+<!--         <div class="row">
             @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()) == false)
                 <div class="col form-group mb-3">
                     <label for="department" class="form-label">{{__("Department")}}</label>
@@ -136,7 +119,7 @@
                 </select>
             </div>
             @endif
-        </div>  
+        </div>   -->
 
 
         <hr class="my-4">
@@ -169,7 +152,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-6 form-group mb-3">
+<!--             <div class="col-6 form-group mb-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <h3>{{__("Cycles")}}</h3>
                 </div>
@@ -182,7 +165,7 @@
                     @endforeach
                     </select>
                 </div>
-            </div>
+            </div> -->
         </div>
         @endif
 
