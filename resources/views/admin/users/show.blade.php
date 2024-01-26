@@ -22,17 +22,17 @@
             <div class="col text-end">
                 @switch(true)
                     @case(str_contains(url()->previous(),'users'))
-                        <a href="{{ route('admin.users.index') }}" class="me-2" role="button">
+                        <a href="{{ route('users.index') }}" class="me-2" role="button">
                             <i class="bi bi-arrow-90deg-left fs-3"></i>
                         </a>
                         @break
                     @case(str_contains(url()->previous(),'teachers'))
-                        <a href="{{ route('admin.teachers.index') }}" class="me-2" role="button">
+                        <a href="{{ route('teachers.index') }}" class="me-2" role="button">
                             <i class="bi bi-arrow-90deg-left fs-3"></i>
                         </a>
                         @break
                     @case(str_contains(url()->previous(),'students'))
-                        <a href="{{ route('admin.students.index') }}" class="me-2" role="button">
+                        <a href="{{ route('students.index') }}" class="me-2" role="button">
                             <i class="bi bi-arrow-90deg-left fs-3"></i>
                         </a>
                         @break
@@ -111,7 +111,7 @@
                 @endif
 
                 <!-- Si tiene el rol de Profesor -->
-                @if(in_array('STUDENT',$user->roles->pluck('name')->toArray()))
+                @if(in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
                     <h3>{{__('Cycles')}}</h3>
                     @foreach ($user['cycles'] as $cycle)
                         <div class="card mb-3">

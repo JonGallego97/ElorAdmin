@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Cycle;
 use App\Http\Controllers\ControllerFunctions;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
 
 class UserController extends Controller {
@@ -148,10 +149,6 @@ class UserController extends Controller {
         $isStudent = in_array($studentRole->id,$userRoles,false);
         $isTeacher = in_array($teacherRole->id,$userRoles,false);
         
-        //No es alumno
-        if($isStudent == false && $request->department == 0) {
-            return('Debes seleccionar un departamento');
-        }
         //Es alumno
         if($isStudent) {
             switch(true) {
@@ -216,9 +213,14 @@ class UserController extends Controller {
 
         $roles = Role::select('id','name')->orderBy("id")->get();
         $departments = Department::select('id','name')->orderBy("name")->get();
-        $cycles = Cycle::select('id','name')->orderBy('name')->get();
+        $cycles = Cycle::with('modules')->orderBy('department_id')->get();
 
-        return view('admin.users.extra_create', ['user_id'=>$user->id,'userRolesNames'=>$userRolesNames, 'roles'=> $roles,'departments' => $departments,'cycles' => $cycles]);
+        $englishModulesCodes = Module::where('name','Inglés Técnico')->pluck('code')->toArray();
+        $englishModules = Cycle::with(['modules' => function ($query) use ($englishModulesCodes) {
+            $query->where('code', $englishModulesCodes);
+        }])->get();
+
+        return view('admin.users.extra_create', ['user_id'=>$user->id,'userRolesNames'=>$userRolesNames,'englishModules' => $englishModules, 'roles'=> $roles,'departments' => $departments,'cycles' => $cycles]);
     }
 
 
@@ -246,7 +248,11 @@ class UserController extends Controller {
             $user->dual = (int)$request->dual;
             
         } else if(!$isAdmin) {
-            $user->department = $request->department;
+            if($request->department != 0) {
+                $user->department_id = $request->department;
+            } else {
+                return('Debes seleccionar un departamento');
+            }           
         }
         $user->save();
 
@@ -254,15 +260,17 @@ class UserController extends Controller {
 
         // Ciclos
         if($isStudent){
-            $this->enrollStudentInCycle($user->id,$user->cycle);
+            $result = $this->enrollStudentInCycle($user->id,$request->cycle);
         } elseif ($isTeacher) {
             foreach($request->modules as $module)
-            $this->enrollTeacherInModule($user->id, $module->id);
+            $result =$this->enrollTeacherInModule($user->id, $module->id);
         }
         
-        
-
-        return redirect()->route('admin.users.index');
+        if($result) {
+            return redirect()->route('users.show',['user'=>$user]);
+        } else {
+            return back();
+        }
     }
 
     /**
@@ -380,21 +388,24 @@ class UserController extends Controller {
     {
         $user = User::findOrFail($userId);
         $cycle = Cycle::findOrFail($cycleId);
-
         if ($user->hasRole('ALUMNO')) {
             // Asociar al estudiante con el ciclo
-            $user->cycles()->attach($cycle->id);
+            $lastRegistration = DB::table('cycle_users')->orderByDesc('cycle_registration_number')->first();
+            $sync_data = array(['cycle_id'=>$cycle->id,'cycle_registration_number' => $lastRegistration->cycle_registration_number+1,'registration_date'=>date('Y-m-d')]);
+            //dd($sync_data);
+            $user->cycles()->attach($sync_data);
 
             // Obtener los módulos asociados al ciclo
             $modules = $cycle->modules;
-
             // Enrollar al estudiante en cada módulo
-            $user->modules()->attach($modules);
+            $user->modules()->attach($modules,['cycle_id' => $cycle->id]);
 
-            return response()->json(['message' => 'Estudiante matriculado en el ciclo y sus módulos.']);
+            return true;
+            // return response()->json(['message' => 'Estudiante matriculado en el ciclo y sus módulos.']);
         } else {
             // Si el usuario no es un estudiante, retornar un mensaje de error o realizar otras acciones según sea necesario
-            return response()->json(['error' => 'Solo los estudiantes pueden ser matriculados en ciclos.']);
+            // return response()->json(['error' => 'Solo los estudiantes pueden ser matriculados en ciclos.']);
+            return false;
         }
     }
 
@@ -403,6 +414,7 @@ class UserController extends Controller {
         $user = User::findOrFail($userId);
         $module = Module::findOrFail($moduleId);
 
+        dd($user->hasRole('PROFESOR'));
         if ($user->hasRole('PROFESOR')) {
             // Validar que el profesor no esté ya asignado al módulo
             if (!$user->modules->contains($module->id)) {

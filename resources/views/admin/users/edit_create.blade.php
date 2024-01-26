@@ -8,7 +8,7 @@
         @if(Route::currentRouteName() == 'users.edit')
             "{{ route('users.update',$user) }}"
         @else
-            "{{ route('admin.users.extra_create',$user) }}"
+            "{{ route('users.extra_create',$user) }}"
         @endif
         method="POST">
         @if(Route::currentRouteName() == 'users.edit')
@@ -338,29 +338,6 @@
         </button>
     </form>
 </div>
-
-<script>
-
-    //ajax
-    $.get('input.json', function (data)
-    {
-        $('#item').empty();
-        $('#price').empty();
-
-        $.each(data, function(index, subcatObj)
-        {
-            var prices = subcatObj.price;
-
-            $('#item').append('<option data-price='+prices+' value="'+subcatObj.id+'">'+subcatObj.name+' '+ prices +'</option>');
-        });
-        console.log(data);
-    });
-    $('#create_role').change(function() {
-         var selectedRoles = $(this).find("option:selected").val();
-         selectedRoles.foreach( function(value,index,array) {
-            w
-         });
- </script>
 
 @endsection
 @section('scripts')

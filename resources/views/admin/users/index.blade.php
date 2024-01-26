@@ -62,9 +62,9 @@
             <div class="form-inline col">
                 <form
                 @if(request()->is('admin/students*'))
-                    action="{{ route('admin.students.index') }}"
+                    action="{{ route('students.index') }}"
                 @elseif(request()->is('admin/teachers*'))
-                    action="{{ route('admin.teachers.index') }}"
+                    action="{{ route('teachers.index') }}"
                 @endif
                 class="form-inline" method="GET" id="perPageForm">
                     <label class="mr-2" for="per_page">{{__('Show')}}{{__('Colon')}}</label>

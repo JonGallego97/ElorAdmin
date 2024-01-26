@@ -195,4 +195,10 @@ class CycleController extends Controller
         }else {
         }
     }
+
+    public function getCyclesByDepartment($departmentId){
+        $cycles = Cycle::where('department_id',$departmentId)->get();
+        dd($cycles);
+        return response()->json($cycles);
+    }
 }

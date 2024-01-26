@@ -6,22 +6,51 @@
     <p>Extra</p>
     <form class="mt-2" name="extra_create_platform" action="{{ route('users.store') }}" method="POST">
         @csrf
-        <!-- Solo para editar si es alumno -->
         <div class="row">
-            @if(!in_array('ALUMNO',$userRolesNames) == false && !in_array('ADMINISTRADOR',$userRolesNames) == false)
+            <!-- Solo para editar si no es alumno ni admin -->
+            @if(in_array('ALUMNO',$userRolesNames) == false && in_array('ADMINISTRADOR',$userRolesNames) == false)
             <div class="col-4 form-group mb-3">
                 <label for="department" class="form-label">{{__("Department")}}</label>
-                <select class="form-control" name="department">
+                <select class="form-control" id="department" name="department" onchange="handleDropdownChange()">
                     <option value="0">{{__("Department")}}</option>
                     @foreach ($departments as $department)
-                    <option value={{$department->id}}>{{$department->name}}
-                    </option>
+                    <option value={{$department->id}}>{{$department->name}}</option>
                     @endforeach
                 </select>
             </div>
-            @endif
+
+            <div id="modules" class="col-6 form-group mb-3">
+                <label for="modules" class="form-label">{{__("Modules")}}</label>
+                <select class="form-control" id="select_modules" name="modules" multiple>
+                    @foreach($cycles as $cycle)
+                    <optgroup label='-- {{$cycle->name}} --' data-department-id="{{$cycle->department_id}}">
+                        @foreach($cycle->modules as $module)
+                            <option value={{$module->id}}>{{$module->name}}</option>
+                        @endforeach
+                    </optgroup>
+                    @endforeach
+                </select>
+            </div>
+            <!-- @foreach($departments as $department)
+            <div id="dept{{$department->id}}" class="col-4 form-group mb-3">
+                <label for="modules_dept{{$department->id}}" class="form-label">{{__("Modules")}}</label>
+                <select class="form-control" id="modules_dept{{$department->id}}" name="modules_dept{{$department->id}}" multiple>
+                    @foreach($cycles as $cycle)
+                        @if($department->id == $cycle->department_id)
+                        <optgroup label='-- {{$cycle->name}} --'>
+                            @foreach($cycle->modules as $module)
+                                <option value={{$module->id}}>{{$module->name}}</option>
+                            @endforeach
+                        @endif
+                    @endforeach
+                </select>
+            </div>
+            @endforeach
+            @endif -->
+            
+            <!-- Solo si es alumno -->
             @if(in_array('ALUMNO',$userRolesNames) == true)
-            <div class="col-4 form-group mb-3">
+            <div class="col-4 form-group mb-5">
                 <label for="year" class="form-label">{{__("Year")}}</label>
                 <select class="form-control" name="year">
                     <option value="1">{{__("FirstYear")}}</option>
@@ -38,7 +67,7 @@
                     <h3>{{__("Cycles")}}</h3>
                 </div>
                 <div class= "col mb-3">
-                    <select id="cycles" name="cycles" class="form-control">
+                    <select id="cycle" name="cycle" class="form-control">
                     @foreach ($cycles as $cycle)
                         <option value="{{ $cycle->id }}">
                         {{ $cycle['name'] }}
@@ -55,5 +84,32 @@
         <button type="submit" class="btn btn-primary" name="">{{__("Create")}}</button>
     </form>
 </div>
+<script>
+    function handleDropdownChange() {
+        var selectedDepartmentId = document.getElementById("department").value;
+        var modulesSelect = document.getElementById("select_modules");
+
+        // Si se selecciona la opción 0, mostrar todas las opciones
+        if (selectedDepartmentId === "0") {
+            var optgroups = modulesSelect.getElementsByTagName("optgroup");
+            for (var i = 0; i < optgroups.length; i++) {
+                optgroups[i].style.display = "block";
+            }
+        } else {
+            // Oculta todos los grupos de opciones
+            var optgroups = modulesSelect.getElementsByTagName("optgroup");
+            for (var i = 0; i < optgroups.length; i++) {
+                optgroups[i].style.display = "none";
+            }
+
+            // Muestra solo el grupo de opciones correspondiente al departamento seleccionado
+            var selectedOptgroup = modulesSelect.querySelector("optgroup[data-department-id='" + selectedDepartmentId + "']");
+            if (selectedOptgroup) {
+                selectedOptgroup.style.display = "block";
+            }
+        }
+    }
+</script>
+
 
 @endsection
