@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->binary('content');
+            $table->string('content');
             $table->enum('data_type', ['TEXT', 'IMAGE', 'FILE', 'GPS']);
             $table->timestamps();
             $table->foreignId('chat_id')->constrained('chats')->cascadeOnDelete()->cascadeOnUpdate();
