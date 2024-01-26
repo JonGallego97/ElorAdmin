@@ -17,3 +17,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+#firebase auth
+/src/main/resources/firebase-auth.json
