@@ -4,17 +4,11 @@
 
 <div class="container">
     <div id="user_data" data-user={{$user->roles}}></div>
-    <form class="mt-2" name="edit_create_platform" action=
-        @if(Route::currentRouteName() == 'users.edit')
-            "{{ route('users.update',$user) }}"
-        @else
-            "{{ route('users.extra_create',$user) }}"
-        @endif
-        method="POST">
+    <form class="mt-2" name="edit_create_platform" action="{{ Route::currentRouteName() == 'users.edit' ? route('users.update', $user) : route('users.extra_create', $user) }}" method="POST">
+        @csrf
         @if(Route::currentRouteName() == 'users.edit')
         @method('PUT')
         @endif
-        @csrf
         <div class="form-group mb-3">
             <h1>
                 @if(Route::currentRouteName() == 'users.edit')
@@ -56,7 +50,7 @@
             <div class="col form-group mb-3">
                 <label for="dni" class="form-label">{{__("DNI")}}</label>
                 <input type="text" class="form-control" id="dni" name="dni" required
-                    value="{{$user->DNI}}"/>
+                    value="{{$user->dni}}"/>
             </div>
             <div class="col form-group mb-3">
                 <label for="phone_number1" class="form-label">{{__("PhoneNumber1")}}</label>
@@ -175,6 +169,7 @@
         <div class="form-group mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <h3>{{__("Roles")}}</h3>
+                <input type="hidden" id="selectedRolesInput" name="selectedRoles" value="">
                 <input type="hidden" id="hiddenRoleIds" value="{{ implode(',', $user->roles->pluck('id')->toArray()) }}">
                 <button type="button" style="border: none; background: none;" id="roleEdit" data-bs-toggle="modal" data-bs-target="#rolesModal" data-role-ids="sad">
                     <i class="bi bi-pencil fs-3"></i>
@@ -193,6 +188,7 @@
         <div class="form-group mb-2">
             <div class="d-flex justify-content-between align-items-center">
                 <h3>{{__("Cycles")}}</h3>
+                <input type="hidden" id="selectedCyclesInput" name="selectedCycles" value="">
                 <input type="hidden" id="hiddenCycleIds" value="{{ implode(',', $user->cycles->pluck('id')->toArray()) }}">
                 <button type="button" style="border: none; background: none;" id="cycleEdit" data-bs-toggle="modal" data-bs-target="#cyclesModal">
                     <i class="bi bi-pencil fs-3"></i>
@@ -338,6 +334,9 @@
         </button>
     </form>
 </div>
+
+
+
 
 @endsection
 @section('scripts')

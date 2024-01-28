@@ -90,11 +90,12 @@
                 <hr>
                 <!-- Si tiene el rol de Profesor -->
                 @if(in_array('PROFESOR',$user->roles->pluck('name')->toArray()))
-                    <h3>{{__('Cycles')}}</h3>
-                    @foreach ($user['cycles'] as $cycle)
+                    <h3>{{__('Ciclos')}}</h3>
+                    
+                    @foreach ($cyclesWithModules as $cycle)
                         <div class="card mb-3">
                             <div class="card-header">
-                                <a href="{{route('cycles.show', $cycle)}}" role="button">
+                                <a href="{{route('cycles.show', $cycle['id'])}}" role="button">
                                     <h4>{{ $cycle['name'] }}</h4>
                                 </a>
                             </div>
@@ -102,7 +103,7 @@
                                 <h5>{{__('Modules')}}</h5>
                                 <ul>
                                     @foreach ($cycle['modules'] as $module)
-                                        <li>{{ $module['code'] }} - <a href="{{ route('modules.show', $module) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
+                                        <li>{{ $module['code'] }} - <a href="{{ route('modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
                                     @endforeach
                                 </ul>
                             </div>

@@ -53,7 +53,7 @@ class RoleController extends Controller
         ], $messages);
 
         $role = new Role();
-        $role->name = $request->name;
+        $role->name = strtoupper($request->name);
         $role->save();
         $role->users = $this->getRoleUsers($request, $role);
         return view('admin.roles.show', ['role' => $role]);
@@ -116,7 +116,7 @@ class RoleController extends Controller
         if (in_array($role->id, [1, 2, 3])) {
             return redirect()->back()->withErrors(['id' => __('errorMessageRoleCanNotBeUpdated')]);
         }
-        $role->name = $request->name;
+        $role->name = strtoupper($request->name);
         $role->save();
         $role->users = $this->getRoleUsers($request, $role);
         return view('admin.roles.show',['role'=>$role]);

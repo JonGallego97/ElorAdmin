@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+/* document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById("roleEdit").onclick = function() {
         roleModal()
@@ -120,3 +120,4 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+ */

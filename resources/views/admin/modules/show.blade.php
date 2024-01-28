@@ -137,6 +137,63 @@
                 </div>
             </div>
         </div>
+        <div class="mt-4">
+            <h3>{{__('Cycles')}}</h3>
+            <table class="table  table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">{{__('Name')}}</th>
+                        <th scope="col">{{__('Departament')}}</th>
+                        <th scope="col">{{__('Alumnos')}}</th>
+                        <th scope="col">{{__('Actions')}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($cyclesArray as $cycle)
+                        <tr>
+                            <td>
+                                <a href="{{route('cycles.show', $cycle['id'])}}" role="button">
+                                    {{$cycle['name']}}
+                                </a>
+                            </td>
+                            <td>{{ $cycle['department'][0] }}</td>
+                            <td></td>
+                            <td>
+                                <div class="d-flex">
+                                    <a href="{{ route('cycles.edit', $cycle['id']) }}" class="me-2" role="button">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteCycleModal" data-cycle-id="{{ $cycle['id'] }}" data-cycle-name="{{ $cycle['name'] }}" id="openModalBtn">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="row">
+                @if ($module->students->total() > 10)
+                <div class="form-inline col">
+                    <form class="form-inline" method="GET" id="perPageForm">
+                        <label class="mr-2" for="per_page">{{__('Show')}}{{__('Colon')}}</label>
+                        <select class="form-control" name="per_page" id="per_page" onchange="document.getElementById('perPageForm').submit()">
+                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                            <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
+                            <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
+                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                        </select>
+                    </form>
+                </div>
+                @endif
+                <div class="d-flex justify-content-end col">
+                    {!! $module->students->links() !!}
+                </div>
+            </div>
+        </div>
+
+        
 
     </div>
 

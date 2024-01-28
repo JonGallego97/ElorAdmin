@@ -74,7 +74,7 @@ class UserController extends Controller {
             ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'dual', 'first_login', 'year', 'created_at', 'updated_at']);
         }else if($request->role == 'PROFESOR'){
             //si no es admin
-
+            return redirect()->back()->with('error', 'No eres ADMINISTRADOR');
         }else{
             return view('admin.index',compact('users'));
 
@@ -99,7 +99,7 @@ class UserController extends Controller {
 
             $users->totalUsers = $totalUsers;
         }else {
-
+            return redirect()->back()->with('error', 'No eres ADMINISTRADOR');
         }
         return view('admin.users.index',['users'=>$users]);
     }
@@ -109,7 +109,7 @@ class UserController extends Controller {
      */
     public function create(Request $request)
     {
-        if ($request->is('admin*')) {
+        if ($request->is('admin*') && $this->ControllerFunctions->checkAdminRole()) {
             //si es admin
             $user = new User();
             $roles = Role::select('id','name')->orderBy("id")->get();
@@ -186,7 +186,7 @@ class UserController extends Controller {
         $user->surname1 = ucfirst(strtolower($request->surname1));
         $user->surname2 = ucfirst(strtolower($request->surname2));
         $user->dni = $request->dni;
-        $user->address = ucwords($request->address);
+        $user->address = ucwords(strtolower($request->address));
         $user->phone_number1 = $request->phone_number1;
         $user->phone_number2 = $request->phone_number2;
         $user->first_login = false;
@@ -229,6 +229,7 @@ class UserController extends Controller {
      */
     public function store(Request $request)
     {
+
         $user = User::with('roles')->where('id', $request->user_id)->first();
 
         $userRoles = $user->roles->pluck('id')->toArray();
@@ -262,8 +263,20 @@ class UserController extends Controller {
         if($isStudent){
             $result = $this->enrollStudentInCycle($user->id,$request->cycle);
         } elseif ($isTeacher) {
-            foreach($request->modules as $module)
-            $result =$this->enrollTeacherInModule($user->id, $module->id);
+            if(is_array($request->modules)) {
+                foreach($request->modules as $module) {
+                    $modulesArray = explode("/",$module);
+                    $cycle_id = $modulesArray[0];
+                    $module_id = $modulesArray[1];
+                    $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
+                }
+            } else {
+                $modulesArray = explode("/",$request->modules);
+                $cycle_id = $modulesArray[0];
+                $module_id = $modulesArray[1];
+                $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
+            }
+            
         }
         
         if($result) {
@@ -278,13 +291,58 @@ class UserController extends Controller {
      */
     public function show(User $user, Request $request)
     {
+        $userRoles = $user->roles->pluck('id')->toArray();
+
+        $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
+        $isStudent = in_array($studentRole->id,$userRoles,false);
+        $teacherRole = Role::select('id','name')->where('name','PROFESOR')->first();
+        $isTeacher = in_array($teacherRole->id,$userRoles,false);
+
+        $user = User::with('roles','cycles.modules','department','modules')->where('id', $user->id)->first();
+        $fileName =    $this->ControllerFunctions->createImageFromBase64($user);
 
         if ($request->is('admin*')) {
             //si es admin
-            $user = User::with('roles','cycles.modules','department')->where('id', $user->id)->first();
-                //$image = (new ControllerFunctions)->createImageFromBase64($user->image);
-            $fileName =    $this->ControllerFunctions->createImageFromBase64($user);
-            return view('admin.users.show', ['user' => $user])->with('imagePath','images/'.$fileName);
+            switch (true) {
+                case $isStudent:
+                    return view('admin.users.show', ['user' => $user])->with('imagePath','images/'.$fileName);
+                    break;
+                case $isTeacher:
+                    $userModules = $user->modules; // Obtener los módulos del usuario
+                    $cyclesWithModules = [];
+
+                    foreach ($userModules as $module) {
+                        $moduleCycles = $module->cycles; // Obtener los ciclos relacionados con el módulo
+                        foreach ($moduleCycles as $cycle) {
+                            $cycleId = $cycle->id;
+                            $cycleName = $cycle->name;
+
+                            // Verificar si el ciclo ya está en $cyclesWithModules por su 'id'
+                            if (!array_key_exists($cycleId, $cyclesWithModules)) {
+                                $cyclesWithModules[$cycleId] = [
+                                    'id' => $cycleId,
+                                    'name' => $cycleName,
+                                    'modules' => [],
+                                ];
+                            }
+
+                            // Agregar el módulo al ciclo correspondiente
+                            $cyclesWithModules[$cycleId]['modules'][] = [
+                                'id' => $module->id,
+                                'name' => $module->name,
+                                'code' => $module->code,
+                                'hours' => $module->hours
+                            ];
+                        }
+                    }
+                    return view('admin.users.show', ['user' => $user,'cyclesWithModules' => $cyclesWithModules])->with('imagePath','images/'.$fileName);
+                    break;
+                default:
+                    return view('admin.users.show', ['user' => $user])->with('imagePath','images/'.$fileName);
+                    break;
+            }
+
+            
             // if(optional(User::find($user->id)->roles->first())->id == 2){
             //     //Si es profesor
             //     $user = User::with('roles','cycles.modules')->where('id', $user->id)->first();
@@ -321,7 +379,7 @@ class UserController extends Controller {
      */
     public function edit(User $user, Request $request)
     {
-        if ($request->is('admin*')) {
+        if ($request->is('admin*') && $this->ControllerFunctions->checkAdminRole()) {
             //si es admin
             $departments = Department::select('id','name')->orderBy("name")->get();
                 $roles = Role::all();
@@ -354,10 +412,14 @@ class UserController extends Controller {
      */
     public function update(Request $request, User $user)
     {
-        $user->name = $request->name;
-        $user->save();
+        if ($this->ControllerFunctions->checkAdminRole()) {
+            dd($request);
+            $user->name = $request->name;
+            $user->save();
 
-        return view('cycles.show',['user'=>$user]);
+            return view('cycles.show',['user'=>$user]);
+        }
+        
     }
 
     /**
@@ -365,20 +427,14 @@ class UserController extends Controller {
      */
     public function destroy(Request $request, $userId)
     {
-        if ($request->is('admin*')) {
-            // //si es admin
-            // if(optional(User::find($userId)->roles->first())->id == 2){
-            //     //Si es profesor
-            //     $redirectRoute = 'admin.teachers.index';
-            // }else if(optional(User::find($userId)->roles->first())->id == 3){
-            //     $redirectRoute = 'admin.students.index';
-            // }
+        
+        if ($request->is('admin*') && $this->ControllerFunctions->checkAdminRole()) {
             $user = User::find($userId);
             if ($user && $user->id != 0) {
                 $user->delete();
                 return redirect()->back()->with('success', 'Usuario eliminado exitosamente.');
             } else {
-                return redirect()->back()->with('error', 'Usuario no encontrado.');
+                return redirect()->back()->with('error', 'No se puede eliminar el usuario ADMINISTRADOR');
             }
         }else {
         }
@@ -409,21 +465,22 @@ class UserController extends Controller {
         }
     }
 
-    public function enrollTeacherInModule($userId, $moduleId)
+    public function enrollTeacherInModule($userId, $moduleId,$cycleId)
     {
         $user = User::findOrFail($userId);
         $module = Module::findOrFail($moduleId);
 
-        dd($user->hasRole('PROFESOR'));
         if ($user->hasRole('PROFESOR')) {
             // Validar que el profesor no esté ya asignado al módulo
             if (!$user->modules->contains($module->id)) {
                 // Asociar al profesor con el módulo
-                $user->modules()->attach($module->id);
+                $user->modules()->attach($module->id, ['cycle_id' => $cycleId]);
 
-                return response()->json(['message' => 'Profesor asignado al módulo.']);
+                return true;
+                // return response()->json(['message' => 'Profesor asignado al módulo.']);
             } else {
-                return response()->json(['error' => 'El profesor ya está asignado a este módulo.']);
+                return false;
+                // return response()->json(['error' => 'El profesor ya está asignado a este módulo.']);
             }
         } else {
             // Si el usuario no es un profesor, retornar un mensaje de error que incluya los roles del usuario

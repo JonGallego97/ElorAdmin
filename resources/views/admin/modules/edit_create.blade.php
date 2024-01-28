@@ -38,6 +38,17 @@
                 <input type="text" class="form-control" id="hours" name="hours" required
                     value="{{$module->hours}}"/>
             </div>
+            <div class="form-group mb-3">
+                <label for="cycle" class="form-label">{{__('Cycle')}}</label>
+                <select id="cycle" name="cycle[]" class="form-control" multiple>
+                @foreach ($departmentsWithCycles as $department)
+                    <optgroup label='-- {{$department->name}} --'>
+                    @foreach ($department->cycles as $cycle)
+                    <option value="{{ $cycle->id }}">{{ $cycle['name'] }}</option>
+                    @endforeach
+                @endforeach
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary" name="">
                 @if($module->id != null)
                     {{__('Edit')}}

@@ -48,7 +48,7 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         $deparment = new Department();
-        $deparment->name = $request->name;
+        $deparment->name = ucwords(strtolower($request->name));
         $created = $deparment->save();
         if ($created) {
             return redirect()->route('departments.index');
@@ -66,9 +66,9 @@ class DepartmentController extends Controller
         return view('admin.departments.show', ['department' => $department]);
     }
 
-    public function edit()
+    public function edit(Department $department)
     {
-        return view('departments.create');
+        return view('admin.departments.edit_create',['department' => $department]);
     }
 
 
@@ -77,7 +77,7 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, Department $department)
     {
-        $department->name = $request->name;
+        $department->name = ucwords(strtolower($request->name));
         $department->save();
         return redirect()->route('departments.index');
     }

@@ -55,7 +55,9 @@ class CycleController extends Controller
      */
     public function create()
     {
-        return view('admin.cycles.edit_create');
+        $departments = Department::select('id','name')->orderBy('name','asc')->get();
+        $modules = Module::orderBy('name','asc')->get();
+        return view('admin.cycles.edit_create',['departments'=>$departments,'modules'=>$modules]);
     }
 
     /**
@@ -65,7 +67,11 @@ class CycleController extends Controller
     {
         $cycle = new Cycle();
         $cycle->name = $request->name;
+        $cycle->department_id = $request->department;
         $cycle->save();
+
+        $modules = $request->modules;
+        $cycle->modules()->attach($modules);
         return redirect()->route('cycles.index');
     }
 
@@ -132,14 +138,17 @@ class CycleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit()
+    public function edit(Cycle $cycle)
     {
         $adminRole = (new ControllerFunctions)->checkAdminRole();
         $adminRoute = (new ControllerFunctions)->checkAdminRoute();
+        $departments = Department::select('id','name')->orderBy('name','asc')->get();
+        $cycle = Cycle::with('modules')->where('id',$cycle->id)->get();
+        $allModules = Module::orderBy('name','asc')->get();
         if ($adminRole && $adminRoute) {
-            return view('admin.cycles.edit_create');
+            return view('admin.cycles.edit_create',['cycle'=>$cycle['0'],'allModules'=>$allModules,'departments'=>$departments]);
         } else {
-            return view('admin.cycles.edit_create');
+            return view('admin.cycles.index');
         }
         
     }
@@ -150,9 +159,18 @@ class CycleController extends Controller
     public function update(Request $request, Cycle $cycle)
     {
         $cycle->name = $request->name;
+        $cycle->modules()->sync($request->modules);
         $cycle->save();
 
-        return view('cycles.show',['cycle'=>$cycle]);
+        $cycleId = $cycle->id;
+        $cycle->count_students = $this->cycleCountStudents($cycleId);
+        $cycle->modules = $this->cycleModule($request, $cycleId);
+        foreach ($cycle->modules as $module) {
+            $module->count_teachers = $this->moduleTeachersCount($module->id);
+            $module->count_students = $this->moduleStudentsCount($module->id);
+        }
+        $cycle->department = Department::find($cycle->department_id);
+        return view('admin.cycles.show', compact('cycle'));
     }
 
     /**

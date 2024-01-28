@@ -3,7 +3,6 @@
 @section('nav')
 
 <div class="container">
-    <p>Extra</p>
     <form class="mt-2" name="extra_create_platform" action="{{ route('users.store') }}" method="POST">
         @csrf
         <div class="row">
@@ -19,34 +18,18 @@
                 </select>
             </div>
 
-            <div id="modules" class="col-6 form-group mb-3">
+            <div id="modules_div" class="col-6 form-group mb-3">
                 <label for="modules" class="form-label">{{__("Modules")}}</label>
-                <select class="form-control" id="select_modules" name="modules" multiple>
+                <select class="form-control" id="modules" name="modules[]" multiple="multiple">
                     @foreach($cycles as $cycle)
                     <optgroup label='-- {{$cycle->name}} --' data-department-id="{{$cycle->department_id}}">
                         @foreach($cycle->modules as $module)
-                            <option value={{$module->id}}>{{$module->name}}</option>
+                            <option value="{{$cycle->id}}/{{$module->id}}">{{$module->name}}</option>
                         @endforeach
                     </optgroup>
                     @endforeach
                 </select>
             </div>
-            <!-- @foreach($departments as $department)
-            <div id="dept{{$department->id}}" class="col-4 form-group mb-3">
-                <label for="modules_dept{{$department->id}}" class="form-label">{{__("Modules")}}</label>
-                <select class="form-control" id="modules_dept{{$department->id}}" name="modules_dept{{$department->id}}" multiple>
-                    @foreach($cycles as $cycle)
-                        @if($department->id == $cycle->department_id)
-                        <optgroup label='-- {{$cycle->name}} --'>
-                            @foreach($cycle->modules as $module)
-                                <option value={{$module->id}}>{{$module->name}}</option>
-                            @endforeach
-                        @endif
-                    @endforeach
-                </select>
-            </div>
-            @endforeach
-            @endif -->
             
             <!-- Solo si es alumno -->
             @if(in_array('ALUMNO',$userRolesNames) == true)
@@ -87,7 +70,7 @@
 <script>
     function handleDropdownChange() {
         var selectedDepartmentId = document.getElementById("department").value;
-        var modulesSelect = document.getElementById("select_modules");
+        var modulesSelect = document.getElementById("modules");
 
         // Si se selecciona la opción 0, mostrar todas las opciones
         if (selectedDepartmentId === "0") {
@@ -110,6 +93,4 @@
         }
     }
 </script>
-
-
 @endsection

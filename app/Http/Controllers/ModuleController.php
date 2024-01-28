@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Module;
 use App\Models\User;
+use App\Models\Department;
 use App\Models\Role;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -51,7 +52,8 @@ class ModuleController extends Controller
     public function create()
     {
         $module = new Module();
-        return view('admin.modules.create', ['module' => $module]);
+        $departmentsWithCycles = Department::has('cycles')->with('cycles')->get();
+        return view('admin.modules.edit_create', ['module' => $module,'departmentsWithCycles' => $departmentsWithCycles]);
     }
 
 
@@ -82,6 +84,11 @@ class ModuleController extends Controller
         $module->hours = $request->hours;
 
         $created = $module->save();
+
+        $cycles = $request->cycle;
+        $module->cycles()->attach($cycles);
+        
+
         if($created) {
             $module->teachers = $this->teachers($request, $module);;
             $module->students = $this->students($request, $module);;
@@ -94,13 +101,28 @@ class ModuleController extends Controller
      */
     public function show(Request $request, Module $module)
     {
+
         $module->teachers = $this->teachers($request, $module);
         $module->students = $this->students($request, $module);
-        return view('admin.modules.show',['module'=>$module]);
+        // foreach ($module->cycles as $cycle) {
+        //     $departments = $cycle->department()->pluck('name','id')->toArray();
+        //     $departmentsArray[$cycle->id] = $departments;
+        // }
+        foreach ($module->cycles as $cycle) {
+            $cycleInfo = [
+                'id' => $cycle->id,
+                'name' => $cycle->name,
+                'department' => $cycle->department()->pluck('name')->toArray(),
+            ];
+    
+            $resultArray[] = $cycleInfo;
+        }
+        return view('admin.modules.show',['module'=>$module,'cyclesArray' => $resultArray]);
     }
     public function edit(Module $module)
     {
-        return view('admin.modules.create', ['module' => $module]);
+        $departmentsWithCycles = Department::has('cycles')->with('cycles')->get();
+        return view('admin.modules.edit_create', ['module' => $module,'departmentsWithCycles' => $departmentsWithCycles]);
     }
 
     private function teachers(Request $request, Module $module){
@@ -148,6 +170,10 @@ class ModuleController extends Controller
         $module->hours = $request->hours;
 
         $updated = $module->save();
+
+        $cycles = $request->cycle;
+        $module->cycles()->sync($cycles);
+
         if($updated) {
             $module->teachers = $this->teachers($request, $module);
             $module->students = $this->students($request, $module);
