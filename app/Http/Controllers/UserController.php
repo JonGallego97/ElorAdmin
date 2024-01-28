@@ -74,7 +74,7 @@ class UserController extends Controller {
             ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'dual', 'first_login', 'year', 'created_at', 'updated_at']);
         }else if($request->role == 'PROFESOR'){
             //si no es admin
-            return redirect()->back()->with('error', 'No eres ADMINISTRADOR');
+            
         }else{
             return view('admin.index',compact('users'));
 
@@ -260,6 +260,7 @@ class UserController extends Controller {
 
 
         // Ciclos
+        
         if($isStudent){
             $result = $this->enrollStudentInCycle($user->id,$request->cycle);
         } elseif ($isTeacher) {
@@ -277,6 +278,8 @@ class UserController extends Controller {
                 $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
             }
             
+        } else {
+            $result = false;
         }
         
         if($result) {

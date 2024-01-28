@@ -36,6 +36,38 @@ class CycleSeeder extends Seeder
                 'department_id' => 1,
 
             ],
+            [
+                'id' => 4,
+                'name' => 'TÉCNICO SUPERIOR EN DISEÑO EN FABRICACIÓN MECANICA',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'department_id' => 7,
+
+            ],
+            [
+                'id' => 5,
+                'name' => 'TÉCNICO SUPERIOR EN PROGRAMACIÓN DE LA PRODUCCIÓN DE LA FABRICACIÓN MECÁNICA',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'department_id' => 7,
+
+            ],  
+            [
+                'id' => 6,
+                'name' => 'TÉCNICO SUPERIOR EN AGENCIAS DE VIAJE Y GESTIÓN DE EVENTOS',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'department_id' => 8,
+
+            ],
+            [
+                'id' => 7,
+                'name' => 'TÉCNICO SUPERIOR EN GUÍA, INFORMACIÓN Y ASISTENCIA TURÍSTICA',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'department_id' => 8,
+
+            ],
         ];
 
         foreach ($cycles as $cycle) {

@@ -30,6 +30,7 @@
                     @endforeach
                 </select>
             </div>
+            @endif
             
             <!-- Solo si es alumno -->
             @if(in_array('ALUMNO',$userRolesNames) == true)

@@ -49,5 +49,17 @@ class DepartmentSeeder extends Seeder
             "updated_at" => now(),
           
         ]);
+        DB::table('departments')->insert([
+            'name' => 'Fabricacion Mecanica',
+            "created_at" => now(),
+            "updated_at" => now(),
+          
+        ]);
+        DB::table('departments')->insert([
+            'name' => 'Hosteleria y Turismo',
+            "created_at" => now(),
+            "updated_at" => now(),
+          
+        ]);
     }
 }
