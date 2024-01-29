@@ -72,5 +72,6 @@
     "Registered":"Matriculado",
     "FirstYear": "Primero",
     "SecondYear": "Segundo",
-    "ExtraCreate": "Datos extra del Usuario"
+    "ExtraCreate": "Datos extra del Usuario",
+    "addCycle": "Añadir ciclo"
 }

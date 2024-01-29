@@ -49,7 +49,7 @@ class UserFactory extends Factory
             'name' => $name,
             'surname1' => $surname1,
             'surname2' => $surname2,
-            'email' => strtolower($name . "." . $surname1 . substr($surname2, 0, 2) . '@elorrieta-errekamari.com'),
+            'email' => strtolower(trim($name . "." . $surname1 . substr($surname2, 0, 2)) . '@elorrieta-errekamari.com'),
             'DNI' => $userID,
             'address' => $fakerSpain->address,
             'phone_number1' => $fakerSpain->numerify('#########'),

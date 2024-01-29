@@ -90,9 +90,18 @@ class ModuleController extends Controller
         
 
         if($created) {
-            $module->teachers = $this->teachers($request, $module);;
-            $module->students = $this->students($request, $module);;
-            return view('admin.modules.show', ['module' => $module]);
+            $module->teachers = $this->teachers($request, $module);
+            $module->students = $this->students($request, $module);
+            foreach ($module->cycles as $cycle) {
+                $cycleInfo = [
+                    'id' => $cycle->id,
+                    'name' => $cycle->name,
+                    'department' => $cycle->department()->pluck('name')->toArray(),
+                ];
+        
+                $resultArray[] = $cycleInfo;
+            }
+            return view('admin.modules.show',['module'=>$module,'cyclesArray' => $resultArray]);
         }
     }
 
@@ -104,10 +113,8 @@ class ModuleController extends Controller
 
         $module->teachers = $this->teachers($request, $module);
         $module->students = $this->students($request, $module);
-        // foreach ($module->cycles as $cycle) {
-        //     $departments = $cycle->department()->pluck('name','id')->toArray();
-        //     $departmentsArray[$cycle->id] = $departments;
-        // }
+
+
         foreach ($module->cycles as $cycle) {
             $cycleInfo = [
                 'id' => $cycle->id,
@@ -177,7 +184,16 @@ class ModuleController extends Controller
         if($updated) {
             $module->teachers = $this->teachers($request, $module);
             $module->students = $this->students($request, $module);
-            return view('admin.modules.show', ['module' => $module]);
+            foreach ($module->cycles as $cycle) {
+                $cycleInfo = [
+                    'id' => $cycle->id,
+                    'name' => $cycle->name,
+                    'department' => $cycle->department()->pluck('name')->toArray(),
+                ];
+        
+                $resultArray[] = $cycleInfo;
+            }
+            return view('admin.modules.show',['module'=>$module,'cyclesArray' => $resultArray]);
         }
     }
 

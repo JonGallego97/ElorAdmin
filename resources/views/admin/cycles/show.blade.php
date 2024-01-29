@@ -39,7 +39,6 @@
                         <th scope="col">{{__('Actions')}}</th>
                     </tr>
                 </thead>
-                @dd($cycle);
                 <tbody>
                     @foreach ($cycle->modules as $module)
                         <tr>

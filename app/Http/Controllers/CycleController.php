@@ -87,8 +87,8 @@ class CycleController extends Controller
             $cycle->count_students = $this->cycleCountStudents($cycleId);
             $cycle->modules = $this->cycleModule($request, $cycleId);
             foreach ($cycle->modules as $module) {
-                $module->count_teachers = $this->moduleTeachersCount($module->id);
-                $module->count_students = $this->moduleStudentsCount($module->id);
+                $module->count_teachers = $this->moduleTeachersCount($module->id,$cycle->id);
+                $module->count_students = $this->moduleStudentsCount($module->id,$cycle->id);
             }
             $cycle->department = Department::find($cycle->department_id);
             return view('admin.cycles.show', compact('cycle'));
@@ -117,22 +117,40 @@ class CycleController extends Controller
         ->paginate($perPage);
     }
 
-    private function moduleTeachersCount($moduleId){
-        return Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
-        ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
-        ->join('role_users', 'users.id', '=', 'role_users.user_id')
-        ->where('role_users.role_id', '=', 2)
-        ->where('modules.id', '=', $moduleId)
-        ->count();
-    }
+    // private function moduleTeachersCount($moduleId){
+    //     return Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
+    //     ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
+    //     ->join('role_users', 'users.id', '=', 'role_users.user_id')
+    //     ->where('role_users.role_id', '=', 2)
+    //     ->where('modules.id', '=', $moduleId)
+    //     ->count();
+    // }
 
-    private function moduleStudentsCount($moduleId){
+    // private function moduleStudentsCount($moduleId){
+    //     return Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
+    //     ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
+    //     ->join('role_users', 'users.id', '=', 'role_users.user_id')
+    //     ->where('role_users.role_id', '=', 3)
+    //     ->where('modules.id', '=', $moduleId)
+    //     ->count();
+    // }
+    private function moduleStudentsCount($moduleId, $cycleId) {
         return Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
-        ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
-        ->join('role_users', 'users.id', '=', 'role_users.user_id')
-        ->where('role_users.role_id', '=', 3)
-        ->where('modules.id', '=', $moduleId)
-        ->count();
+            ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
+            ->join('role_users', 'users.id', '=', 'role_users.user_id')
+            ->where('role_users.role_id', '=', 3)
+            ->where('modules.id', '=', $moduleId)
+            ->where('module_user_cycle.cycle_id', '=', $cycleId)
+            ->count();
+    }
+    private function moduleTeachersCount($moduleId, $cycleId) {
+        return Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
+            ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
+            ->join('role_users', 'users.id', '=', 'role_users.user_id')
+            ->where('role_users.role_id', '=', 2)
+            ->where('modules.id', '=', $moduleId)
+            ->where('module_user_cycle.cycle_id', '=', $cycleId)
+            ->count();
     }
 
     /**
@@ -166,8 +184,8 @@ class CycleController extends Controller
         $cycle->count_students = $this->cycleCountStudents($cycleId);
         $cycle->modules = $this->cycleModule($request, $cycleId);
         foreach ($cycle->modules as $module) {
-            $module->count_teachers = $this->moduleTeachersCount($module->id);
-            $module->count_students = $this->moduleStudentsCount($module->id);
+            $module->count_teachers = $this->moduleTeachersCount($module->id,$cycle->id);
+            $module->count_students = $this->moduleStudentsCount($module->id,$cycle->id);
         }
         $cycle->department = Department::find($cycle->department_id);
         return view('admin.cycles.show', compact('cycle'));
@@ -201,8 +219,8 @@ class CycleController extends Controller
                 $cycle->count_students = $this->cycleCountStudents($cycleId);
                 $cycle->modules = $this->cycleModule($request, $cycleId);
                 foreach ($cycle->modules as $module) {
-                    $module->count_teachers = $this->moduleTeachersCount($module->id);
-                    $module->count_students = $this->moduleStudentsCount($module->id);
+                    $module->count_teachers = $this->moduleTeachersCount($module->id,$cycle->id);
+                    $module->count_students = $this->moduleStudentsCount($module->id,$cycle->id);
                 }
                 $cycle->department = Department::find($cycle->department_id);
                 return view('admin.cycles.show',['cycle'=>$cycle]);

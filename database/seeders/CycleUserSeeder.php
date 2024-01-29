@@ -34,20 +34,28 @@ class CycleUserSeeder extends Seeder
         }
         
 
-        // Itera sobre los usuarios y asigna ciclos aleatorios a cada uno
+        // Itera sobre los usuarios y asigna un ciclo aleatorio a cada uno
         $userStudents->each(function ($user) use ($cycles,&$lastRegistrationNumber) {
 
             $registrationNumber = ++$lastRegistrationNumber;
             $registrationDate = rand(strtotime("01/01/1990"),strtotime(today()));
             $registrationDate = date('Y-m-d',$registrationDate);
-
+            $cycleId = $cycles->random(1)->pluck('id')->toArray();
             $user->cycles()->attach(
-                $cycles->random(1)->pluck('id')->toArray(),
+                $cycleId,
                 [
                     'cycle_registration_number' => $registrationNumber,
                     'registration_date' => $registrationDate
                 ]
             );
+            $cycles = Cycle::with('modules')->where('id',$cycleId[0])->get();
+            foreach($cycles as $cycle) {
+                    $modules = $cycle->modules;
+                    foreach ($modules as $module) {
+                        $user->modules()->attach($module,['cycle_id' => $cycleId[0]]);
+                    }
+            }
+            
         });
 
         $userTeachers = User::whereHas('roles', function ($query) {

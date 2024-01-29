@@ -52,6 +52,11 @@
                         <h2>{{ $user['department']['name'] }}</h2>
                     </div>
                     @endif
+                    <div class="col d-flex justify-content-end">
+                        <a href="{{ route('users.edit', $user) }}" class="me-2" role="button">
+                            <i class="bi bi-pencil-square" style="font-size: 24px;"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -82,7 +87,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col d-flex justify-content-end">
                         <!-- photo -->
                         <img src="{{ asset($imagePath) }}" alt="Imagen" />
                     </div>
@@ -90,7 +95,26 @@
                 <hr>
                 <!-- Si tiene el rol de Profesor -->
                 @if(in_array('PROFESOR',$user->roles->pluck('name')->toArray()))
-                    <h3>{{__('Ciclos')}}</h3>
+                    <form class="row form" name="add_module" action="{{ route('users.addModule',$user) }}" method="POST">
+                        @method('PUT')
+                        @csrf
+                        <div class="col-5 mb-3">
+                            <h3>{{__('Cycles')}}</h3>
+                        </div>
+                        <div class="col-7 d-flex justify-content-end mb-3">
+                            <select class="form-control" id="newModule" name="newModule">
+                                <option value="null">{{__("Modules")}}</option>
+                                @foreach($allCyclesWithModules as $cycle)
+                                <optgroup label='-- {{$cycle->name}} --' data-department-id="{{$cycle->department_id}}">
+                                    @foreach($cycle->modules as $module)
+                                        <option value="{{$cycle->id}}/{{$module->id}}">{{$module->name}}</option>
+                                    @endforeach
+                                </optgroup>
+                                @endforeach
+                            </select>
+                            <button type="submit" class="col-2 ml-3 btn btn-primary" name="">{{__("addCycle")}}</button>
+                        </div>
+                    </form>
                     
                     @foreach ($cyclesWithModules as $cycle)
                         <div class="card mb-3">
@@ -111,9 +135,31 @@
                     @endforeach
                 @endif
 
-                <!-- Si tiene el rol de Profesor -->
+                <!-- Si tiene el rol de Alumno -->
                 @if(in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
-                    <h3>{{__('Cycles')}}</h3>
+                <div class="row">
+                    <div class="col form-group mb-3">
+                        <h3>{{__('Cycles')}}</h3>
+                    </div>
+                    <form class="mt-2" name="add_cycle" action="{{ route('users.addCycle',$user) }}" method="POST">
+                        @method('PUT')
+                        @csrf
+                        <div class="col form-group mb-3">
+                            <select id="newCycle" name="newCycle">
+                                <option value="null">{{__('Cycles')}}</optgroup>
+                                @foreach($departmentsWithCycles as $department)
+                                    <optgroup label="{{$department->name}}">
+                                    @foreach($department->cycles as $cycle)
+                                        <option value="{{$cycle->id}}">{{$cycle->name}}</option>
+                                    @endforeach
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-2 form-group mb-3">
+                        <button type="submit" class="btn btn-primary" name="">{{__("addCycle")}}</button>
+                        </div>
+                    </form>
+                </div>
                     @foreach ($user['cycles'] as $cycle)
                         <div class="card mb-3">
                             <div class="card-header">

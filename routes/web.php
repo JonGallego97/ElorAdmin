@@ -41,6 +41,8 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     //Users
     Route::get('users/{user}/editRoles', [UserController::class, 'editRoles'])->name('users.editRoles');
     Route::put('users/{user}/editCycles', [UserController::class, 'editCycles'])->name('users.editCycles');
+    Route::put('users/{user}/addCycle',[UserController::class,'addCycle'])->name('users.addCycle');
+    Route::put('users/{user}/addModule',[UserController::class,'addModule'])->name('users.addModule');
     Route::delete('users/destroy/{userId}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/students', [UserController::class, 'indexStudent'])->name('students.index');
