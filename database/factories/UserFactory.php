@@ -45,7 +45,7 @@ class UserFactory extends Factory
         $userID = $userID . $DNILetterArray[$letter];
 
         return [
-            'password' => bcrypt('contraseña'), // Puedes utilizar un método más seguro para generar contraseñas
+            'password' => bcrypt('password'), // Puedes utilizar un método más seguro para generar contraseñas
             'name' => $name,
             'surname1' => $surname1,
             'surname2' => $surname2,

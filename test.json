@@ -1,142 +1,189 @@
-{
-    "id": 0,
-    "email": "admin@elorrieta-errekamari.com",
-    "name": "Admin",
-    "surname1": "Admin",
-    "surname2": "Admin",
-    "address": "Dirección",
-    "phoneNumber1": 123456789,
-    "phoneNumber2": 987654321,
-    "dual": null,
-    "firstLogin": false,
-    "roles": [
-        {
-            "id": 1,
-            "name": "ADMINISTRADOR"
-        }
-    ],
-    "department": {
+[
+    {
         "id": 1,
-        "name": "Informatica"
-    },
-    "listChats": [
-        {
-            "id": 1,
-            "name": "Home",
-            "listMessages": [
-                {
+        "name": "Home",
+        "createdAt": null,
+        "updatedAt": null,
+        "listMessages": [
+            {
+                "id": 1,
+                "dataType": "TEXT",
+                "content": null,
+                "createdAt": "2024-01-18T17:59:29.000+00:00",
+                "userId": {
                     "id": 1,
-                    "dataType": "TEXT",
-                    "content": null,
-                    "createdAt": "2024-01-18T17:59:29.000+00:00",
-                    "userId": {
-                        "id": 1,
-                        "email": "Gabriel.VicenteAl@elorrieta-errekamari.com",
-                        "name": "Gabriel",
-                        "surname1": "Vicente",
-                        "surname2": "Alcala",
-                        "address": "Camiño Javier, 2, Ático 1º, 53509, Munguía de San Pedro",
-                        "phoneNumber1": 277797267,
-                        "phoneNumber2": 185006964,
-                        "dual": null,
-                        "firstLogin": true,
-                        "roles": [
-                            {
-                                "id": 3,
-                                "name": "ALUMNO"
-                            }
-                        ],
-                        "department": null,
-                        "listChats": null,
-                        "enabled": true,
-                        "accountNonLocked": true,
-                        "username": "Gabriel.VicenteAl@elorrieta-errekamari.com",
-                        "authorities": null,
-                        "dni": "57222385",
-                        "password": null,
-                        "credentialsNonExpired": true,
-                        "accountNonExpired": true
-                    }
-                },
-                {
+                    "email": "Gabriel.VicenteAl@elorrieta-errekamari.com",
+                    "name": "Gabriel",
+                    "surname1": "Vicente",
+                    "surname2": "Alcala",
+                    "phoneNumber1": 277797267,
+                    "enabled": true,
+                    "accountNonLocked": true,
+                    "accountNonExpired": true,
+                    "credentialsNonExpired": true,
+                    "username": "Gabriel.VicenteAl@elorrieta-errekamari.com"
+                }
+            },
+            {
+                "id": 2,
+                "dataType": "TEXT",
+                "content": null,
+                "createdAt": "2024-01-18T17:59:29.000+00:00",
+                "userId": {
                     "id": 2,
-                    "dataType": "TEXT",
-                    "content": null,
-                    "createdAt": "2024-01-18T17:59:29.000+00:00",
-                    "userId": {
-                        "id": 2,
-                        "email": "Ainhoa.GuardadoCa@elorrieta-errekamari.com",
-                        "name": "Ainhoa",
-                        "surname1": "Guardado",
-                        "surname2": "Carrion",
-                        "address": "Travessera Sotelo, 6, 8º D, 37816, Ramos Baja",
-                        "phoneNumber1": 710114123,
-                        "phoneNumber2": 869609023,
-                        "dual": null,
-                        "firstLogin": false,
-                        "roles": [
-                            {
-                                "id": 3,
-                                "name": "ALUMNO"
-                            }
-                        ],
-                        "department": null,
-                        "listChats": null,
-                        "enabled": true,
-                        "accountNonLocked": true,
-                        "username": "Ainhoa.GuardadoCa@elorrieta-errekamari.com",
-                        "authorities": null,
-                        "dni": "97584010",
-                        "password": null,
-                        "credentialsNonExpired": true,
-                        "accountNonExpired": true
-                    }
+                    "email": "Ainhoa.GuardadoCa@elorrieta-errekamari.com",
+                    "name": "Ainhoa",
+                    "surname1": "Guardado",
+                    "surname2": "Carrion",
+                    "phoneNumber1": 710114123,
+                    "enabled": true,
+                    "accountNonLocked": true,
+                    "accountNonExpired": true,
+                    "credentialsNonExpired": true,
+                    "username": "Ainhoa.GuardadoCa@elorrieta-errekamari.com"
                 }
-            ],
-            "listUsers": [
-                {
-                    "id": {
-                        "chatId": 1,
-                        "userId": 0
-                    },
-                    "user": {
-                        "id": 0,
-                        "name": "Admin"
-                    },
-                    "admin": true
+            }
+        ],
+        "listUsers": [
+            {
+                "id": {
+                    "chatId": 1,
+                    "userId": 0
                 },
-                {
-                    "id": {
-                        "chatId": 1,
-                        "userId": 1
-                    },
-                    "user": {
-                        "id": 1,
-                        "name": "Gabriel"
-                    },
-                    "admin": true
+                "user": {
+                    "id": 0,
+                    "name": "Admin",
+                    "email": "admin@elorrieta-errekamari.com"
                 },
-                {
-                    "id": {
-                        "chatId": 1,
-                        "userId": 2
-                    },
-                    "user": {
-                        "id": 2,
-                        "name": "Ainhoa"
-                    },
-                    "admin": true
-                }
-            ],
-            "public": true
-        }
-    ],
-    "enabled": true,
-    "accountNonLocked": true,
-    "username": "admin@elorrieta-errekamari.com",
-    "authorities": null,
-    "dni": "12345678A",
-    "password": null,
-    "credentialsNonExpired": true,
-    "accountNonExpired": true
-}
+                "admin": true
+            },
+            {
+                "id": {
+                    "chatId": 1,
+                    "userId": 1
+                },
+                "user": {
+                    "id": 1,
+                    "name": "Gabriel",
+                    "email": "Gabriel.VicenteAl@elorrieta-errekamari.com"
+                },
+                "admin": true
+            },
+            {
+                "id": {
+                    "chatId": 1,
+                    "userId": 2
+                },
+                "user": {
+                    "id": 2,
+                    "name": "Ainhoa",
+                    "email": "Ainhoa.GuardadoCa@elorrieta-errekamari.com"
+                },
+                "admin": true
+            }
+        ],
+        "public": true
+    },
+    {
+        "id": 3,
+        "name": "Admin",
+        "createdAt": null,
+        "updatedAt": null,
+        "listMessages": [],
+        "listUsers": [
+            {
+                "id": {
+                    "chatId": 3,
+                    "userId": 0
+                },
+                "user": {
+                    "id": 0,
+                    "name": "Admin",
+                    "email": "admin@elorrieta-errekamari.com"
+                },
+                "admin": true
+            }
+        ],
+        "public": false
+    },
+    {
+        "id": 33,
+        "name": "Nombre del Chat",
+        "createdAt": null,
+        "updatedAt": null,
+        "listMessages": [],
+        "listUsers": [
+            {
+                "id": {
+                    "chatId": 33,
+                    "userId": 0
+                },
+                "user": {
+                    "id": 0,
+                    "name": "Admin",
+                    "email": "admin@elorrieta-errekamari.com"
+                },
+                "admin": true
+            }
+        ],
+        "public": true
+    },
+    {
+        "id": 34,
+        "name": "Chat Admin",
+        "createdAt": null,
+        "updatedAt": null,
+        "listMessages": [],
+        "listUsers": [
+            {
+                "id": {
+                    "chatId": 34,
+                    "userId": 0
+                },
+                "user": {
+                    "id": 0,
+                    "name": "Admin",
+                    "email": "admin@elorrieta-errekamari.com"
+                },
+                "admin": true
+            },
+            {
+                "id": {
+                    "chatId": 34,
+                    "userId": 1
+                },
+                "user": {
+                    "id": 1,
+                    "name": "Gabriel",
+                    "email": "Gabriel.VicenteAl@elorrieta-errekamari.com"
+                },
+                "admin": true
+            },
+            {
+                "id": {
+                    "chatId": 34,
+                    "userId": 2
+                },
+                "user": {
+                    "id": 2,
+                    "name": "Ainhoa",
+                    "email": "Ainhoa.GuardadoCa@elorrieta-errekamari.com"
+                },
+                "admin": false
+            },
+            {
+                "id": {
+                    "chatId": 34,
+                    "userId": 3
+                },
+                "user": {
+                    "id": 3,
+                    "name": "Olivia",
+                    "email": "Olivia.FontSa@elorrieta-errekamari.com"
+                },
+                "admin": false
+            }
+        ],
+        "public": true
+    }
+]
