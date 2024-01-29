@@ -51,7 +51,7 @@ class User extends Authenticatable
     //Relacion con Modulos (Profesores)
     public function modules()
     {
-        return $this->belongsToMany(Module::class, 'module_user', 'user_id', 'module_id');
+        return $this->belongsToMany(Module::class, 'module_user_cycle', 'user_id', 'module_id');
     }
 
     //Relacion con Ciclos (Alumnos)
