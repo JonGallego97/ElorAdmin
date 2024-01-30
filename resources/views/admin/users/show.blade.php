@@ -137,15 +137,14 @@
 
                 <!-- Si tiene el rol de Alumno -->
                 @if(in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
-                <div class="row">
-                    <div class="col form-group mb-3">
-                        <h3>{{__('Cycles')}}</h3>
-                    </div>
-                    <form class="mt-2" name="add_cycle" action="{{ route('users.addCycle',$user) }}" method="POST">
+                <form class="row form" name="add_cycle" action="{{ route('users.addCycle',$user) }}" method="POST">
                         @method('PUT')
                         @csrf
-                        <div class="col form-group mb-3">
-                            <select id="newCycle" name="newCycle">
+                        <div class="col-5 mb-3">
+                            <h3>{{__('Cycles')}}</h3>
+                        </div>
+                        <div class="col-7 d-flex justify-content-end mb-3">
+                            <select class="form-control" id="newCycle" name="newCycle">
                                 <option value="null">{{__('Cycles')}}</optgroup>
                                 @foreach($departmentsWithCycles as $department)
                                     <optgroup label="{{$department->name}}">
@@ -154,12 +153,9 @@
                                     @endforeach
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="col-2 form-group mb-3">
-                        <button type="submit" class="btn btn-primary" name="">{{__("addCycle")}}</button>
+                            <button type="submit" class="col-2 ml-3 btn btn-primary" name="">{{__("addCycle")}}</button>
                         </div>
                     </form>
-                </div>
                     @foreach ($user['cycles'] as $cycle)
                         <div class="card mb-3">
                             <div class="card-header">

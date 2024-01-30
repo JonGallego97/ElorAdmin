@@ -67,24 +67,40 @@ class CycleUserSeeder extends Seeder
 
         $userTeachers->each(function ($user) {
 
-            $isLanguagesDept = Department::select('id')->where('name','Idiomas')->pluck('id')->first();
-            $isFolDept = Department::select('id')->where('name','FOL')->pluck('id')->first();
-            $isEieDept = Department::select('id')->where('name','Empresa e Iniciativa Emprendedora')->pluck('id')->first();
+            $languagesDeptId = Department::select('id')->where('name','Idiomas')->pluck('id')->first();
+            $folDeptId = Department::select('id')->where('name','FOL')->pluck('id')->first();
+            $eieDeptId = Department::select('id')->where('name','Empresa e Iniciativa Emprendedora')->pluck('id')->first();
+            $specialModulesDeptIdArray = array($languagesDeptId,$folDeptId,$eieDeptId);
 
-            switch ($user->department_id) {
-                case $isLanguagesDept:
-                    $moduleNames = ['Inglés técnico','Inglés', 'Segunda lengua extranjera'];
-                    break;
-                case $isFolDept:
-                    $moduleNames = 'Formación y Orientación Laboral';
-                    break;
-                case $isEieDept:
-                    $moduleNames = 'Empresa e Iniciativa Emprendedora';
-                    break;
-            }
 
-            
-            if(isset($moduleNames)) {
+            $languageModules = ['Inglés técnico','Inglés', 'Segunda lengua extranjera'];
+            $folModules = 'Formación y Orientación Laboral';
+            $eieModules = 'Empresa e Iniciativa Emprendedora';
+
+
+            $modulesInDepartment = Module::whereIn('id', function ($query) use ($user) {
+                $query->select('module_id')
+                      ->from('cycle_module')
+                      ->whereIn('cycle_id', function ($subQuery) use ($user) {
+                          $subQuery->select('id')
+                                   ->from('cycles')
+                                   ->where('department_id', $user->department_id);
+                      });
+            })->get();
+
+            if($modulesInDepartment->isEmpty()) {
+                $moduleNames = null;
+                switch ($user->department_id) {
+                    case $languagesDeptId:
+                        $moduleNames = $languageModules;
+                        break;
+                    case $folDeptId:
+                        $moduleNames = $folModules;
+                        break;
+                    case $eieDeptId:
+                        $moduleNames = $eieModules;
+                        break;
+                }
                 if(is_array($moduleNames)) {
                     $modulesInDepartment = Module::whereIn('id', function ($query) use ($moduleNames) {
                         $query->select('id')
@@ -103,38 +119,36 @@ class CycleUserSeeder extends Seeder
                             ->where('name', 'LIKE', '%' . $moduleNames . '%');
                     })->get();
                 }
-            } else {
-                $modulesInDepartment = Module::whereIn('id', function ($query) use ($user) {
-                    $query->select('module_id')
-                          ->from('cycle_module')
-                          ->whereIn('cycle_id', function ($subQuery) use ($user) {
-                              $subQuery->select('id')
-                                       ->from('cycles')
-                                       ->where('department_id', $user->department_id);
-                          });
-                })->get();
             }
-
 
             if (!$modulesInDepartment->isEmpty()) {
                 $maxModulesToAttach = 5;
                 $randomModules = $modulesInDepartment->random(mt_rand(1, min($maxModulesToAttach, $modulesInDepartment->count())));
                 foreach($randomModules as $module) {
-                    $cycle_id = DB::table('cycle_module')
-                        ->where('module_id', $module->id)
-                        ->pluck('cycle_id')->toArray();
-
-                    // Verificar que se obtuvieron ciclos
-                    if (!empty($cycle_id)) {
-                        // Adjuntar el módulo al usuario con los ciclos correspondientes
-                        $user->modules()->attach($module->id, ['cycle_id' => $cycle_id[0]]);
+                    $this->command->info("Prueba: " . in_array($user->department_id,$specialModulesDeptIdArray));
+                    $isCorrect = false;
+                    if (in_array($user->department_id,$specialModulesDeptIdArray)) {
+                        $cycle_id = DB::table('cycle_module')
+                            ->where('module_id', $module->id)
+                            ->pluck('cycle_id')->toArray();
+                            $isCorrect = true;
+                    } else {
+                        if(!in_array($module->name,$languageModules) && $module->name != $folModules && $module->name != $eieModules) {
+                            $cycle_id = DB::table('cycle_module')
+                            ->where('module_id', $module->id)
+                            ->pluck('cycle_id')->toArray();          
+                            $isCorrect = true;              
+                        }
                     }
-                }           
+                    if ($isCorrect) {
+                        $user->modules()->attach($module->id, ['cycle_id' => $cycle_id[0]]);
+                        $isCorrect = false;
+                    }           
+                }
             }
-            
         });
 
-
+        
 
     }
 }

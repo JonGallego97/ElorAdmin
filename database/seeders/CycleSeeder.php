@@ -18,14 +18,14 @@ class CycleSeeder extends Seeder
                 'name' => 'TÉCNICO EN SISTEMAS MICROINFORMÁTICOS Y REDES',
                 'created_at' => now(),
                 'updated_at' => now(),
-                'department_id' => 1,
+                'department_id' => 5,
             ],
             [
                 'id' => 2,
                 'name' => 'TÉCNICO SUPERIOR EN DESARROLLO DE APLICACIONES MULTIPLATAFORMA',
                 'created_at' => now(),
                 'updated_at' => now(),
-                'department_id' => 1,
+                'department_id' => 5,
 
             ],
             [
@@ -33,7 +33,7 @@ class CycleSeeder extends Seeder
                 'name' => 'TÉCNICO SUPERIOR EN DESARROLLO DE APLICACIONES WEB',
                 'created_at' => now(),
                 'updated_at' => now(),
-                'department_id' => 1,
+                'department_id' => 5,
 
             ],
             [
@@ -41,7 +41,7 @@ class CycleSeeder extends Seeder
                 'name' => 'TÉCNICO SUPERIOR EN DISEÑO EN FABRICACIÓN MECANICA',
                 'created_at' => now(),
                 'updated_at' => now(),
-                'department_id' => 7,
+                'department_id' => 9,
 
             ],
             [
@@ -49,7 +49,7 @@ class CycleSeeder extends Seeder
                 'name' => 'TÉCNICO SUPERIOR EN PROGRAMACIÓN DE LA PRODUCCIÓN DE LA FABRICACIÓN MECÁNICA',
                 'created_at' => now(),
                 'updated_at' => now(),
-                'department_id' => 7,
+                'department_id' => 9,
 
             ],  
             [
@@ -57,7 +57,7 @@ class CycleSeeder extends Seeder
                 'name' => 'TÉCNICO SUPERIOR EN AGENCIAS DE VIAJE Y GESTIÓN DE EVENTOS',
                 'created_at' => now(),
                 'updated_at' => now(),
-                'department_id' => 8,
+                'department_id' => 10,
 
             ],
             [
@@ -65,7 +65,7 @@ class CycleSeeder extends Seeder
                 'name' => 'TÉCNICO SUPERIOR EN GUÍA, INFORMACIÓN Y ASISTENCIA TURÍSTICA',
                 'created_at' => now(),
                 'updated_at' => now(),
-                'department_id' => 8,
+                'department_id' => 10,
 
             ],
         ];

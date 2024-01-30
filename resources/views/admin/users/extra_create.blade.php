@@ -72,26 +72,30 @@
     function handleDropdownChange() {
         var selectedDepartmentId = document.getElementById("department").value;
         var modulesSelect = document.getElementById("modules");
+        var modulesDiv = document.getElementById("modules_div");
 
-        // Si se selecciona la opción 0, mostrar todas las opciones
-        if (selectedDepartmentId === "0") {
-            var optgroups = modulesSelect.getElementsByTagName("optgroup");
+        // Define un array que contiene los departmentIds permitidos
+        var noTeacherDepartmentIds = [1,2,3,4];
+
+        var optgroups = modulesSelect.getElementsByTagName("optgroup");
             for (var i = 0; i < optgroups.length; i++) {
-                optgroups[i].style.display = "block";
+                // Obtiene el department_id del optgroup
+                var departmentId = optgroups[i].getAttribute("data-department-id");
+
+                // Muestra u oculta el optgroup según el department_id y la existencia en el array permitido
+                if (selectedDepartmentId === "0" || departmentId === selectedDepartmentId) {
+                    optgroups[i].style.display = "block";
+                } else {
+                    optgroups[i].style.display = "none";
+                }
             }
+        if (noTeacherDepartmentIds.includes(selectedDepartmentId)) {
+            modulesDiv.style.visibility = "hidden";
         } else {
-            // Oculta todos los grupos de opciones
-            var optgroups = modulesSelect.getElementsByTagName("optgroup");
-            for (var i = 0; i < optgroups.length; i++) {
-                optgroups[i].style.display = "none";
-            }
-
-            // Muestra solo el grupo de opciones correspondiente al departamento seleccionado
-            var selectedOptgroup = modulesSelect.querySelector("optgroup[data-department-id='" + selectedDepartmentId + "']");
-            if (selectedOptgroup) {
-                selectedOptgroup.style.display = "block";
-            }
+            modulesDiv.style.visibility = "visible";
         }
     }
+
+
 </script>
 @endsection

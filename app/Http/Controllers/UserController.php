@@ -29,7 +29,7 @@ class UserController extends Controller {
     public function indexStudent(Request $request)
     {
 
-        if ($request->is('admin*')) {
+        if ($this->ControllerFunctions->checkAdminRoute()) {
             //si es admin
             $perPage = $request->input('per_page', 10);
             $users = User::whereHas('roles', function ($query) {
@@ -203,12 +203,16 @@ class UserController extends Controller {
         $departments = Department::select('id','name')->orderBy("name")->get();
         $cycles = Cycle::with('modules')->orderBy('department_id')->get();
 
-        $englishModulesCodes = Module::where('name','Inglés Técnico')->pluck('code')->toArray();
-        $englishModules = Cycle::with(['modules' => function ($query) use ($englishModulesCodes) {
-            $query->where('code', $englishModulesCodes);
+        $languageModulesCodes = Module::whereIn('name', ['Inglés Técnico', 'Inglés', 'Segunda lengua extranjera'])->pluck('code')->toArray();
+        $languageModules = Cycle::with(['modules' => function ($query) use ($languageModulesCodes) {
+            $query->where('code', $languageModulesCodes);
         }])->get();
-
-        return view('admin.users.extra_create', ['user_id'=>$user->id,'userRolesNames'=>$userRolesNames,'englishModules' => $englishModules, 'roles'=> $roles,'departments' => $departments,'cycles' => $cycles]);
+        if($user->hasRole("ADMINISTRADOR")){
+            return redirect()->route('users.show',['user'=>$user]);
+        } else {
+            return view('admin.users.extra_create', ['user_id'=>$user->id,'userRolesNames'=>$userRolesNames,'languageModules' => $languageModules, 'roles'=> $roles,'departments' => $departments,'cycles' => $cycles]);
+        }
+       
     }
 
 
