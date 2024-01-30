@@ -44,7 +44,7 @@
                                 </a>
                             </td>
                             <td>{{ $user->email }}</td>
-                            <td>{{ $user->DNI }}</td>
+                            <td>{{ $user->dni }}</td>
                             <td>
                                 <div class="d-flex">
                                     <a href="{{ route('users.edit', $user) }}" class="me-2" role="button">

@@ -116,10 +116,16 @@ class ModuleController extends Controller
 
 
         foreach ($module->cycles as $cycle) {
+            $studentCount = User::whereHas('cycles', function ($query) use ($cycle) {
+                $query->where('cycle_id', $cycle->id);
+            })->whereHas('roles', function ($query) {
+                $query->where('name', "ALUMNO");
+            })->count();
             $cycleInfo = [
                 'id' => $cycle->id,
                 'name' => $cycle->name,
                 'department' => $cycle->department()->pluck('name')->toArray(),
+                'students' => $studentCount
             ];
     
             $resultArray[] = $cycleInfo;

@@ -47,7 +47,7 @@
                                 </a>
                             </td>
                             <td>{{ $user->email }}</td>
-                            <td>{{ $user->DNI }}</td>
+                            <td>{{ $user->dni }}</td>
                             <td>
                                 <div class="d-flex">
                                     <a href="{{ route('users.edit', $user) }}" class="me-2" role="button">
@@ -102,7 +102,7 @@
                                 </a>
                             </td>
                             <td>{{ $user->email }}</td>
-                            <td>{{ $user->DNI }}</td>
+                            <td>{{ $user->dni }}</td>
                             <td>
                                 <div class="d-flex">
                                     <a href="{{ route('users.edit', $user) }}" class="me-2" role="button">
@@ -157,7 +157,7 @@
                                 </a>
                             </td>
                             <td>{{ $cycle['department'][0] }}</td>
-                            <td></td>
+                            <td>{{ $cycle['students'] }}</td>
                             <td>
                                 <div class="d-flex">
                                     <a href="{{ route('cycles.edit', $cycle['id']) }}" class="me-2" role="button">

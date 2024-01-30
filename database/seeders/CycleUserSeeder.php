@@ -9,7 +9,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Cycle;
+use App\Models\Department;
 use App\Models\Module;
+use App\Models\Role;
 
 class CycleUserSeeder extends Seeder
 {
@@ -58,21 +60,63 @@ class CycleUserSeeder extends Seeder
             
         });
 
+
         $userTeachers = User::whereHas('roles', function ($query) {
             $query->where('name', "PROFESOR"); // Asegúrate de que el id coincida con el rol que estás buscando
         })->get();
 
         $userTeachers->each(function ($user) {
-            $modulesInDepartment = Module::whereIn('id', function ($query) use ($user) {
-                $query->select('module_id')
-                      ->from('cycle_module')
-                      ->whereIn('cycle_id', function ($subQuery) use ($user) {
-                          $subQuery->select('id')
-                                   ->from('cycles')
-                                   ->where('department_id', $user->department_id);
-                      });
-            })->get();
-            if ($modulesInDepartment->count() > 0) {
+
+            $isLanguagesDept = Department::select('id')->where('name','Idiomas')->pluck('id')->first();
+            $isFolDept = Department::select('id')->where('name','FOL')->pluck('id')->first();
+            $isEieDept = Department::select('id')->where('name','Empresa e Iniciativa Emprendedora')->pluck('id')->first();
+
+            switch ($user->department_id) {
+                case $isLanguagesDept:
+                    $moduleNames = ['Inglés técnico','Inglés', 'Segunda lengua extranjera'];
+                    break;
+                case $isFolDept:
+                    $moduleNames = 'Formación y Orientación Laboral';
+                    break;
+                case $isEieDept:
+                    $moduleNames = 'Empresa e Iniciativa Emprendedora';
+                    break;
+            }
+
+            
+            if(isset($moduleNames)) {
+                if(is_array($moduleNames)) {
+                    $modulesInDepartment = Module::whereIn('id', function ($query) use ($moduleNames) {
+                        $query->select('id')
+                            ->from('modules')
+                            ->whereIn('name', $moduleNames)
+                            ->orWhere(function ($subQuery) use ($moduleNames) {
+                                foreach ($moduleNames as $moduleName) {
+                                    $subQuery->orWhere('name',$moduleName);
+                                }
+                            });
+                    })->get();
+                } else {
+                    $modulesInDepartment = Module::whereIn('id', function ($query) use ($moduleNames) {
+                        $query->select('id')
+                            ->from('modules')
+                            ->where('name', 'LIKE', '%' . $moduleNames . '%');
+                    })->get();
+                }
+            } else {
+                $modulesInDepartment = Module::whereIn('id', function ($query) use ($user) {
+                    $query->select('module_id')
+                          ->from('cycle_module')
+                          ->whereIn('cycle_id', function ($subQuery) use ($user) {
+                              $subQuery->select('id')
+                                       ->from('cycles')
+                                       ->where('department_id', $user->department_id);
+                          });
+                })->get();
+            }
+
+
+            if (!$modulesInDepartment->isEmpty()) {
                 $maxModulesToAttach = 5;
                 $randomModules = $modulesInDepartment->random(mt_rand(1, min($maxModulesToAttach, $modulesInDepartment->count())));
                 foreach($randomModules as $module) {

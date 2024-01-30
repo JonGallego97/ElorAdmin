@@ -21,15 +21,15 @@ class UserSeeder extends Seeder
         //Alumnos - Deben de ser 1000
         RoleUser::factory()->count(10)->create(['role_id' => "3"]);
         //Profesores - Deben de ser 80
-        RoleUser::factory()->count(10)->create(['role_id' => "2"]);
+        RoleUser::factory()->count(100)->create(['role_id' => "2"]);
 
-        $users = User::whereHas('roles', function ($query) {
+        $teachers = User::whereHas('roles', function ($query) {
             $query->where('name', 'PROFESOR');
         })->get();
 
-        foreach($users as $user){
-            $departmentId = Department::inRandomOrder()->value('id');
-            $user->update(['department_id' => $departmentId]);
+        foreach($teachers as $teacher){
+            $departmentId = Department::where('id','>=',5)->inRandomOrder()->value('id');
+            $teacher->update(['department_id' => $departmentId]);
         }
 
         DB::table('users')->insert([
