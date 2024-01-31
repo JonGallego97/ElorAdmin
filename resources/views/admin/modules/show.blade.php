@@ -2,10 +2,11 @@
     @section('nav')
     <div class="container mt-4">
         <div class="row p-3 mb-2 bg-secondary-subtle rounded-pill">
-            <div class="col">
-                <h1>
-                    <h1>{{ __('Module') }}{{ __('Colon') }} {{ $module->name }}</h1>
-                </h1>
+            <div class="col d-flex align-items-center">
+                <h1 class="me-2 mb-0" style="white-space: nowrap;">{{ __('Module') }}{{ __('Colon') }} {{ $module->name }}</h1>
+                <a href="{{ route('modules.edit', $module) }}" class="me-2" role="button">
+                    <i class="bi bi-pencil-square" style="font-size: 24px;"></i>
+                </a>
             </div>
             <div class="col text-end">
                 <a href="{{ route('modules.index') }}" class="me-2" role="button">

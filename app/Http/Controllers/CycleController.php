@@ -13,13 +13,21 @@ use Illuminate\Support\Facades\Auth;
 
 class CycleController extends Controller
 {
+    private $ControllerFunctions;
+
+    function __construct() {
+        $this->ControllerFunctions = new ControllerFunctions;
+    }
+    //$this->ControllerFunctions->checkAdminRoute()
+    //$this->ControllerFunctions->checkAdminRole()
+    //$this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $adminRoute = (new ControllerFunctions)->checkAdminRoute();
-        if ($adminRoute) {
+        if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
             $perPage = $request->input('per_page', 10);
             $cycles = Cycle::orderBy('name', 'asc')->paginate($perPage);
             foreach ($cycles as $cycle) {
@@ -55,9 +63,14 @@ class CycleController extends Controller
      */
     public function create()
     {
-        $departments = Department::select('id','name')->orderBy('name','asc')->get();
-        $modules = Module::orderBy('name','asc')->get();
-        return view('admin.cycles.edit_create',['departments'=>$departments,'modules'=>$modules]);
+        if($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()){
+            $departments = Department::select('id','name')->orderBy('name','asc')->get();
+            $modules = Module::orderBy('name','asc')->get();
+            return view('admin.cycles.edit_create',['departments'=>$departments,'modules'=>$modules]);
+        } else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
+        }
+        
     }
 
     /**
@@ -65,14 +78,41 @@ class CycleController extends Controller
      */
     public function store(Request $request)
     {
-        $cycle = new Cycle();
-        $cycle->name = $request->name;
-        $cycle->department_id = $request->department;
-        $cycle->save();
-
-        $modules = $request->modules;
-        $cycle->modules()->attach($modules);
-        return redirect()->route('cycles.index');
+        if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()){
+            $messages = [
+                'name.required' => __('errorMessageNameEmpty'),
+                'name.regex' => __('errorMessageNameLettersOnly'),
+            ];
+    
+            $request->validate([
+                'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+            ], $messages);
+    
+            $cycle = new Cycle();
+            $cycle->name = strtoupper($request->name);
+            $cycle->department_id = $request->department;
+            $result = $cycle->save();
+    
+            if($result) {
+                $modules = $request->modules;
+                $cycle->modules()->attach($modules);
+                
+                $cycleId = $cycle->id;
+                $cycle->count_students = $this->cycleCountStudents($cycleId);
+                $cycle->modules = $this->cycleModule($request, $cycleId);
+                foreach ($cycle->modules as $module) {
+                    $module->count_teachers = $this->moduleTeachersCount($module->id,$cycle->id);
+                    $module->count_students = $this->moduleStudentsCount($module->id,$cycle->id);
+                }
+                $cycle->department = Department::find($cycle->department_id);
+                return view('admin.cycles.show', compact('cycle'));
+            } else {
+                return redirect()->back()->withErrors('success',__('successCycleUpdated'));
+            }
+            
+        } else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
+        }
     }
 
     /**
@@ -80,9 +120,7 @@ class CycleController extends Controller
      */
     public function show(Request $request, Cycle $cycle)
     {
-        $adminRoute = (new ControllerFunctions)->checkAdminRoute();
-        if ($adminRoute) {
-
+        if ($this->ControllerFunctions->checkAdminRoute()){
             $cycleId = $cycle->id;
             $cycle->count_students = $this->cycleCountStudents($cycleId);
             $cycle->modules = $this->cycleModule($request, $cycleId);
@@ -92,12 +130,9 @@ class CycleController extends Controller
             }
             $cycle->department = Department::find($cycle->department_id);
             return view('admin.cycles.show', compact('cycle'));
-        }else {
-            //si no es admin
-
-        }
-
-        return view('cycles.show',['cycle'=>$cycle]);
+        } else {
+            return view('cycles.show',['cycle'=>$cycle]);
+        }        
     }
 
     private function cycleCountStudents($cycleId){
@@ -117,23 +152,6 @@ class CycleController extends Controller
         ->paginate($perPage);
     }
 
-    // private function moduleTeachersCount($moduleId){
-    //     return Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
-    //     ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
-    //     ->join('role_users', 'users.id', '=', 'role_users.user_id')
-    //     ->where('role_users.role_id', '=', 2)
-    //     ->where('modules.id', '=', $moduleId)
-    //     ->count();
-    // }
-
-    // private function moduleStudentsCount($moduleId){
-    //     return Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
-    //     ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
-    //     ->join('role_users', 'users.id', '=', 'role_users.user_id')
-    //     ->where('role_users.role_id', '=', 3)
-    //     ->where('modules.id', '=', $moduleId)
-    //     ->count();
-    // }
     private function moduleStudentsCount($moduleId, $cycleId) {
         return Module::join('module_user_cycle', 'modules.id', '=', 'module_user_cycle.module_id')
             ->join('users', 'module_user_cycle.user_id', '=', 'users.id')
@@ -158,17 +176,14 @@ class CycleController extends Controller
      */
     public function edit(Cycle $cycle)
     {
-        $adminRole = (new ControllerFunctions)->checkAdminRole();
-        $adminRoute = (new ControllerFunctions)->checkAdminRoute();
-        $departments = Department::select('id','name')->orderBy('name','asc')->get();
-        $cycle = Cycle::with('modules')->where('id',$cycle->id)->get();
-        $allModules = Module::orderBy('name','asc')->get();
-        if ($adminRole && $adminRoute) {
+        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()){
+            $departments = Department::select('id','name')->orderBy('name','asc')->get();
+            $cycle = Cycle::with('modules')->where('id',$cycle->id)->get();
+            $allModules = Module::orderBy('name','asc')->get();
             return view('admin.cycles.edit_create',['cycle'=>$cycle['0'],'allModules'=>$allModules,'departments'=>$departments]);
         } else {
-            return view('admin.cycles.index');
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
-        
     }
 
     /**
@@ -176,19 +191,33 @@ class CycleController extends Controller
      */
     public function update(Request $request, Cycle $cycle)
     {
-        $cycle->name = $request->name;
-        $cycle->modules()->sync($request->modules);
-        $cycle->save();
+        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()){
+            $messages = [
+                'name.required' => __('errorMessageNameEmpty'),
+                'name.regex' => __('errorMessageNameLettersOnly'),
+            ];
+    
+            $request->validate([
+                'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+            ], $messages);
 
-        $cycleId = $cycle->id;
-        $cycle->count_students = $this->cycleCountStudents($cycleId);
-        $cycle->modules = $this->cycleModule($request, $cycleId);
-        foreach ($cycle->modules as $module) {
-            $module->count_teachers = $this->moduleTeachersCount($module->id,$cycle->id);
-            $module->count_students = $this->moduleStudentsCount($module->id,$cycle->id);
+            $cycle->name = strtoupper($request->name);
+            $cycle->modules()->sync($request->modules);
+            $cycle->save();
+
+            $cycleId = $cycle->id;
+            $cycle->count_students = $this->cycleCountStudents($cycleId);
+            $cycle->modules = $this->cycleModule($request, $cycleId);
+            foreach ($cycle->modules as $module) {
+                $module->count_teachers = $this->moduleTeachersCount($module->id,$cycle->id);
+                $module->count_students = $this->moduleStudentsCount($module->id,$cycle->id);
+            }
+            $cycle->department = Department::find($cycle->department_id);
+            return view('admin.cycles.show', compact('cycle'));
+        } else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
-        $cycle->department = Department::find($cycle->department_id);
-        return view('admin.cycles.show', compact('cycle'));
+        
     }
 
     /**
@@ -196,23 +225,20 @@ class CycleController extends Controller
      */
     public function destroy(Request $request, $cycleId)
     {
-        $redirectRoute = 'cycles.index';
-
-        if ($request->is('admin*')) {
-            //si es admin
+        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()){
             $cycle = Cycle::find($cycleId);
             if ($cycle) {
                 $cycle->delete();
-                return redirect()->route($redirectRoute)->with('success', 'Usuario eliminado exitosamente.');
+                return redirect()->route('cycles.index')->with('success', __('successCycleDeleted'));
             } else {
-                return redirect()->back()->with('error', 'Usuario no encontrado.');
+                return redirect()->back()->withErrors('error',__('errorCycleDelete'));
             }
-        }else {
+        } else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
     }
     public function destroyCycleModule(Request $request, $cycleId, $moduleId){
-        $redirectRoute = 'admin.cycles.show';
-        if ($request->is('admin*')) {
+        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
             $cycle = Cycle::find($cycleId);
             if ($cycle) {
                 $cycle->modules()->detach($moduleId);
@@ -223,12 +249,12 @@ class CycleController extends Controller
                     $module->count_students = $this->moduleStudentsCount($module->id,$cycle->id);
                 }
                 $cycle->department = Department::find($cycle->department_id);
-                return view('admin.cycles.show',['cycle'=>$cycle]);
+                return redirect()->route('cycles.show',['$cycle'=>$cycle])->with('success',__('successModuleDeleted'));
             } else {
-
+                return redirect()->back()->withErrors('error',__('errorModuleDelete'));
             }
-
         }else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
     }
 

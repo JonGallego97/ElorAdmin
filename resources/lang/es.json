@@ -67,11 +67,20 @@
     "errorMessageCodeInteger": "El código debe ser un número entero.",
     "errorMessageHoursEmpty": "El número de horas no puede estar vacío.",
     "errorMessageRoleCanNotBeUpdated": "Los roles ADMINISTRADOR, ALUMNOS y PROFESORES no pueden ser modificados.",
+    "errorModuleCodeExists": "El codigo de modulo ya existe.",
+    "successModuleCreated": "Modulo creado correctamente",
+    "errorModuleNotCreated": "Error creando el modulo",
+    "errorMessageNameLettersOnly": "El nombre solo puede contener letras",
     "from": "de",
     "Staff": "Personal",
     "Registered":"Matriculado",
     "FirstYear": "Primero",
     "SecondYear": "Segundo",
     "ExtraCreate": "Datos extra del Usuario",
-    "addCycle": "Añadir ciclo"
+    "addCycle": "Añadir ciclo",
+    "errorModuleDelete": "Error eliminando modulo",
+    "errorNoAdmin": "Es necesario ser administrador",
+    "successModuleDeleted": "Modulo eliminado correctamente",
+    "errorCycleDelete": "Modulo eliminado correctamente",
+    "successCycleDeleted": "Modulo eliminado correctamente"
 }
