@@ -42,7 +42,7 @@ class UserSeeder extends Seeder
             'phone_number1' => 123456789,
             'phone_number2' => 987654321,
             'image' => '',
-            'dual' => null,
+            'is_dual' => false,
             'first_login' => false,
             'year' => null,
             'created_at' => now(),
