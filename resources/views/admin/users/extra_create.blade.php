@@ -18,7 +18,27 @@
                 </select>
             </div>
 
+            @if(in_array('PROFESOR',$userRolesNames) == true)
             <div id="modules_div" class="col-6 form-group mb-3">
+                <label for="modules" class="form-label">{{__("Modules")}}</label>
+                <div style="max-height: 200px; overflow-y: auto;">
+                    @foreach($cycles as $cycle)
+                        <div class="mb-2 department-block department_{{$cycle->department_id}}">
+                            <label class="fw-bold">{{$cycle->name}}</label>
+                            @foreach($cycle->modules as $module)
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="modules[]" value="{{$cycle->id}}/{{$module->id}}" id="module_{{$module->id}}">
+                                    <label class="form-check-label" for="module_{{$module->id}}">{{$module->name}}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+
+            <!-- <div id="modules_div" class="col-6 form-group mb-3">
                 <label for="modules" class="form-label">{{__("Modules")}}</label>
                 <select class="form-control" id="modules" name="modules[]" multiple="multiple">
                     @foreach($cycles as $cycle)
@@ -29,7 +49,7 @@
                     </optgroup>
                     @endforeach
                 </select>
-            </div>
+            </div> -->
             @endif
             
             <!-- Solo si es alumno -->
@@ -42,8 +62,8 @@
                 </select>
                 <label for="dual" class="form-label">{{__("Dual")}}</label>
                 <select class="form-control" name="dual">
-                    <option value="true">{{__("Yes")}}</option>
-                    <option value="false">{{__("No")}}</option>
+                    <option value="1">{{__("Yes")}}</option>
+                    <option value="0">{{__("No")}}</option>
                 </select>
             </div>
             <div class="col-6 form-group mb-3">
@@ -68,8 +88,9 @@
         <button type="submit" class="btn btn-primary" name="">{{__("Create")}}</button>
     </form>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    function handleDropdownChange() {
+    /* function handleDropdownChange() {
         var selectedDepartmentId = document.getElementById("department").value;
         var modulesSelect = document.getElementById("modules");
         var modulesDiv = document.getElementById("modules_div");
@@ -94,8 +115,20 @@
         } else {
             modulesDiv.style.visibility = "visible";
         }
-    }
+    } */
+    function handleDropdownChange() {
+        var selectedDepartmentId = $("#department").val();
+        
+        // Oculta todos los bloques de departamento
+        $(".department-block").hide();
+        
+        // Muestra solo el bloque del departamento seleccionado
+        $(".department_" + selectedDepartmentId).show();
 
+        if (selectedDepartmentId == 0) {
+            $(".department-block").show();
+        }
+    }
 
 </script>
 @endsection

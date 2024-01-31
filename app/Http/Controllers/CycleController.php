@@ -61,7 +61,7 @@ class CycleController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         if($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()){
             $departments = Department::select('id','name')->orderBy('name','asc')->get();
@@ -82,11 +82,15 @@ class CycleController extends Controller
             $messages = [
                 'name.required' => __('errorMessageNameEmpty'),
                 'name.regex' => __('errorMessageNameLettersOnly'),
+                'modules.required' => __('errorModulesRequired'),
+                'modules.array' => __('errorModulesRequired'),
             ];
     
             $request->validate([
                 'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                'modules' => ['required','array'],
             ], $messages);
+
     
             $cycle = new Cycle();
             $cycle->name = strtoupper($request->name);
@@ -94,20 +98,11 @@ class CycleController extends Controller
             $result = $cycle->save();
     
             if($result) {
-                $modules = $request->modules;
+                $modules = $$request->input('modules', []);
                 $cycle->modules()->attach($modules);
-                
-                $cycleId = $cycle->id;
-                $cycle->count_students = $this->cycleCountStudents($cycleId);
-                $cycle->modules = $this->cycleModule($request, $cycleId);
-                foreach ($cycle->modules as $module) {
-                    $module->count_teachers = $this->moduleTeachersCount($module->id,$cycle->id);
-                    $module->count_students = $this->moduleStudentsCount($module->id,$cycle->id);
-                }
-                $cycle->department = Department::find($cycle->department_id);
-                return view('admin.cycles.show', compact('cycle'));
+                return redirect()->route('cycles.show',['cycle'=>$cycle])->with('success',__('successCreate'));
             } else {
-                return redirect()->back()->withErrors('success',__('successCycleUpdated'));
+                return redirect()->back()->withErrors('success',__('successUpdate'));
             }
             
         } else {
@@ -174,7 +169,7 @@ class CycleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Cycle $cycle)
+    public function edit(Request $request,Cycle $cycle)
     {
         if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()){
             $departments = Department::select('id','name')->orderBy('name','asc')->get();
@@ -195,25 +190,26 @@ class CycleController extends Controller
             $messages = [
                 'name.required' => __('errorMessageNameEmpty'),
                 'name.regex' => __('errorMessageNameLettersOnly'),
+                'modules.required' => __('errorModulesRequired'),
+                'modules.array' => __('errorModulesRequired'),
             ];
     
             $request->validate([
                 'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                'modules' => ['required','array'],
             ], $messages);
 
-            $cycle->name = strtoupper($request->name);
-            $cycle->modules()->sync($request->modules);
-            $cycle->save();
 
-            $cycleId = $cycle->id;
-            $cycle->count_students = $this->cycleCountStudents($cycleId);
-            $cycle->modules = $this->cycleModule($request, $cycleId);
-            foreach ($cycle->modules as $module) {
-                $module->count_teachers = $this->moduleTeachersCount($module->id,$cycle->id);
-                $module->count_students = $this->moduleStudentsCount($module->id,$cycle->id);
+            $cycle->name = strtoupper($request->name);
+            $cycle->department_id = $request->department;
+            $cycle->modules()->sync($request->input('modules', []));
+            $result = $cycle->save();
+
+            if ($result) {
+                return redirect()->route('cycles.show',['cycle'=>$cycle])->with('success',__('successUpdate'));
+            } else {
+                return redirect()->back()->withErrors('error', __('errorUpdate'));
             }
-            $cycle->department = Department::find($cycle->department_id);
-            return view('admin.cycles.show', compact('cycle'));
         } else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
@@ -229,9 +225,9 @@ class CycleController extends Controller
             $cycle = Cycle::find($cycleId);
             if ($cycle) {
                 $cycle->delete();
-                return redirect()->route('cycles.index')->with('success', __('successCycleDeleted'));
+                return redirect()->route('cycles.index')->with('success', __('successDelete'));
             } else {
-                return redirect()->back()->withErrors('error',__('errorCycleDelete'));
+                return redirect()->back()->withErrors('error',__('errorDelete'));
             }
         } else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
@@ -242,16 +238,16 @@ class CycleController extends Controller
             $cycle = Cycle::find($cycleId);
             if ($cycle) {
                 $cycle->modules()->detach($moduleId);
-                $cycle->count_students = $this->cycleCountStudents($cycleId);
+                /* $cycle->count_students = $this->cycleCountStudents($cycleId);
                 $cycle->modules = $this->cycleModule($request, $cycleId);
                 foreach ($cycle->modules as $module) {
                     $module->count_teachers = $this->moduleTeachersCount($module->id,$cycle->id);
                     $module->count_students = $this->moduleStudentsCount($module->id,$cycle->id);
                 }
-                $cycle->department = Department::find($cycle->department_id);
-                return redirect()->route('cycles.show',['$cycle'=>$cycle])->with('success',__('successModuleDeleted'));
+                $cycle->department = Department::find($cycle->department_id); */
+                return redirect()->route('cycles.show',['$cycle'=>$cycle])->with('success',__('successDelete'));
             } else {
-                return redirect()->back()->withErrors('error',__('errorModuleDelete'));
+                return redirect()->back()->withErrors('error',__('errorDelete'));
             }
         }else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));

@@ -54,8 +54,11 @@
                     @endif
                     <div class="col d-flex justify-content-end">
                         <a href="{{ route('users.edit', $user) }}" class="me-2" role="button">
-                            <i class="bi bi-pencil-square" style="font-size: 24px;"></i>
+                            <i class="bi bi-pencil-square fs-3"></i>
                         </a>
+                        <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
+                            <i class="bi bi-trash3 fs-3"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -158,11 +161,19 @@
                     </form>
                     @foreach ($user['cycles'] as $cycle)
                         <div class="card mb-3">
-                            <div class="card-header">
-                                <a href="{{route('cycles.show', $cycle)}}" role="button">
-                                    <h4>{{ $cycle['name'] }}</h4>
-                                </a>
+                            <div class="card-header row align-items-center">
+                                <div class="col">
+                                    <a href="{{ route('cycles.show', $cycle) }}" role="button">
+                                        <h4>{{ $cycle['name'] }}</h4>
+                                    </a>
+                                </div>
+                                <div class="col-auto">
+                                    <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="user/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
+                                        <i class="bi bi-trash3 fs-6"></i>
+                                    </button>
+                                </div>
                             </div>
+
                             <div class="card-body">
                                 <h5>{{__('Modules')}}</h5>
                                 <ul>

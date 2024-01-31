@@ -31,6 +31,7 @@ class ControllerFunctions {
             return false;
         }
     }
+    
 
     public function createImageFromBase64(User $user)
     {

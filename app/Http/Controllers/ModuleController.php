@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Module;
 use App\Models\User;
 use App\Models\Department;
+use App\Models\Cycle;
 use App\Models\Role;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 
 class ModuleController extends Controller
@@ -55,14 +57,15 @@ class ModuleController extends Controller
         }
     }
 
-    public function create()
+    public function create(Request $request)
     {
         if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()){
             $module = new Module();
             $departmentsWithCycles = Department::has('cycles')->with('cycles')->get();
-            return view('admin.modules.edit_create', ['module' => $module,'departmentsWithCycles' => $departmentsWithCycles]);
+            $moduleCyclesIds = $module->cycles->pluck('id')->toArray();
+            return view('admin.modules.edit_create', ['module' => $module,'departmentsWithCycles' => $departmentsWithCycles,'moduleCyclesIds'=>$moduleCyclesIds]);
         } else {
-
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
         
     }
@@ -83,31 +86,36 @@ class ModuleController extends Controller
                 'code.unique' => __('errorModuleCodeExists'),
                 'hours.required' => __('errorMessageHoursEmpty'),
                 'hours.integer' => __('errorMessageHoursInteger'),
+                'cycles.required' => __('errorCycleRequired'),
+                'cycles.array' => __('errorCycleRequired'),
             ];
     
             $request->validate([
                 'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
                 'code' => ['required', 'integer', 'unique:modules'],
                 'hours' => ['required', 'integer'],
+                'cycles' => ['required','array'],
             ], $messages);
+
     
             $module = new Module();
             $module->code = $request->code;
-            $module->name = $request->name;
+            $module->name = ucfirst(strtolower($request->name));
             $module->hours = $request->hours;
     
             $created = $module->save();
     
-            $cycles = $request->cycle;
+            //$cycles = $request->cycle;
+            $cycles = $request->input('cycles', []);
             $module->cycles()->attach($cycles);
             
             if($created) {
-                return redirect()->route('modules.show',['module'=>$module])->with('success',__('successModuleCreated'));
+                return redirect()->route('modules.show',['module'=>$module])->with('success',__('successCreate'));
             } else {
-                return redirect()->back()->withErrors(['error' => __('errorModuleNotCreated')]);
+                return redirect()->back()->withErrors(['error' => __('errorCreate')]);
             }
         } else {
-            return redirect()->back()->withError('error', __('errorNoAdmin'));
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
         
     }
@@ -139,18 +147,19 @@ class ModuleController extends Controller
             }
             return view('admin.modules.show',['module'=>$module,'cyclesArray' => $resultArray]);
         } else {
-            return redirect()->back()->withError('error', __('errorNoAdmin'));
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
 
         
     }
-    public function edit(Module $module)
+    public function edit(Request $request,Module $module)
     {
         if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()){
             $departmentsWithCycles = Department::has('cycles')->with('cycles')->get();
-            return view('admin.modules.edit_create', ['module' => $module,'departmentsWithCycles' => $departmentsWithCycles]);
+            $moduleCyclesIds = $module->cycles->pluck('id')->toArray();
+            return view('admin.modules.edit_create', ['module' => $module,'departmentsWithCycles' => $departmentsWithCycles,'moduleCyclesIds'=>$moduleCyclesIds]);
         } else {
-            return redirect()->back()->withError('error', __('errorNoAdmin'));
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
         
     }
@@ -190,39 +199,34 @@ class ModuleController extends Controller
                 'code.unique' => __('errorModuleCodeExists'),
                 'hours.required' => __('errorMessageHoursEmpty'),
                 'hours.integer' => __('errorMessageHoursInteger'),
+                'cycles.required' => __('errorCycleRequired'),
+                'cycles.array' => __('errorCycleRequired'),
             ];
 
             $request->validate([
                 'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
-                'code' => ['required', 'integer', 'unique:modules'],
+                'code' => ['required', 'integer', Rule::unique('modules')->ignore($module->id)],
                 'hours' => ['required', 'integer'],
+                'cycles' => ['required','array'],
             ], $messages);
 
             $module->code = $request->code;
-            $module->name = $request->name;
+            $module->name = ucfirst(strtolower($request->name));
             $module->hours = $request->hours;
 
             $updated = $module->save();
 
-            $cycles = $request->cycle;
+            //$cycles = $request->cycle;
+            $cycles = $request->input('cycles', []);
             $module->cycles()->sync($cycles);
 
             if($updated) {
-                $module->teachers = $this->teachers($request, $module);
-                $module->students = $this->students($request, $module);
-                foreach ($module->cycles as $cycle) {
-                    $cycleInfo = [
-                        'id' => $cycle->id,
-                        'name' => $cycle->name,
-                        'department' => $cycle->department()->pluck('name')->toArray(),
-                    ];
-            
-                    $resultArray[] = $cycleInfo;
-                }
-                return view('admin.modules.show',['module'=>$module,'cyclesArray' => $resultArray]);
+                return redirect()->route('modules.show',['module'=>$module])->with('success',__('successUpdate'));
+            } else {
+                return redirect()->back()->withErrors('error', __('errorUpdate'));
             }
         } else {
-            return redirect()->back()->withError('error', __('errorNoAdmin'));
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
         
     }
@@ -238,12 +242,12 @@ class ModuleController extends Controller
             $module = Module::find($moduleId);
             if ($module) {
                 $module->delete();
-                return redirect()->route('modules.index')->with('success', __('successModuleDeleted'));
+                return redirect()->route('modules.index')->with('success', __('successDelete'));
             } else {
-                return redirect()->back()->withError('error', __('errorModuleDelete'));
+                return redirect()->back()->withErrors('error', __('errorDelete'));
             }
         }else {
-            return redirect()->back()->withError('error', __('errorNoAdmin'));
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
     }
 
@@ -252,14 +256,14 @@ class ModuleController extends Controller
             $module = Module::find($moduleId);
             if ($module) {
                 $module->users()->detach($userId);
-                $module->teachers = $this->teachers($request, $module);
-                $module->students = $this->students($request, $module);
-                return view('admin.modules.show',['module'=>$module]);
+                
+                return redirect()->route('modules.show',['$module'=>$module])->with('success',__('successDelete'));
             } else {
-
+                return redirect()->back()->withErrors('error',__('errorDelete'));
             }
 
         }else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
     }
 }

@@ -27,7 +27,6 @@ class PersonController extends Controller
         }
 
 
-    $usersInRole3ByModule;
 
     // Obtener los ciclos y módulos del usuario
     $cycles = $user->cycles;

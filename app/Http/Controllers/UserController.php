@@ -22,6 +22,7 @@ class UserController extends Controller {
     function __construct() {
         $this->ControllerFunctions = new ControllerFunctions;
     }
+    //$this->ControllerFunctions->checkAdminRoute()
 
     /**
      * Display a listing of the resource.
@@ -95,7 +96,7 @@ class UserController extends Controller {
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
             //si es admin
@@ -121,10 +122,45 @@ class UserController extends Controller {
     }
 
     public function extra_create(Request $request) {
-        $userRoles = $request->roles;
-        if($userRoles == 0) {
-            return('Debes seleccionar un rol');
-        }
+
+        $messages = [
+            'name.required' => __('errorMessageNameEmpty'),
+            'name.regex' => __('errorMessageNameLettersOnly'),
+            'surname1.required' => __('errorMessageNameEmpty'),
+            'surname1.regex' => __('errorMessageNameLettersOnly'),
+            'surname2.required' => __('errorMessageNameEmpty'),
+            'surname2.regex' => __('errorMessageNameLettersOnly'),
+            'dni.required' => __('errorMessageNameEmpty'),
+            'dni.regex' => __('errorDNILettersAndNumbersOnly'),
+            'address.required' => __('errorMessageCodeEmpty'),
+            'address.string' => __('errorMessageCodeInteger'),
+            'code.unique' => __('errorModuleCodeExists'),
+            'phone_number1.required' => __('errorTelephoneIsRequired'),
+            'phone_number1.integer' => __('errorTelephoneMustBeInteger'),
+            'phone_number2.required' => __('errorTelephoneIsRequired'),
+            'phone_number2.integer' => __('errorTelephoneMustBeInteger'),
+            'roles.required' => __('errorRoleRequired'),
+            'roles.array' => __('errorRoleRequired'),
+        ];
+
+        $request->validate([
+            'name' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+            'surname1' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+            'surname2' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+            'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
+                if (!$this->ControllerFunctions->checkDni($value)) {
+                    $fail(__('errorInvalidDNI'));
+                }
+            }],
+            'address' =>['required','string'],
+            'phone_number1' =>['required','integer'],
+            'phone_number2' =>['required','integer'],
+            'year' => ['nullable','integer'],
+            'dual' => ['nullable','boolean'],
+            'roles' => ['required','array'],
+        ],$messages);
+
+        $userRoles = $request->input('roles', []);
 
         $userRolesNames = Array();
         foreach ($userRoles as $userRole) {
@@ -137,39 +173,9 @@ class UserController extends Controller {
         $isStudent = in_array($studentRole->id,$userRoles,false);
         $isTeacher = in_array($teacherRole->id,$userRoles,false);
         
-        //Es alumno
-        if($isStudent) {
-            switch(true) {
-                case $request->department_id != null:
-                    return ('Un alumno no puede tener un departamento');
-                    break;
-                case count($userRoles) > 1:
-                    return ('Un alumno no puede tener mas de un rol');
-                    break;
-            }
-        }
-        // $request->validate([
-        //     'name' =>'required|string',
-        //     'surname1' =>'required|string',
-        //     'surname2' =>'required|string',
-        //     'DNI' =>'required|string',
-        //     'address' =>'required|string',
-        //     'phoneNumber1' =>'required|integer',
-        //     'phoneNumber2' =>'required|integer',
-        //     'year' => 'nullable|integer',
-        //     'dual' => 'nullable|boolean'
-        // ]);
-
-        // $request->firstLogin = true;
-
-        //Comprobamos si DNI es real
-        if(!$this->ControllerFunctions->checkDni($request->dni)) {
-            return ('El DNI no es correcto.');
-        }
 
 
         $user = new User();
-        // $user->password = bcrypt($request->password);
         $user->name = ucfirst(strtolower($request->name));
         $user->surname1 = ucfirst(strtolower($request->surname1));
         $user->surname2 = ucfirst(strtolower($request->surname2));
@@ -221,64 +227,104 @@ class UserController extends Controller {
      */
     public function store(Request $request)
     {
+        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
 
-        $user = User::with('roles')->where('id', $request->user_id)->first();
+            $messages = [
+                'cycles.required' => __('errorMessageCyclesEmpty'),
+                'department.required' => __('errorMessageDepartmentEmpty'),
+                'department.not_in' => __('errorMessageDepartmentEmpty'),
+                'modules.required' => __('errorMessageModulesEmpty'),
+                'cycle.required' => __('errorMessageCyclesEmpty'),
+                'modules.required' => __('errorModulesEmpty'),
+                'modules.array' => __('errorModulesEmpty'),
+            ];
 
-        $userRoles = $user->roles->pluck('id')->toArray();
+            $user = User::where('id',$request->user_id)->first();
 
-        $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
-        $isStudent = in_array($studentRole->id,$userRoles,false);
-        $teacherRole = Role::select('id','name')->where('name','PROFESOR')->first();
-        $isTeacher = in_array($teacherRole->id,$userRoles,false);
-        $adminRole = Role::select('id','name')->where('name','ADMINISTRADOR')->first();
-        $isAdmin = in_array($adminRole->id,$userRoles,false);
-        
-
-        
-        //Datos Extra
-        if($isStudent){
-            $user->year = $request->year;
-            $user->dual = (int)$request->dual;
+            switch (true){
+                case $user->hasRole("ALUMNO"):
+                    $request->validate([
+                        'cycle' => ['required'],
+                    ],$messages);
+                    break;
+                case $user->hasRole("PROFESOR"):
+                    $request->validate([
+                        'department' =>['required','not_in:0'],
+                        'modules' =>['required','array'],
+                    ],$messages);
+                    break;
+                default:
+                    $request->validate([
+                        'department' =>['required','not_in:0'],
+                    ],$messages);
+                    break;
+            }
             
-        } else if(!$isAdmin) {
-            if($request->department != 0) {
-                $user->department_id = $request->department;
-            } else {
-                return('Debes seleccionar un departamento');
-            }           
-        }
-        $user->save();
+            
 
+            $user = User::with('roles')->where('id', $request->user_id)->first();
 
+            $userRoles = $user->roles->pluck('id')->toArray();
 
-        // Ciclos
-        
-        if($isStudent){
-            $result = $this->enrollStudentInCycle($user->id,$request->cycle);
-        } elseif ($isTeacher) {
-            if(is_array($request->modules)) {
-                foreach($request->modules as $module) {
+            $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
+            $isStudent = in_array($studentRole->id,$userRoles,false);
+            $teacherRole = Role::select('id','name')->where('name','PROFESOR')->first();
+            $isTeacher = in_array($teacherRole->id,$userRoles,false);
+            $adminRole = Role::select('id','name')->where('name','ADMINISTRADOR')->first();
+            $isAdmin = in_array($adminRole->id,$userRoles,false);
+            
+
+            
+            //Datos Extra
+            if($isStudent){
+                $user->year = $request->year;
+                $user->dual = $request->dual;
+               
+            } else if(!$isAdmin) {
+                $user->department_id = $request->department;     
+            }
+            $user->save();
+
+            // Ciclos
+            
+            if($isStudent){
+                $result = $this->enrollStudentInCycle($user->id,$request->cycle);
+            } elseif ($isTeacher) {
+                $modules = $request->input('modules');
+                foreach($modules as $module) {
                     $modulesArray = explode("/",$module);
                     $cycle_id = $modulesArray[0];
                     $module_id = $modulesArray[1];
                     $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
                 }
+                /* if(is_array($request->input('modules'))) {
+                    foreach($modules as $module) {
+                        $modulesArray = explode("/",$module);
+                        $cycle_id = $modulesArray[0];
+                        $module_id = $modulesArray[1];
+                        $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
+                    }
+                } else {
+                    $modulesArray = explode("/",$request->modules);
+                    $cycle_id = $modulesArray[0];
+                    $module_id = $modulesArray[1];
+                    $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
+                } */
+                
             } else {
-                $modulesArray = explode("/",$request->modules);
-                $cycle_id = $modulesArray[0];
-                $module_id = $modulesArray[1];
-                $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
+                $result = true;
             }
             
+            if($result) {
+                return redirect()->route('users.show',['user'=>$user]);
+            } else {
+                return redirect()->back()->withErrors('error', __('errorCreate'));
+            }
         } else {
-            $result = false;
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
+
         
-        if($result) {
-            return redirect()->route('users.show',['user'=>$user]);
-        } else {
-            return back();
-        }
     }
 
     /**
@@ -375,17 +421,16 @@ class UserController extends Controller {
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(Request $request,User $user)
     {
         if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
             //si es admin
             $departments = Department::select('id','name')->orderBy("name")->get();
-                $roles = Role::all();
-                $cycles_modules = Cycle::with('modules')->get();
-                return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules,'departments' => $departments]);
+            $roles = Role::all();
+            $cycles_modules = Cycle::with('modules')->get();
+            return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules,'departments' => $departments]);
         }else {
-            //si no es admin
-
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
     }
 
@@ -394,8 +439,7 @@ class UserController extends Controller {
      */
     public function update(Request $request, User $user)
     {
-        if ($this->ControllerFunctions->checkAdminRole()) {
-            dd($request);
+        if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
             $user->name = $request->name;
             $user->save();
 
@@ -444,6 +488,8 @@ class UserController extends Controller {
                 return back()->with('error','Already in that module');
             }
             
+        } else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
         
         
@@ -452,101 +498,127 @@ class UserController extends Controller {
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($userId)
+    public function destroy(Request $request,$userId)
     {
         
         if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
             $user = User::find($userId);
-            if ($user && $user->id != 0) {
-                $user->delete();
-                return redirect()->back()->with('success', 'Usuario eliminado exitosamente.');
+            if($user->id != 0){
+                if ($user) {
+                    $user->delete();
+                    return redirect()->route('users.index');
+                } else {
+                    return redirect()->back()->withErrors('error', __('errorDelete'));
+                }
             } else {
-                return redirect()->back()->with('error', 'No se puede eliminar el usuario ADMINISTRADOR');
+                return redirect()->back()->withErrors('error', __('errorAdminCantBeDeleted'));
             }
+            
         }else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
     }
 
     public function enrollStudentInCycle($userId, $cycleId)
     {
-        $user = User::findOrFail($userId);
-        $cycle = Cycle::findOrFail($cycleId);
-        if ($user->hasRole('ALUMNO')) {
-            // Asociar al estudiante con el ciclo
-            $lastRegistration = DB::table('cycle_users')->orderByDesc('cycle_registration_number')->first();
-            $sync_data = array(['cycle_id'=>$cycle->id,'cycle_registration_number' => $lastRegistration->cycle_registration_number+1,'registration_date'=>date('Y-m-d')]);
-            //dd($sync_data);
-            $user->cycles()->attach($sync_data);
+        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+            $user = User::findOrFail($userId);
+            $cycle = Cycle::findOrFail($cycleId);
+            if ($user->hasRole('ALUMNO')) {
+                // Asociar al estudiante con el ciclo
+                $lastRegistration = DB::table('cycle_users')->orderByDesc('cycle_registration_number')->first();
+                $sync_data = array(['cycle_id'=>$cycle->id,'cycle_registration_number' => $lastRegistration->cycle_registration_number+1,'registration_date'=>date('Y-m-d')]);
+                //dd($sync_data);
+                $user->cycles()->attach($sync_data);
 
-            // Obtener los módulos asociados al ciclo
-            $modules = $cycle->modules;
-            // Enrollar al estudiante en cada módulo
-            $user->modules()->attach($modules,['cycle_id' => $cycle->id]);
+                // Obtener los módulos asociados al ciclo
+                $modules = $cycle->modules;
+                // Enrollar al estudiante en cada módulo
+                $user->modules()->attach($modules,['cycle_id' => $cycle->id]);
 
-            return true;
-            // return response()->json(['message' => 'Estudiante matriculado en el ciclo y sus módulos.']);
+                return true;
+                // return response()->json(['message' => 'Estudiante matriculado en el ciclo y sus módulos.']);
+            } else {
+                // Si el usuario no es un estudiante, retornar un mensaje de error o realizar otras acciones según sea necesario
+                // return response()->json(['error' => 'Solo los estudiantes pueden ser matriculados en ciclos.']);
+                return false;
+            }
         } else {
-            // Si el usuario no es un estudiante, retornar un mensaje de error o realizar otras acciones según sea necesario
-            // return response()->json(['error' => 'Solo los estudiantes pueden ser matriculados en ciclos.']);
-            return false;
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
+        
     }
 
     public function enrollTeacherInModule($userId, $moduleId,$cycleId)
     {
-        $user = User::findOrFail($userId);
-        $module = Module::findOrFail($moduleId);
+        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+            $user = User::findOrFail($userId);
+            $module = Module::findOrFail($moduleId);
 
-        if ($user->hasRole('PROFESOR')) {
-            // Validar que el profesor no esté ya asignado al módulo
-            if (!$user->modules->contains($module->id)) {
-                // Asociar al profesor con el módulo
-                $user->modules()->attach($module->id, ['cycle_id' => $cycleId]);
+            if ($user->hasRole('PROFESOR')) {
+                // Validar que el profesor no esté ya asignado al módulo
+                if (!$user->modules->contains($module->id)) {
+                    // Asociar al profesor con el módulo
+                    $user->modules()->attach($module->id, ['cycle_id' => $cycleId]);
 
-                return true;
-                // return response()->json(['message' => 'Profesor asignado al módulo.']);
+                    return true;
+                    // return response()->json(['message' => 'Profesor asignado al módulo.']);
+                } else {
+                    return false;
+                    // return response()->json(['error' => 'El profesor ya está asignado a este módulo.']);
+                }
             } else {
-                return false;
-                // return response()->json(['error' => 'El profesor ya está asignado a este módulo.']);
+                // Si el usuario no es un profesor, retornar un mensaje de error que incluya los roles del usuario
+                return response()->json(['error' => "Solo los profesores pueden ser asignados a módulos."]);
             }
         } else {
-            // Si el usuario no es un profesor, retornar un mensaje de error que incluya los roles del usuario
-            return response()->json(['error' => "Solo los profesores pueden ser asignados a módulos."]);
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
+        
     }
 
     public function editRoles(Request $request, User  $user) {
-        $roleList = $request->input('selectedRoles');
-        $rolesArray = explode(',', $roleList);
 
-        // Busca los roles en la base de datos con los IDs proporcionados
-        $roles = Role::whereIn('id', $rolesArray)->get();
-        $user->roles = $roles;
-        $roles = Role::all();
-        $cycles_modules = Cycle::with('modules')->get();
-        return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
+        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+            $roleList = $request->input('selectedRoles');
+            $rolesArray = explode(',', $roleList);
+
+            // Busca los roles en la base de datos con los IDs proporcionados
+            $roles = Role::whereIn('id', $rolesArray)->get();
+            $user->roles = $roles;
+            $roles = Role::all();
+            $cycles_modules = Cycle::with('modules')->get();
+            return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
+        } else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
+        }
+        
     }
 
     public function editCycles(Request $request, User $user) {
 
-        $cycleList = $request->input('selectedCycles');
-        $cyclesArray = explode(',', $cycleList);
+        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+            $cycleList = $request->input('selectedCycles');
+            $cyclesArray = explode(',', $cycleList);
+            
+            // $cycles = Cycle::whereIn('id', $cyclesArray)
+            //     ->with(['modules' => function ($query) use ($user) {
+            //         $query->whereHas('users', function ($query) use ($user) {
+            //             $query->where('user_id', $user->id);
+            //         });
+            //     }])
+            //     ->get();
+            $cycles = Cycle::whereIn('id', $cyclesArray)
+            ->with('modules')
+            ->get();
+            $user->cycles = $cycles;
+            $roles = Role::all();
+            $cycles_modules = Cycle::with('modules')->get();
 
-
-        // $cycles = Cycle::whereIn('id', $cyclesArray)
-        //     ->with(['modules' => function ($query) use ($user) {
-        //         $query->whereHas('users', function ($query) use ($user) {
-        //             $query->where('user_id', $user->id);
-        //         });
-        //     }])
-        //     ->get();
-        $cycles = Cycle::whereIn('id', $cyclesArray)
-        ->with('modules')
-        ->get();
-        $user->cycles = $cycles;
-        $roles = Role::all();
-        $cycles_modules = Cycle::with('modules')->get();
-
-        return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
+            return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules]);
+        } else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
+        }
+        
     }
 }

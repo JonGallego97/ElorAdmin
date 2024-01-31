@@ -38,16 +38,38 @@
                 <input type="text" class="form-control" id="hours" name="hours" required
                     value="{{$module->hours}}"/>
             </div>
-            <div class="form-group mb-3">
+            <!-- <div class="form-group mb-3">
                 <label for="cycle" class="form-label">{{__('Cycle')}}</label>
                 <select id="cycle" name="cycle[]" class="form-control" multiple>
                 @foreach ($departmentsWithCycles as $department)
                     <optgroup label='-- {{$department->name}} --'>
                     @foreach ($department->cycles as $cycle)
-                    <option value="{{ $cycle->id }}">{{ $cycle['name'] }}</option>
+                    <option value="{{ $cycle->id }}"
+                    @if(in_array($cycle->id,$moduleCyclesIds))
+                    selected
+                    @endif
+                    >{{ $cycle['name'] }}</option>
                     @endforeach
                 @endforeach
                 </select>
+            </div> -->
+            <div class="form-group mb-3 col-4" style="max-height: 200px; overflow-y: auto;">
+                <label class="form-label">{{__('Cycles')}}</label>
+                @foreach ($departmentsWithCycles as $department)
+                    <div class="mb-2">
+                        <strong>-- {{ $department->name }} --</strong>
+                    </div>
+                    @foreach ($department->cycles as $cycle)
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="cycles[]" value="{{ $cycle->id }}" id="cycle_{{ $cycle->id }}"
+                            @if(in_array($cycle->id, $moduleCyclesIds))
+                                checked
+                            @endif
+                            >
+                            <label class="form-check-label" for="cycle_{{ $cycle->id }}">{{ $cycle->name }}</label>
+                        </div>
+                    @endforeach
+                @endforeach
             </div>
             <button type="submit" class="btn btn-primary" name="">
                 @if($module->id != null)
@@ -57,6 +79,7 @@
                 @endif
 
             </button>
+            <input type="hidden" name="last_url" value="{{  URL::previous() }}">
         </form>
     </div>
     @endsection

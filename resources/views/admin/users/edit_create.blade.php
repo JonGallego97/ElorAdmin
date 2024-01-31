@@ -118,7 +118,7 @@
 
         <hr class="my-4">
         @if(Route::currentRouteName() == 'users.create')
-        <div class="row">
+<!--         <div class="row">
             <div class="col-4 form-group mb-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <h3>{{__("Roles")}}</h3>
@@ -145,7 +145,28 @@
                         
                     @endforeach
                 </select>
+            </div> -->
+            <div class="row">
+                <div id="rolesContainer" class="col-4 form-group mb-3" style="max-height: 200px; overflow-y: auto;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3>{{__("Roles")}}</h3>
+                    </div>
+                    @foreach ($roles as $role)
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="roles[]" id="role_{{ $role->id }}" value="{{ $role->id }}"
+                                @if((str_contains(url()->previous(),'teachers') && $role->name == 'PROFESOR') || (str_contains(url()->previous(),'students') && $role->name == 'ALUMNO'))
+                                    checked
+                                @endif
+                            >
+                            <label class="form-check-label" for="role_{{ $role->id }}">
+                                {{ $role->name }}
+                            </label>
+                        </div>
+                    @endforeach
+                </div>
             </div>
+
+
 <!--             <div class="col-6 form-group mb-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <h3>{{__("Cycles")}}</h3>
@@ -334,7 +355,6 @@
         </button>
     </form>
 </div>
-
 
 
 
