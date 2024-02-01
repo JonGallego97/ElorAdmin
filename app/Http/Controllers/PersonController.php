@@ -14,9 +14,11 @@ class PersonController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $usera = User::All();
-        $cycle = $user->cycles;
 
+        $usera = User::All();
+
+        $cycle = cycle::find($user->id);
+        //dd($cycle);
 
         // Verificar si el usuario autenticado tiene el rol deseado
         if (User::find($user->id)->roles->first()->id == 2) {
@@ -25,24 +27,26 @@ class PersonController extends Controller
                 $query->where('id', 2);
             })->get();
         }
-
-
-
     // Obtener los ciclos y módulos del usuario
     $cycles = $user->cycles;
 
-
-    foreach ($cycles as $cycle) {
-        foreach ($cycle->modules as $module) {
-
-            $usersInRole3ByModule=$module->users;
+    $usersInRole3ByModule=[];
+//dd($cycles);
+    foreach ($cycles as $cycles) {
+        foreach ($cycles as $users) {
+            if ($user->roles->first()->id == 2) {
+            $usersInRole3ByModule=$users;
+            //dd($usersInRole3ByModule);
+        }
         }
     }
+
 
     // Obtener los datos adicionales del usuario autenticado
     $user = User::with('roles', 'cycles.modules', 'modules')->where('id', $user->id)->first();
 
-    return view('persons.index', ['user' => $user,'usersInRole3ByModule' => $usersInRole3ByModule,'usera' => $usera], ['cycle' => $cycle]);
+
+    return view('persons.index', compact('user','usersInRole3ByModule','usera', 'cycle'));
     }
 
     public function staff(Request $request)
@@ -55,7 +59,7 @@ class PersonController extends Controller
             $query->where('id', 2);
         })
             ->orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'dual', 'first_login', 'year', 'created_at', 'updated_at']);
+            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
         $totalUsers = User::whereHas('roles', function ($query) {
             $query->where('id', 2);
         })->count();

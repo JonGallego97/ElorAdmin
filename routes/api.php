@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\DepartmentController;
 use App\Http\Controllers\API\CycleController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\FirebaseController;
 
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\ModuleController;
@@ -35,3 +36,5 @@ Route::resources([
 Route::put('users/{user}/update-password', UserController::class.'@updatePassword');
 Route::post('/users/{userId}/enroll/{cycleId}', [UserController::class, 'enrollStudentInCycle']);
 
+//FIREBASE
+Route::get('/firebase/fmcTesting', [FirebaseController::class, 'fcmTesting']);

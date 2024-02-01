@@ -54,6 +54,7 @@ class User extends Authenticatable
     public function modules()
     {
         return $this->belongsToMany(Module::class, 'module_user_cycle','user_id', 'module_id')->withPivot('cycle_id');
+
     }
 
     //Relacion con Ciclos (Alumnos)
