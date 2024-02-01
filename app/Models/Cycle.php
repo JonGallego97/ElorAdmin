@@ -16,7 +16,7 @@ class Cycle extends Model
 
     public function modules()
     {
-        return $this->belongsToMany(Module::class);
+        return $this->belongsToMany(Module::class,'cycle_module');
     }
     public function sortedModules()
     {

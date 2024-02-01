@@ -27,7 +27,6 @@ class PersonController extends Controller
                 $query->where('id', 2);
             })->get();
         }
-
     // Obtener los ciclos y módulos del usuario
     $cycles = $user->cycles;
 

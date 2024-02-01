@@ -4,70 +4,135 @@
 
 <div class="container">
     <div id="user_data" data-user={{$user->roles}}></div>
-    <form class="mt-2" name="create_platform" action="
-        @if($user->id != null)
-            {{route('users.update',$user)}}
-        @else
-            {{route('users.store',$user)}}
-        @endif
-        "method="POST" enctype="multipart/form-data">
+    <form class="mt-2" name="edit_create_platform" action="{{ Route::currentRouteName() == 'users.edit' ? route('users.update', $user) : route('users.extra_create', $user) }}" method="POST">
         @csrf
+        @if(Route::currentRouteName() == 'users.edit')
         @method('PUT')
+        @endif
         <div class="form-group mb-3">
             <h1>
-                @if($user->id != null)
+                @if(Route::currentRouteName() == 'users.edit')
                 {{__("Edit")}}
                 @else
                 {{__("Create")}}
                 @endif
-                {{__("Teacher")}}
+                @switch(true)
+                    @case(str_contains(url()->previous(),'users'))
+                        {{__('User')}}
+                        @break
+                    @case(str_contains(url()->previous(),'teachers'))
+                        {{__('Teachers')}}
+                        @break
+                    @case(str_contains(url()->previous(),'students'))
+                        {{__('Students')}}
+                        @break
+                @endswitch
             </h1>
         </div>
         <div class="row">
             <div class="col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("Name")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
+                <label for="name" class="form-label">{{__("Name")}}</label>
+                <input type="text" class="form-control" id="name" name="name" required
                     value="{{$user->name}}"/>
             </div>
             <div class=" col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("Surname1")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
+                <label for="surname1" class="form-label">{{__("Surname1")}}</label>
+                <input type="text" class="form-control" id="surname1" name="surname1" required
                     value="{{$user->surname1}}"/>
             </div>
             <div class="col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("Surname2")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
+                <label for="surname2" class="form-label">{{__("Surname2")}}</label>
+                <input type="text" class="form-control" id="surname2" name="surname2" required
                     value="{{$user->surname2}}"/>
             </div>
         </div>
         <div class="row">
             <div class="col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("DNI")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
-                    value="{{$user->DNI}}"/>
+                <label for="dni" class="form-label">{{__("DNI")}}</label>
+                <input type="text" class="form-control" id="dni" name="dni" required
+                    value="{{$user->dni}}"/>
             </div>
             <div class="col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("PhoneNumber1")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
-                    value="{{$user->phoneNumber1}}"/>
+                <label for="phone_number1" class="form-label">{{__("PhoneNumber1")}}</label>
+                <input type="text" class="form-control" id="phone_number1" name="phone_number1" required
+                    value="{{$user->phone_number1}}"/>
             </div>
             <div class="col form-group mb-3">
-                <label for="titulo" class="form-label">{{__("PhoneNumber2")}}</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required
-                    value="{{$user->phoneNumber2}}"/>
+                <label for="phone_number2" class="form-label">{{__("PhoneNumber2")}}</label>
+                <input type="text" class="form-control" id="phone_number2" name="phone_number2" required
+                    value="{{$user->phone_number2}}"/>
             </div>
         </div>
-        <div class="form-group mb-3">
-            <label for="titulo" class="form-label">{{__("Address")}}</label>
-            <input type="text" class="form-control" id="titulo" name="titulo" required
-                value="{{$user->address}}"/>
+        <div class="row">
+            <div class="col form-group mb-3">
+                <label for="address" class="form-label">{{__("Address")}}</label>
+                <input type="text" class="form-control" id="address" name="address" required
+                    value="{{$user->address}}"/>
+            </div>
+            @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()) && Route::currentRouteName() == 'users.edit')
+                <div class="col form-group mb-3">
+                    <label for="department" class="form-label">{{__("Department")}}</label>
+                    <select class="form-control" name="department">
+                        @foreach ($departments as $department)
+                        <option value={{$department->id}}
+                        @if($department->id == $user->department_id)
+                            selected 
+                        @endif    
+                        >{{$department->name}}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+            @elseif (Route::currentRouteName() == 'users.edit')
+                <div class="col form-group mb-3">
+                    <label for="dual" class="form-label">{{__("Dual")}}</label>
+                    <select class="form-control" name="dual">
+                        <option value="1" <?= ($user->dual == 1) ? 'selected' : '' ?>>{{__("Yes")}}</option>
+                        <option value="0" <?= ($user->dual == 0) ? 'selected' : '' ?>>{{__("No")}}</option>
+                    </select>
+                </div>
+                <div class="col form-group mb-3">
+                    <label for="year" class="form-label">{{__("Year")}}</label>
+                    <select class="form-control" name="year">
+                        <option value="1" <?= ($user->year == 1) ? 'selected' : '' ?>>{{__("FirstYear")}}</option>
+                        <option value="2" <?= ($user->year == 0) ? 'selected' : '' ?>>{{__("SecondYear")}}</option>
+                    </select>
+                </div>
+            @endif
         </div>
+        <hr>
 
         <hr class="my-4">
+        @if(Route::currentRouteName() == 'users.create')
+            <div class="row">
+                <div id="rolesContainer" class="col-4 form-group mb-3" style="max-height: 200px; overflow-y: auto;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3>{{__("Roles")}}</h3>
+                    </div>
+                    @foreach ($roles as $role)
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="roles[]" id="role_{{ $role->id }}" value="{{ $role->id }}"
+                                @if((str_contains(url()->previous(),'teachers') && $role->name == 'PROFESOR') || (str_contains(url()->previous(),'students') && $role->name == 'ALUMNO'))
+                                    checked
+                                @endif
+                            >
+                            <label class="form-check-label" for="role_{{ $role->id }}">
+                                {{ $role->name }}
+                            </label>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
 
+
+        <!-- Si viene del edit -->
+        @if(Route::currentRouteName() == 'users.edit')
         <div class="form-group mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <h3>{{__("Roles")}}</h3>
+                <input type="hidden" id="selectedRolesInput" name="selectedRoles" value="">
                 <input type="hidden" id="hiddenRoleIds" value="{{ implode(',', $user->roles->pluck('id')->toArray()) }}">
                 <button type="button" style="border: none; background: none;" id="roleEdit" data-bs-toggle="modal" data-bs-target="#rolesModal" data-role-ids="sad">
                     <i class="bi bi-pencil fs-3"></i>
@@ -80,13 +145,12 @@
                     </option>
                 @endforeach
             </select>
-
         </div>
-
         <hr class="my-4">
-        <div class="form-group mb-3">
+        <div class="form-group mb-2">
             <div class="d-flex justify-content-between align-items-center">
                 <h3>{{__("Cycles")}}</h3>
+                <input type="hidden" id="selectedCyclesInput" name="selectedCycles" value="">
                 <input type="hidden" id="hiddenCycleIds" value="{{ implode(',', $user->cycles->pluck('id')->toArray()) }}">
                 <button type="button" style="border: none; background: none;" id="cycleEdit" data-bs-toggle="modal" data-bs-target="#cyclesModal">
                     <i class="bi bi-pencil fs-3"></i>
@@ -115,8 +179,15 @@
                 @endforeach
             </div>
         </div>
+        @endif
+
+        
 
 
+        <!-- Modals -->
+
+        <!-- Si viene del edit -->
+        @if(Route::currentRouteName() == 'users.edit')
         <div class="modal fade" id="rolesModal" tabindex="-1" aria-labelledby="rolesModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
@@ -135,17 +206,21 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                        <form id="editRolesForm" action="{{ route('users.editRoles', $user) }}" method="GET" style="display: none;">
+                        <form id="editRolesForm" action="{{ route('users.editRoles', ['user' => $user]) }}" method="POST" style="display: none;">
+                        @method('PUT')
+                        @csrf
                         </form>
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="editRolesBtn">{{__('Edit')}}</button>
-                        <form id="editRolesForm" action="{{ route('users.editRoles', $user) }}" method="GET">
+                        <form id="editRolesForm" action="{{ route('users.editRoles', ['user' => $user]) }}" method="POST">
+                        @method('PUT')
+                        @csrf
                             <input type="hidden" name="selectedRoles" id="selectedRolesInput" value="">
                             <button type="submit" id="editListDeRoles" class="btn btn-primary" style="display: none;">{{__('Edit')}}</button>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
 
         <div class="modal fade" id="cyclesModal" tabindex="-1" aria-labelledby="cyclesModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -169,7 +244,9 @@
                         </form>
                         <button type="button" class="btn btn-primary" id="editCyclesBtn">{{__('Edit')}}</button>
 
-                        <form id="editCyclesFormSubmit" action="{{ route('users.editCycles', $user) }}" method="GET">
+                        <form id="editCyclesFormSubmit" action="{{ route('users.editCycles', $user) }}" method="POST">
+                            @method('PUT')
+                            @csrf
                             <input type="hidden" name="selectedCycles" id="selectedCyclesInput" value="">
                             <button type="submit" id="editListDeCycles" class="btn btn-primary" style="display: none;">{{__('Edit')}}</button>
                         </form>
@@ -207,10 +284,11 @@
                 </div>
             </div>
         </div> --}}
+        @endif
 
 
         <button type="submit" class="btn btn-primary" name="">
-            @if($user->id != null)
+            @if(Route::currentRouteName() == 'users.edit')
                 {{__("Update")}}
             @else
                 {{__("Create")}}
@@ -218,6 +296,7 @@
         </button>
     </form>
 </div>
+
 
 
 @endsection
