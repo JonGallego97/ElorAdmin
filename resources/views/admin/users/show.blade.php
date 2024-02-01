@@ -130,7 +130,12 @@
                                 <h5>{{__('Modules')}}</h5>
                                 <ul>
                                     @foreach ($cycle['modules'] as $module)
-                                        <li>{{ $module['code'] }} - <a href="{{ route('modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
+                                        <div class="d-flex align-items-center">
+                                            <li>{{ $module['code'] }} - <a href="{{ route('modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
+                                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserModule" data-type="" data-id="{{ $module['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $module['name'] }}" id="openModalBtn">
+                                                <i class="bi bi-trash3 fs-6"></i>
+                                            </button>
+                                        </div>
                                     @endforeach
                                 </ul>
                             </div>
@@ -159,16 +164,16 @@
                             <button type="submit" class="col-2 ml-3 btn btn-primary" name="">{{__("addCycle")}}</button>
                         </div>
                     </form>
-                    @foreach ($user['cycles'] as $cycle)
+                    @foreach ($userData as $cycle)
                         <div class="card mb-3">
                             <div class="card-header row align-items-center">
                                 <div class="col">
-                                    <a href="{{ route('cycles.show', $cycle) }}" role="button">
+                                    <a href="{{ route('cycles.show', $cycle['id']) }}" role="button">
                                         <h4>{{ $cycle['name'] }}</h4>
                                     </a>
                                 </div>
                                 <div class="col-auto">
-                                    <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="user/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
+                                    <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
                                         <i class="bi bi-trash3 fs-6"></i>
                                     </button>
                                 </div>
@@ -178,7 +183,12 @@
                                 <h5>{{__('Modules')}}</h5>
                                 <ul>
                                     @foreach ($cycle['modules'] as $module)
-                                        <li>{{ $module['code'] }} - <a href="{{ route('modules.show', $module) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
+                                    <div class="d-flex align-items-center">
+                                        <li>{{ $module['code'] }} - <a href="{{ route('modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
+                                        <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserModule" data-type="" data-id="{{ $module['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $module['name'] }}" id="openModalBtn">
+                                            <i class="bi bi-trash3 fs-6"></i>
+                                        </button>
+                                    </div>
                                     @endforeach
                                 </ul>
                             </div>

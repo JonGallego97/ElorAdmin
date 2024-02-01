@@ -123,6 +123,9 @@ class UserController extends Controller {
 
     public function extra_create(Request $request) {
 
+        $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
+        $teacherRole = Role::select('id','name')->where('name','PROFESOR')->first();
+
         $messages = [
             'name.required' => __('errorMessageNameEmpty'),
             'name.regex' => __('errorMessageNameLettersOnly'),
@@ -157,22 +160,23 @@ class UserController extends Controller {
             'phone_number2' =>['required','integer'],
             'year' => ['nullable','integer'],
             'dual' => ['nullable','boolean'],
-            'roles' => ['required','array'],
+            'roles' => ['required','array',function ($attribute, $value, $fail) use ($request,$studentRole) {
+                $userRoles = $request->input('roles', []);
+                if (in_array($studentRole->id,$userRoles,false) && count($userRoles)!=1) {
+                    $fail(__('errorStudentCantHaveMoreRoles'));
+                }
+            }],
         ],$messages);
 
         $userRoles = $request->input('roles', []);
+
 
         $userRolesNames = Array();
         foreach ($userRoles as $userRole) {
             $roleName = Role::select('name')->where('id',$userRole)->first();
             $userRolesNames[$userRole] = $roleName->name;
         }
-
-        $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
-        $teacherRole = Role::select('id','name')->where('name','PROFESOR')->first();
-        $isStudent = in_array($studentRole->id,$userRoles,false);
-        $isTeacher = in_array($teacherRole->id,$userRoles,false);
-        
+       
 
 
         $user = new User();
@@ -363,12 +367,6 @@ class UserController extends Controller {
             //si es admin
             switch (true) {
                 case $isStudent:
-                    // $cyclesWithoutMatriculation = Cycle::whereNotExists(function ($query) use ($user) {
-                    //     $query->select('cycle_users.id')
-                    //           ->from('cycle_users')
-                    //           ->whereRaw('cycle_users.cycle_id = cycles.id')
-                    //           ->where('cycle_users.user_id', $user->id);
-                    // })->get();
                     $departmentsWithCycles = Department::whereHas('cycles', function ($query) use ($user) {
                         $query->whereNotExists(function ($subquery) use ($user) {
                             $subquery->select('cycle_users.id')
@@ -386,7 +384,48 @@ class UserController extends Controller {
                         });
                     }])
                     ->get();
-                    return view('admin.users.show', ['user' => $user,'departmentsWithCycles'=>$departmentsWithCycles])->with('imagePath','images/'.$fileName);
+
+                    $userModulesData = DB::table('module_user_cycle')
+                        ->where('user_id', $user->id)
+                        ->get();
+
+                    // Inicializar el array para almacenar la información
+                    $userData = [];
+
+                    // Obtener ciclos y módulos con la relación directa a partir de los datos de la tabla module_user_cycle
+                    foreach ($userModulesData as $userModule) {
+                        $cycle = Cycle::find($userModule->cycle_id);
+                    
+                        if ($cycle) {
+                            $cycleId = $cycle->id;
+                            $cycleName = $cycle->name;
+                    
+                            // Inicializar el array para el ciclo si aún no existe
+                            if (!isset($userData[$cycleId])) {
+                                $userData[$cycleId] = [
+                                    'id' => $cycleId,
+                                    'name' => $cycleName,
+                                    'modules' => []
+                                ];
+                            }
+                    
+                            // Obtener el módulo directamente usando el ID almacenado en module_user_cycle
+                            $module = Module::find($userModule->module_id);
+                    
+                            if ($module) {
+                                $moduleData = [
+                                    'id' => $module->id,
+                                    'code' => $module->code,
+                                    'name' => $module->name,
+                                    'hours' => $module->hours
+                                ];
+                    
+                                // Agregar el módulo al array correspondiente al ciclo
+                                $userData[$cycleId]['modules'][] = $moduleData;
+                            }
+                        }
+                    }
+                    return view('admin.users.show', ['user' => $user,'userData'=>$userData,'departmentsWithCycles'=>$departmentsWithCycles])->with('imagePath','images/'.$fileName);
                     break;
                 case $isTeacher:
                     $userModules = $user->modules; // Obtener los módulos del usuario
@@ -475,8 +514,11 @@ class UserController extends Controller {
     {
         if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
 
-            $this->enrollStudentInCycle($user->id,$request->newCycle);
-
+            if(!in_array($request->newCycle,$user->cycles->pluck('id')->toArray())){
+                $this->enrollStudentInCycle($user->id,$request->newCycle);
+            } else {
+                return redirect()->back()->withErrors('error','Already in that cycle');
+            }
             return redirect()->route('users.show',['user'=>$user]);
         }
         
@@ -491,18 +533,17 @@ class UserController extends Controller {
             $modulesArray = explode("/",$request->newModule);
             $cycleId = $modulesArray[0];
             $moduleId = $modulesArray[1];
-
             $exists = DB::table('module_user_cycle')->where('user_id', $user->id)
             ->where('module_id',$moduleId)
             ->where('cycle_id',$cycleId)
             ->exists();
 
-            if ($exists) {
+            if (!$exists) {
                 $this->enrollTeacherInModule($user->id,$moduleId,$cycleId);
 
                 return redirect()->route('users.show',['user'=>$user]);
             } else {
-                return back()->with('error','Already in that module');
+                return redirect()->back()->withErrors('error',__('errorAlreadyInModule'));
             }
             
         } else {
@@ -618,13 +659,6 @@ class UserController extends Controller {
             $cycleList = $request->input('selectedCycles');
             $cyclesArray = explode(',', $cycleList);
             
-            // $cycles = Cycle::whereIn('id', $cyclesArray)
-            //     ->with(['modules' => function ($query) use ($user) {
-            //         $query->whereHas('users', function ($query) use ($user) {
-            //             $query->where('user_id', $user->id);
-            //         });
-            //     }])
-            //     ->get();
             $cycles = Cycle::whereIn('id', $cyclesArray)
             ->with('modules')
             ->get();
@@ -637,5 +671,47 @@ class UserController extends Controller {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
         
+    }
+
+    public function destroyUserCycle(Request $request, $cycleId, $userId){
+        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+            $user = User::find($userId);
+            if ($user) {
+                
+                $modules = DB::table('module_user_cycle')->where('user_id', $user->id)
+                ->where('cycle_id',$cycleId)->get();
+
+                foreach($modules as $module) {
+                    $user->modules()->detach($module->module_id);
+                }
+
+                $user->cycles()->detach($cycleId);
+                
+                
+                
+                return redirect()->route('users.show',['user'=>$user]);
+            } else {
+                return redirect()->back()->withErrors('error',__('errorDelete'));
+            }
+
+        }else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
+        }
+    }
+
+    public function destroyUserModule(Request $request, $moduleId, $userId){
+        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+            $user = User::find($userId);
+            if ($user) {
+                $user->modules()->detach($moduleId);
+                
+                return redirect()->route('users.show',['user'=>$user])->with('success',__('successDelete'));
+            } else {
+                return redirect()->back()->withErrors('error',__('errorDelete'));
+            }
+
+        }else {
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
+        }
     }
 }

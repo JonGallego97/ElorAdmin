@@ -100,5 +100,8 @@
     "errorRoleRequired": "Es necesario seleccionar un Rol",
     "errorMessageModulesEmpty": "Es necesario seleccionar un modulo",
     "errorMessageCyclesEmpty": "Es necesario seleccionar un ciclo",
-    "errorMessageDepartmentEmpty": "Es necesario seleccionar un departamento"
+    "errorMessageDepartmentEmpty": "Es necesario seleccionar un departamento",
+    "errorStudentCantHaveMoreRoles": "Un estudiante no puede tener mas de un rol",
+    "errorAlreadyInModule": "Ya esta en el modulo",
+    "errorAlreadyInCycle": "Ya esta en el ciclo"
 }

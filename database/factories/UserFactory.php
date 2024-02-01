@@ -43,10 +43,28 @@ class UserFactory extends Factory
         $letter = round((float)$userID /23,2);
         $letter = round(($letter - (int)$letter)*23,0);
         $userID = $userID . $DNILetterArray[$letter];
-        $userName = trim(strtolower($name . "." . $surname1 . substr($surname2, 0, 2)));
+        $tilesList = array(
+            'á' => 'a',
+            'é' => 'e',
+            'í' => 'i',
+            'ó' => 'o',
+            'ú' => 'u',
+            'ñ' => 'n',
+            'Á' => 'A',
+            'É' => 'E',
+            'Í' => 'I',
+            'Ó' => 'O',
+            'Ú' => 'U',
+            'Ñ' => 'N'
+        );
+     
+    
+        $userName = $name . "." . $surname1 . substr($surname2, 0, 2);
+        $userName = str_replace(" ","",$userName);
+        $userName = strtolower(strtr($userName, $tilesList));
 
         return [
-            'password' => bcrypt('contraseña'), // Puedes utilizar un método más seguro para generar contraseñas
+            'password' => bcrypt(str_replace(".","",$userName) . date("Y")), // Puedes utilizar un método más seguro para generar contraseñas
             'name' => $name,
             'surname1' => $surname1,
             'surname2' => $surname2,

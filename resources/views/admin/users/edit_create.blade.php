@@ -69,83 +69,41 @@
                 <input type="text" class="form-control" id="address" name="address" required
                     value="{{$user->address}}"/>
             </div>
-        </div>
-        <hr>
-<!--         <div class="row">
-            @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()) == false)
+            @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()) && Route::currentRouteName() == 'users.edit')
                 <div class="col form-group mb-3">
                     <label for="department" class="form-label">{{__("Department")}}</label>
-                    <select class="form-control" name="department" multiple>
+                    <select class="form-control" name="department">
                         @foreach ($departments as $department)
                         <option value={{$department->id}}
-                        @if ($user->department == $department->id)
-                        selected
-                        @endif
+                        @if($department->id == $user->department_id)
+                            selected 
+                        @endif    
                         >{{$department->name}}
                         </option>
                         @endforeach
                     </select>
                 </div>
+            @elseif (Route::currentRouteName() == 'users.edit')
+                <div class="col form-group mb-3">
+                    <label for="dual" class="form-label">{{__("Dual")}}</label>
+                    <select class="form-control" name="dual">
+                        <option value="1" <?= ($user->dual == 1) ? 'selected' : '' ?>>{{__("Yes")}}</option>
+                        <option value="0" <?= ($user->dual == 0) ? 'selected' : '' ?>>{{__("No")}}</option>
+                    </select>
+                </div>
+                <div class="col form-group mb-3">
+                    <label for="year" class="form-label">{{__("Year")}}</label>
+                    <select class="form-control" name="year">
+                        <option value="1" <?= ($user->year == 1) ? 'selected' : '' ?>>{{__("FirstYear")}}</option>
+                        <option value="2" <?= ($user->year == 0) ? 'selected' : '' ?>>{{__("SecondYear")}}</option>
+                    </select>
+                </div>
             @endif
-            @if(Route::currentRouteName() == 'users.create')
-            <div class="col-4 form-group mb-3">
-                <p>Solo para personal del centro</p>
-                <label for="department" class="form-label">{{__("Department")}}</label>
-                <select class="form-control" name="department">
-                    <option value="0">{{__("Department")}}</option>
-                    @foreach ($departments as $department)
-                    <option value={{$department->id}}>{{$department->name}}
-                    </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-4 form-group mb-3">
-                <p>Solo para Alumnos</p>
-                <label for="year" class="form-label">{{__("Year")}}</label>
-                <select class="form-control" name="year">
-                    <option value="1">{{__("FirstYear")}}</option>
-                    <option value="1">{{__("SecondYear")}}</option>
-                </select>
-                <label for="dual" class="form-label">{{__("Dual")}}</label>
-                <select class="form-control" name="dual">
-                    <option value="true"{{ $user->dual == true ? 'selected' : ''}}>{{__("Yes")}}</option>
-                    <option value="false"{{ $user->dual == false ? 'selected' : '' }}>{{__("No")}}</option>
-                </select>
-            </div>
-            @endif
-        </div>   -->
-
+        </div>
+        <hr>
 
         <hr class="my-4">
         @if(Route::currentRouteName() == 'users.create')
-<!--         <div class="row">
-            <div class="col-4 form-group mb-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3>{{__("Roles")}}</h3>
-                </div>
-                <select id="create_roles" name="roles[]" class="form-control mb-3" multiple>
-                    @foreach ($roles as $role)
-                        @switch(true)
-                            @case(str_contains(url()->previous(),'teachers') && $role->name == 'PROFESOR')
-                                <option value="{{ $role->id }}" selected>
-                                    {{ $role->name }}
-                                </option>
-                                @break
-                            @case(str_contains(url()->previous(),'students') && $role->name == 'ALUMNO')
-                                <option value="{{ $role->id }}" selected>
-                                    {{ $role->name }}
-                                </option>
-                                @break
-                            @default
-                                <option value="{{ $role->id }}">
-                                    {{ $role->name }}
-                                </option>
-                                @break
-                        @endswitch
-                        
-                    @endforeach
-                </select>
-            </div> -->
             <div class="row">
                 <div id="rolesContainer" class="col-4 form-group mb-3" style="max-height: 200px; overflow-y: auto;">
                     <div class="d-flex justify-content-between align-items-center">
@@ -165,22 +123,6 @@
                     @endforeach
                 </div>
             </div>
-
-
-<!--             <div class="col-6 form-group mb-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3>{{__("Cycles")}}</h3>
-                </div>
-                <div class= "col mb-3">
-                    <select id="cycles" name="cycles" class="form-control">
-                    @foreach ($cycles as $cycle)
-                        <option value="{{ $cycle->id }}">
-                        {{ $cycle['name'] }}
-                        </option>
-                    @endforeach
-                    </select>
-                </div>
-            </div> -->
         </div>
         @endif
 
@@ -203,7 +145,6 @@
                     </option>
                 @endforeach
             </select>
-
         </div>
         <hr class="my-4">
         <div class="form-group mb-2">
@@ -279,7 +220,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
 
         <div class="modal fade" id="cyclesModal" tabindex="-1" aria-labelledby="cyclesModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">

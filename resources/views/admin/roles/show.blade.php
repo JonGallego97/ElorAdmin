@@ -5,7 +5,7 @@
             <div class="col d-flex align-items-center">
                 <h1 class="me-2 mb-0" style="white-space: nowrap;">{{ __('Role') }}{{ __('Colon') }} {{ $role->name }}</h1>
                 <a href="{{ route('roles.edit', $role) }}" class="me-2" role="button">
-                    <i class="bi bi-pencil-square" style="font-size: 24px;"></i>
+                    <i class="bi bi-pencil-square fs-2"></i>
                 </a>
                 <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="roles/destroy" data-type="{{__('role')}}" data-id="{{ $role->id }}" data-name="{{ $role->name }}" id="openModalBtn">
                     <i class="bi bi-trash3 fs-2"></i>

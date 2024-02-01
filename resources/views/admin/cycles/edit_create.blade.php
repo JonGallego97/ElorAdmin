@@ -23,14 +23,18 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group mb-3">
+                <div class="form-group mb-3" style="max-height: 200px; overflow-y: auto;">
                     <label for="modules" class="form-label">{{__('Modules')}}</label>
-                    <select id="modules" name="modules[]" class="form-control" multiple>
-                        
-                        @foreach ($allModules as $module)
-                        <option value="{{ $module->id }}" {{ $cycle->modules->contains('id', $module->id) ? 'selected' : '' }}>{{$module->name}}</option>
-                        @endforeach
-                    </select>
+
+                    @foreach ($allModules as $module)
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="modules[]" id="module_{{ $module->id }}" value="{{ $module->id }}"
+                            {{ $cycle->modules->contains('id', $module->id) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="module_{{ $module->id }}">
+                                {{ $module['name'] }}
+                            </label>
+                        </div>
+                    @endforeach
                 </div>
                 <button type="submit" class="btn btn-primary" name="">{{__('Edit')}}</button>
             </form>

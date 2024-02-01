@@ -98,7 +98,7 @@ class CycleController extends Controller
             $result = $cycle->save();
     
             if($result) {
-                $modules = $$request->input('modules', []);
+                $modules = $request->input('modules', []);
                 $cycle->modules()->attach($modules);
                 return redirect()->route('cycles.show',['cycle'=>$cycle])->with('success',__('successCreate'));
             } else {

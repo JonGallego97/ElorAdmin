@@ -5,8 +5,11 @@
             <div class="col d-flex align-items-center">
                 <h1 class="me-2 mb-0" style="white-space: nowrap;">{{ __('Cycle') }}{{ __('Colon') }} {{ $cycle->name }}</h1>
                 <a href="{{ route('cycles.edit', $cycle) }}" class="me-2" role="button">
-                    <i class="bi bi-pencil-square" style="font-size: 24px;"></i>
+                    <i class="bi bi-pencil-square fs-2"></i>
                 </a>
+                <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="cycles/destroy" data-type="{{__('cycle')}}" data-id="{{ $cycle->id }}" data-name="{{ $cycle->name }}" id="openModalBtn">
+                    <i class="bi bi-trash3 fs-2"></i>
+                </button>
             </div>
             <div class="col text-end">
                 <a href="{{ route('cycles.index') }}" class="me-2" role="button">

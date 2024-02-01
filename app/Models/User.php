@@ -67,6 +67,11 @@ class User extends Authenticatable
         return $this->roles->where('name', $role)->isNotEmpty();
     }
 
+    public function enrolledCyclesWithModules($cycleId)
+    {
+        return $this->cycles->where('name', $cycleId);
+    }
+
     public function department()
     {
         return $this->belongsTo(Department::class);
