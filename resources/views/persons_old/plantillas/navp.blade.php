@@ -13,23 +13,23 @@
                     <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
                         <ul class="nav flex-column mb-auto">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('person.index', ['user' => Auth::user()->id]) }}">
+                                <a class="nav-link" href="{{ route('index', ['user' => Auth::user()->id]) }}">
                                     {{__('Dashboard')}}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('person.staff.index', ['user' => Auth::user()->id]) }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('staff.index', ['user' => Auth::user()->id]) }}">
                                     {{__('Personal')}}
                                 </a>
 
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('person.departments.index') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('departments.index') }}">
                                     {{__('Departments')}}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('person.cycles.index') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('cycles.index') }}">
 
                                     {{__('Cycles')}}
                                 </a>

@@ -53,7 +53,7 @@ class DepartmentController extends Controller
     {
         $departments = Department::withCount('users')->orderBy('users_count')->get();
 
-        return view('persons.departments.index', ['departments' => $departments]) ;
+        return view('departments.index', ['departments' => $departments]) ;
 
     }
     /**
