@@ -70,14 +70,5 @@ class UserChatMessageSeeder extends Seeder
         
         ]);
 
-        DB::table('messages')->insert([
-            'user_id' => '0',
-            'chat_id' => '1',
-            'content' => 'Bienvenido a la aplicación de Elorrieta-Errekamari',
-            'data_type' => 'TEXT',
-            "created_at" => now(),
-            "updated_at" => now(),
-        
-        ]); 
     }
 }

@@ -159,7 +159,7 @@ class UserController extends Controller {
             'phone_number1' =>['required','integer'],
             'phone_number2' =>['required','integer'],
             'year' => ['nullable','integer'],
-            'dual' => ['nullable','boolean'],
+            'is_dual' => ['boolean'],
             'roles' => ['required','array',function ($attribute, $value, $fail) use ($request,$studentRole) {
                 $userRoles = $request->input('roles', []);
                 if (in_array($studentRole->id,$userRoles,false) && count($userRoles)!=1) {
@@ -299,7 +299,7 @@ class UserController extends Controller {
             //Datos Extra
             if($isStudent){
                 $user->year = $request->year;
-                $user->dual = $request->dual;
+                $user->is_dual = $request->is_dual;
                
             } else if(!$isAdmin) {
                 $user->department_id = $request->department;     
