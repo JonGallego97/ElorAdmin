@@ -45,7 +45,7 @@ class UserFactory extends Factory
         $userID = $userID . $DNILetterArray[$letter];
 
         return [
-            'password' => bcrypt('contraseña'), // Puedes utilizar un método más seguro para generar contraseñas
+            'password' => bcrypt('password'), // Puedes utilizar un método más seguro para generar contraseñas
             'name' => $name,
             'surname1' => $surname1,
             'surname2' => $surname2,
@@ -55,7 +55,7 @@ class UserFactory extends Factory
             'phone_number1' => $fakerSpain->numerify('#########'),
             'phone_number2' => $fakerSpain->numerify('#########'),
             'image' => "",
-            'dual' => null,
+            'is_dual' => false,
             'first_login' => $fakerSpain->boolean,
             'year' => $year,
             'created_at' => now(),
