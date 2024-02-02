@@ -2,16 +2,19 @@
     @section('nav')
     <div class="container mt-4">
         <div class="row p-3 mb-2 bg-secondary-subtle rounded-pill">
-            <div class="col">
-                <h1>
-                    <h1>{{ __('Department') }}{{ __('Colon') }} {{ $department->name }}</h1>
-                </h1>
+            <div class="col d-flex align-items-center">
+                <h1 class="me-2 mb-0" style="white-space: nowrap;">{{ __('Department') }}{{ __('Colon') }} {{ $department->name }}</h1>
+                <a href="{{ route('departments.edit', $department) }}" class="me-2" role="button">
+                    <i class="bi bi-pencil-square fs-2"></i>
+                </a>
+                <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments/destroy" data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">
+                    <i class="bi bi-trash3 fs-2"></i>
+                </button>
             </div>
             <div class="col text-end">
                 <a href="{{ route('departments.index') }}" class="me-2" role="button">
                     <i class="bi bi-arrow-90deg-left fs-3"></i>
                 </a>
-
             </div>
         </div>
         <br>
@@ -44,7 +47,7 @@
                                 </a>
                             </td>
                             <td>{{ $user->email }}</td>
-                            <td>{{ $user->DNI }}</td>
+                            <td>{{ $user->dni }}</td>
                             <td>
                                 <div class="d-flex">
                                     <a href="{{ route('users.edit', $user) }}" class="me-2" role="button">

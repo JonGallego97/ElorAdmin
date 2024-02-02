@@ -4,13 +4,14 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable,SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -42,6 +43,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_dual' => 'boolean'
     ];
 
     public function roles()
@@ -51,7 +53,8 @@ class User extends Authenticatable
     //Relacion con Modulos (Profesores)
     public function modules()
     {
-        return $this->belongsToMany(Module::class, 'module_user', 'user_id', 'module_id');
+        return $this->belongsToMany(Module::class, 'module_user_cycle','user_id', 'module_id')->withPivot('cycle_id');
+
     }
 
     //Relacion con Ciclos (Alumnos)
@@ -63,6 +66,11 @@ class User extends Authenticatable
     public function hasRole($role)
     {
         return $this->roles->where('name', $role)->isNotEmpty();
+    }
+
+    public function enrolledCyclesWithModules($cycleId)
+    {
+        return $this->cycles->where('name', $cycleId);
     }
 
     public function department()

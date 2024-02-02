@@ -79,8 +79,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($cycle['modules'] as $module)
-                                        @if (in_array($module->id, $user['modules']->pluck('id')->toArray()))
+                                    @foreach ($user['modules'] as $module)
+                                        @if ($user['modules']->contains('id', $module['id']))
                                             <tr>
                                                 <td>{{ $module['code'] }}</td>
                                                 <td>
@@ -105,12 +105,18 @@
                                                             </thead>
                                                             <tbody>
                                                                 <tr>
-                                                                    @foreach ($usersInRole3ByModule as $aUser)
+                                                                    @if ($usersInRole3ByModule)
+                                                                    @foreach ($usersInRole3ByModule as $user)
+                                                                        <tr>
+                                                                            <td>{{ $user->name }}</td>
+                                                                            <td>{{ $user->email }}</td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                @else
                                                                     <tr>
-                                                                        <td>{{ $aUser->name }}</td>
-                                                                        <td>{{ $aUser->email }}</td>
+                                                                        <td colspan="2">No users found</td>
                                                                     </tr>
-                                                                @endforeach
+                                                                @endif
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -170,12 +176,18 @@
                 <div class="card mb-3">
                     <div class="card-header">
                             <h3>{{__('Cycles')}}</h3>
-                    <div class="accordion" id="accordionExample">
-                        @foreach ($user['cycles'] as $cycle)
+
+                        <div class="accordion" id="accordionExample">
+                            @if ($user->cycles->isEmpty())
+                            <p>No cycles found for this user.</p>
+                            @else
+                            @foreach ($user->cycles as $cycle)
+
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="heading{{ $cycle->id }}">
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $cycle->id }}" aria-expanded="true" aria-controls="collapse{{ $cycle->id }}">
                                         {{ $cycle->name }}
+
                                         &nbsp;<small class="text-muted">{{ __('Registered') }}: {{ $cycle->created_at->toDateString() }}</small>
                                         &nbsp;<small class="text-muted">{{ __('Year') }}: {{ max(1, $cycle->year - date('Y')) }}</small>
                                     </button>
@@ -197,7 +209,7 @@
                                                             <td>{{ $module->name }}</td>
                                                             @foreach ($usera as $aUser)
                                                                 @if ($aUser->hasRole('PROFESOR'))
-                                                                {{--falta que filtrar por diferente profesores por cada modulo--}}
+
                                                                     <td>{{ $aUser->name }}</td>
                                                                     <td>{{ $aUser->email }}</td>
                                                                 @break
@@ -210,7 +222,9 @@
                                     </div>
                                 </div>
                             </div>
+
                         @endforeach
+                        @endif
                     </div>
                 </div>
             @endif

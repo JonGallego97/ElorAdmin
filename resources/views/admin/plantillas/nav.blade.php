@@ -16,16 +16,16 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('admin.users.index') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('users.index') }}">
                                     {{__('Users')}}
                                 </a>
                                 <div id="usuariosCollapse">
                                     <ul class="nav flex-column">
                                         <li class="nav-item">
-                                            <a class="nav-link ml-3 small" href="{{ route('admin.students.index') }}">{{__('Students')}}</a>
+                                            <a class="nav-link ml-3 small" href="{{ route('students.index') }}">{{__('Students')}}</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link ml-3 small" href="{{ route('admin.teachers.index') }}">{{__('Teachers')}}</a>
+                                            <a class="nav-link ml-3 small" href="{{ route('teachers.index') }}">{{__('Teachers')}}</a>
                                         </li>
                                     </ul>
                                 </div>

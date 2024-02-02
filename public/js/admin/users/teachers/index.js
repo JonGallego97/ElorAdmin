@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+/* document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById("roleEdit").onclick = function() {
         roleModal()
@@ -22,14 +22,21 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     function cycleModal() {
-        var clyclesList = document.getElementById('hiddenCycleIds').value;
-        var selectedCycles = clyclesList ? clyclesList.split(',') : [];
+        var cyclesList = document.getElementById('hiddenCycleIds').value;
+        var selectedCycles = cyclesList ? cyclesList.split(',') : [];
         selectedCycles.forEach(function(cycleId) {
             var checkbox = document.getElementById('cycle_' + cycleId);
             if (checkbox !== null) {
                 checkbox.checked = true;
             }
         });
+        // var submitButton = document.getElementById('editCyclesBtn');
+        // submitButton.addEventListener('click', function() {
+        //     var form = document.getElementById('editCyclesForm');
+        //     form.formAction = "{{  route('users.editModules', $user) }}"
+        //     form.submit();
+        // });
+        
     }
 
     //Precargar modules en la modal
@@ -80,9 +87,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Actualizar el atributo 'data-user' con la nueva lista de roles
             userDataElement.setAttribute('data-user', JSON.stringify(userRoles));
+            console.log(JSON.stringify(userRoles));
 
             // Actualizar la lista de roles en el HTML
             actualizarListaRoles(userRoles);
+            $(this).find('#selectedInputRoles').attr('value',JSON.stringify(userRoles));
+            document.getElementById("editRolesForm").submit();
+            
         });
 
         // Obtener los roles que estén chequeados
@@ -108,3 +119,5 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+ */
