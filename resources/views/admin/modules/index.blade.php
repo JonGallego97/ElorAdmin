@@ -7,7 +7,7 @@
                 </h1>
             </div>
             <div class="col text-end">
-                <a href="{{ route('modules.create') }}" class="me-2" role="button">
+                <a href="{{ route('admin.modules.create') }}" class="me-2" role="button">
                     <i class="bi bi-person-plus fs-3"></i>
                 </a>
 
@@ -30,7 +30,7 @@
                 <tr>
                     <td>{{$module->code}}</td>
                     <td>
-                        <a href="{{route('modules.show', $module)}}" role="button">
+                        <a href="{{route('admin.modules.show', $module)}}" role="button">
                             {{$module->name}}
                         </a>
                     </td>
@@ -39,7 +39,7 @@
                     <td>{{$module->count_students}}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="{{ route('modules.edit', $module) }}" class="me-2" role="button">
+                            <a href="{{ route('admin.modules.edit', $module) }}" class="me-2" role="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="modules/destroy" data-type="{{__('module')}}" data-id="{{ $module->id }}" data-name="{{ $module->name }}" id="openModalBtn">

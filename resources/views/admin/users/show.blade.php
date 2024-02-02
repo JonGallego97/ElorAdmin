@@ -1,7 +1,6 @@
 @extends('admin.plantillas.nav')
 
 @section('nav')
-    <div class="container">
         <div class="row p-3 mb-2 bg-secondary-subtle rounded-pill">
             <div class="col">
                 <h1>
@@ -22,17 +21,17 @@
             <div class="col text-end">
                 @switch(true)
                     @case(str_contains(url()->previous(),'users'))
-                        <a href="{{ route('users.index') }}" class="me-2" role="button">
+                        <a href="{{ route('admin.users.index') }}" class="me-2" role="button">
                             <i class="bi bi-arrow-90deg-left fs-3"></i>
                         </a>
                         @break
                     @case(str_contains(url()->previous(),'teachers'))
-                        <a href="{{ route('teachers.index') }}" class="me-2" role="button">
+                        <a href="{{ route('admin.teachers.index') }}" class="me-2" role="button">
                             <i class="bi bi-arrow-90deg-left fs-3"></i>
                         </a>
                         @break
                     @case(str_contains(url()->previous(),'students'))
-                        <a href="{{ route('students.index') }}" class="me-2" role="button">
+                        <a href="{{ route('admin.students.index') }}" class="me-2" role="button">
                             <i class="bi bi-arrow-90deg-left fs-3"></i>
                         </a>
                         @break
@@ -53,7 +52,7 @@
                     </div>
                     @endif
                     <div class="col d-flex justify-content-end">
-                        <a href="{{ route('users.edit', $user) }}" class="me-2" role="button">
+                        <a href="{{ route('admin.users.edit', $user) }}" class="me-2" role="button">
                             <i class="bi bi-pencil-square fs-3"></i>
                         </a>
                         <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
@@ -91,14 +90,14 @@
                         </select>
                     </div>
                     <div class="col d-flex justify-content-end">
-                        <!-- photo -->
-                        <img src="{{ asset($imagePath) }}" alt="Imagen" />
+                        <!-- photos -->
+                        <img src="{{ asset($imagePath) }}" alt="Imagen" style="max-width: 100%; max-height: 200px;" />
                     </div>
                 </div>
                 <hr>
                 <!-- Si tiene el rol de Profesor -->
                 @if(in_array('PROFESOR',$user->roles->pluck('name')->toArray()))
-                    <form class="row form" name="add_module" action="{{ route('users.addModule',$user) }}" method="POST">
+                    <form class="row form" name="add_module" action="{{ route('admin.users.addModule',$user) }}" method="POST">
                         @method('PUT')
                         @csrf
                         <div class="col-5 mb-3">
@@ -122,16 +121,25 @@
                     @foreach ($cyclesWithModules as $cycle)
                         <div class="card mb-3">
                             <div class="card-header">
-                                <a href="{{route('cycles.show', $cycle['id'])}}" role="button">
-                                    <h4>{{ $cycle['name'] }}</h4>
-                                </a>
+                                <div class="row">
+                                    <div class="col">
+                                        <a href="{{route('cycles.show', $cycle['id'])}}" role="button">
+                                            <h4>{{ $cycle['name'] }}</h4>
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
+                                            <i class="bi bi-trash3 fs-6"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <h5>{{__('Modules')}}</h5>
                                 <ul>
                                     @foreach ($cycle['modules'] as $module)
                                         <div class="d-flex align-items-center">
-                                            <li>{{ $module['code'] }} - <a href="{{ route('modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
+                                            <li>{{ $module['code'] }} - <a href="{{ route('admin.modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
                                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserModule" data-type="" data-id="{{ $module['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $module['name'] }}" id="openModalBtn">
                                                 <i class="bi bi-trash3 fs-6"></i>
                                             </button>
@@ -145,7 +153,7 @@
 
                 <!-- Si tiene el rol de Alumno -->
                 @if(in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
-                <form class="row form" name="add_cycle" action="{{ route('users.addCycle',$user) }}" method="POST">
+                <form class="row form" name="add_cycle" action="{{ route('admin.users.addCycle',$user) }}" method="POST">
                         @method('PUT')
                         @csrf
                         <div class="col-5 mb-3">
@@ -166,16 +174,18 @@
                     </form>
                     @foreach ($userData as $cycle)
                         <div class="card mb-3">
-                            <div class="card-header row align-items-center">
-                                <div class="col">
-                                    <a href="{{ route('cycles.show', $cycle['id']) }}" role="button">
-                                        <h4>{{ $cycle['name'] }}</h4>
-                                    </a>
-                                </div>
-                                <div class="col-auto">
-                                    <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
-                                        <i class="bi bi-trash3 fs-6"></i>
-                                    </button>
+                            <div class="card-header align-items-center">
+                                <div class="row">
+                                    <div class="col">
+                                        <a href="{{ route('admin.cycles.show', $cycle['id']) }}" role="button">
+                                            <h4>{{ $cycle['name'] }}</h4>
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
+                                            <i class="bi bi-trash3 fs-6"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -184,7 +194,7 @@
                                 <ul>
                                     @foreach ($cycle['modules'] as $module)
                                     <div class="d-flex align-items-center">
-                                        <li>{{ $module['code'] }} - <a href="{{ route('modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
+                                        <li>{{ $module['code'] }} - <a href="{{ route('admin.modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
                                         <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserModule" data-type="" data-id="{{ $module['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $module['name'] }}" id="openModalBtn">
                                             <i class="bi bi-trash3 fs-6"></i>
                                         </button>
@@ -197,5 +207,4 @@
                 @endif
             </div>
         </div>
-    </div>
 @endsection

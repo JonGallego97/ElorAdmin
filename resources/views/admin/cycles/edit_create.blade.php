@@ -3,7 +3,7 @@
     <div class="container">
         @if(Route::currentRouteName() == 'cycles.edit')
             <h1>{{__('Edit')}} {{__('Cycle')}} {{__('Colon')}} {{$cycle->name}}</h1>
-            <form class="mt-2" name="create_platform" action="{{route('cycles.update', $cycle)}}" method="POST" enctype="multipart/form-data">
+            <form class="mt-2" name="create_platform" action="{{route('admin.cycles.update', $cycle)}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="form-group mb-3">
@@ -40,7 +40,7 @@
             </form>
         @else
             <h1>{{__('Create')}} {{__('Cycle')}}</h1>
-            <form class="mt-2" name="create_platform" action="{{route('cycles.store')}}" method="POST" enctype="multipart/form-data">
+            <form class="mt-2" name="create_platform" action="{{route('admin.cycles.store')}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group mb-3">
                     <label for="name" class="form-label">{{__('Name')}}</label>

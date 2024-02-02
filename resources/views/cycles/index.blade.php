@@ -35,11 +35,10 @@
                         </thead>
                         <tbody>
                             @foreach ($cycle->sortedModules  as $module)
-                            <tr>
-                                <td>{{ $module->name }}</td> {{-- Aquí cerré correctamente la etiqueta </td> --}}
-                            </tr>
-                        @endforeach
-
+                                <tr>
+                                    <td>{{ $module->name }}</td> {{-- Aquí cerré correctamente la etiqueta </td> --}}
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

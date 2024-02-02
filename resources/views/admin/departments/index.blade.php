@@ -7,7 +7,7 @@
                 </h1>
             </div>
             <div class="col text-end">
-                <a href="{{ route('departments.create') }}" class="me-2" Department="button">
+                <a href="{{ route('admin.departments.create') }}" class="me-2" Department="button">
                     <i class="bi bi-person-plus fs-3"></i>
                 </a>
 
@@ -26,14 +26,14 @@
                 @foreach ($departments as $department)
                 <tr>
                     <td>
-                        <a href="{{route('departments.show', $department)}}" Department="button">
+                        <a href="{{route('admin.departments.show', $department)}}" Department="button">
                             {{$department->name}}
                         </a>
                     </td>
                     <td>{{$department->count_people}}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="{{ route('departments.edit', $department) }}" class="me-2" Department="button">
+                            <a href="{{ route('admin.departments.edit', $department) }}" class="me-2" Department="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments/destroy" data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">

@@ -4,7 +4,7 @@
 
         @if(Route::currentRouteName() == 'departments.edit')
             <h1>{{__('Edit')}} {{__('department')}} {{__('Colon')}} {{$department->name}}</h1>
-            <form class="mt-2" name="create_platform" action="{{route('departments.update', $department)}}" method="POST" enctype="multipart/form-data">
+            <form class="mt-2" name="create_platform" action="{{route('admin.departments.update', $department)}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="form-group mb-3">
@@ -16,7 +16,7 @@
             </form>
         @else
             <h1>{{__('Create')}} {{__('department')}}</h1>
-            <form class="mt-2" name="create_platform" action="{{route('departments.store')}}" method="POST" enctype="multipart/form-data">
+            <form class="mt-2" name="create_platform" action="{{route('admin.departments.store')}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group mb-3">
                     <label for="name" class="form-label">{{__('Name')}}</label>

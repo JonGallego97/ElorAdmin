@@ -55,10 +55,18 @@ class ControllerFunctions {
 
     public function createImageFromBase64(User $user)
     {
-        $imageData = base64_decode($user->image);
-        $fileName = $user->dni . '.png';
-        $filePath = public_path('images/' . $fileName);
-        file_put_contents($filePath,$imageData);
+        $defaultImagePath = 'users/default.png';
+        $defaultRoute = 'users/';
+
+        if ($user->image !== null) {
+            $imageData = base64_decode($user->image);
+            $fileName = $user->dni . '.png';
+            $filePath = public_path('images/users/' . $fileName);
+            file_put_contents($filePath, $imageData);
+            $fileName = $defaultRoute . $fileName;
+        } else {
+            $fileName = $defaultImagePath;
+        }
         return $fileName;
     }
 

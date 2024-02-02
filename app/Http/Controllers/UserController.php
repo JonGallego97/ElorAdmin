@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
+use Illuminate\Support\Facades\App;
+
 
 class UserController extends Controller {
 
@@ -83,9 +85,10 @@ class UserController extends Controller {
             $route = Route::getCurrentRoute()->uri;
             $isTeachers = Str::contains($route,'admin/teachers');
             $isStudents = Str::contains($route,'admin/students');
+            $hasNoRole = str::contains($route,'admin/withoutRole');
             switch(true) {
                 case $isTeachers:
-                    $perPage = $request->input('per_page', 10);
+                    $perPage = $request->input('per_page', App::make('paginationCount'));
                     $users = User::whereHas('roles', function ($query) {
                         $query->where('id', $this->ControllerFunctions->getTeacherRoleId());
                     })
@@ -112,6 +115,16 @@ class UserController extends Controller {
 
                     $users->totalUsers = $totalUsers;
                     //return view('admin.users.index',compact('users'));
+                    break;
+                case $hasNoRole:
+                    $perPage = $request->input('per_page', 10);
+                    $users = User::doesntHave('roles')
+                        ->orderBy('name', 'asc')
+                        ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+
+                    $totalUsers = User::doesntHave('roles')->count();
+
+                    $users->totalUsers = $totalUsers;
                     break;
                 default:
                     $perPage = $request->input('per_page', 10);
@@ -205,18 +218,10 @@ class UserController extends Controller {
             $cycles = Cycle::select('id','name')->orderBy('name')->get();
 
             return view('admin.users.edit_create', ['user'=>$user,'roles'=>$roles,'departments' => $departments,'cycles' => $cycles]);
-            // if(optional(User::find($user->id)->roles->first())->id == 2){
-            //     //Si es profesor
-            //     $user = new User();
-            //     return view('admin.users.edit_create', ['user'=>$user]);
-            // }else if($user->role->id == 3){
-
-            // }
-
 
         }else {
             //si no es admin
-
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
     }
 
@@ -334,7 +339,7 @@ class UserController extends Controller {
             $query->where('code', $languageModulesCodes);
         }])->get();
         if($user->hasRole("ADMINISTRADOR")){
-            return redirect()->route('users.show',['user'=>$user]);
+            return redirect()->route('admin.users.show',['user'=>$user]);
         } else {
             return view('admin.users.extra_create', ['user_id'=>$user->id,'userRolesNames'=>$userRolesNames,'languageModules' => $languageModules, 'roles'=> $roles,'departments' => $departments,'cycles' => $cycles]);
         }
@@ -436,7 +441,7 @@ class UserController extends Controller {
             }
             
             if($result) {
-                return redirect()->route('users.show',['user'=>$user]);
+                return redirect()->route('admin.users.show',['user'=>$user]);
             } else {
                 return redirect()->back()->withErrors('error', __('errorCreate'));
             }
@@ -494,7 +499,6 @@ class UserController extends Controller {
                     // Obtener ciclos y módulos con la relación directa a partir de los datos de la tabla module_user_cycle
                     foreach ($userModulesData as $userModule) {
                         $cycle = Cycle::find($userModule->cycle_id);
-                    
                         if ($cycle) {
                             $cycleId = $cycle->id;
                             $cycleName = $cycle->name;
@@ -568,36 +572,7 @@ class UserController extends Controller {
             }
         } else {
             if(Auth::user()->id == $user->id) {
-                 //Si no viene de admin
-                $user = Auth::user();
-
-                $usera = User::All();
-
-                $cycle = cycle::find($user->id);
-
-                // Verificar si el usuario autenticado tiene el rol deseado
-                if (User::find($user->id)->roles->first()->id == 2) {
-                    // Si tiene el rol deseado, filtrar los usuarios por ese rol
-                    $usera = User::whereHas('roles', function ($query) {
-                        $query->where('id', 2);
-                    })->get();
-                }
-                // Obtener los ciclos y módulos del usuario
-                $cycles = $user->cycles;
-
-                $usersInRole3ByModule=[];
-                foreach ($cycles as $cycles) {
-                    foreach ($cycles as $users) {
-                        if ($user->roles->first()->id == 2) {
-                        $usersInRole3ByModule=$users;
-                        }
-                    }
-                }
-
-                // Obtener los datos adicionales del usuario autenticado
-                $user = User::with('roles', 'cycles.modules', 'modules')->where('id', $user->id)->first();
-
-                return view('users.show', compact('user','usersInRole3ByModule','usera','cycle'));
+                return redirect()->route('home.index');
             } else {
                 // Lógica para obtener la información de los usuarios según sus identificadores ($user1 y $user2)
                 $user = User::where('id',$user->id)->first();
@@ -635,7 +610,7 @@ class UserController extends Controller {
 
             $this->enrollStudentInCycle($user->id,$request->newCycle);
 
-            return redirect()->route('users.show',['user'=>$user]);
+            return redirect()->route('admin.users.show',['user'=>$user]);
             //return view('cycles.show',['user'=>$user]);
         }
 
@@ -653,7 +628,7 @@ class UserController extends Controller {
             } else {
                 return redirect()->back()->withErrors('error','Already in that cycle');
             }
-            return redirect()->route('users.show',['user'=>$user]);
+            return redirect()->route('admin.users.show',['user'=>$user]);
         }
         
     }
@@ -675,7 +650,7 @@ class UserController extends Controller {
             if (!$exists) {
                 $this->enrollTeacherInModule($user->id,$moduleId,$cycleId);
 
-                return redirect()->route('users.show',['user'=>$user]);
+                return redirect()->route('admin.users.show',['user'=>$user]);
             } else {
                 return redirect()->back()->withErrors('error',__('errorAlreadyInModule'));
             }
@@ -698,7 +673,7 @@ class UserController extends Controller {
             if($user->id != 0){
                 if ($user) {
                     $user->delete();
-                    return redirect()->route('users.index');
+                    return redirect()->route('admin.users.index');
                 } else {
                     return redirect()->back()->withErrors('error', __('errorDelete'));
                 }
@@ -820,10 +795,8 @@ class UserController extends Controller {
                 }
 
                 $user->cycles()->detach($cycleId);
-                
-                
-                
-                return redirect()->route('users.show',['user'=>$user]);
+
+                return redirect()->route('admin.users.show',['user'=>$user]);
             } else {
                 return redirect()->back()->withErrors('error',__('errorDelete'));
             }
@@ -839,7 +812,7 @@ class UserController extends Controller {
             if ($user) {
                 $user->modules()->detach($moduleId);
                 
-                return redirect()->route('users.show',['user'=>$user])->with('success',__('successDelete'));
+                return redirect()->route('admin.users.show',['user'=>$user])->with('success',__('successDelete'));
             } else {
                 return redirect()->back()->withErrors('error',__('errorDelete'));
             }

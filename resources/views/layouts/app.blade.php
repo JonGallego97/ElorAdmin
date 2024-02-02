@@ -25,9 +25,12 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="data-bs-theme navbar navbar-expand-md shadow-sm">
             <div class="container">
                 @auth
+                <a href="#" class="btn btn-primary d-md-none ms-3" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
+                    <i class="bi bi-arrow-bar-right"></i>
+                </a>
                 <a class="navbar-brand" href="{{ url('/home') }}">
                     {{ config('app.name', 'ElorAdmin') }}
                 </a>

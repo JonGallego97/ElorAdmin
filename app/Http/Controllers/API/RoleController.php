@@ -6,23 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class RoleController extends Controller
 {
-    /*
-    * @OA\Get(
-    *   path="/api/roles",
-    *   summary="Shows all roles",
-    *   @OA\Response(
-    *       response=200,
-    *       description="Shows all roles."
-    * ),
-    * @OA\Response(
-    *   response="default",
-    *   description="Error has ocurred."
-    *   )
-    * )
-    */
     public function index()
     {
         $roles = Role::orderBy('id')->get();
@@ -33,35 +20,6 @@ class RoleController extends Controller
         }
     }
 
-    /*
-    * @OA\Post(
-    *   path="/api/roles",
-    *   summary="Create a role",
-    *   @OA\Parameter(
-    *       name="Name",
-    *       in="query",
-    *       description="name",
-    *       required=true,
-    *       @OA\Schema(
-    *           type="string"
-    *       )
-    *   ),
-    *   @OA\Response(
-    *       response=200,
-    *       description="successful operation",
-    *       @OA\JsonContent(
-    *           type="string"
-    *       ),
-    *   ),
-    *   @OA\Response(
-    *       response=401,
-    *       description="Unauthenticated"
-    *   ),
-    *   security={
-    *       {"bearerAuth": {}}
-    *   }
-    * )
-    */
     public function store(Request $request)
     {
         $role = new Role();
@@ -75,29 +33,7 @@ class RoleController extends Controller
         }
     }
 
-    /*
-    * @OA\Get(
-    *   path="/api/roles/{id}",
-    *   summary="Shows one role",
-    *   @OA\Parameter(
-    *       name="id",
-    *       description="Role id",
-    *       required=true,
-    *       in="path",
-    *       @OA\Schema(
-    *           type="integer"
-    *       )
-    *   ),
-    *   @OA\Response(
-    *       response=200,
-    *       description="Shows role."
-    *   ),
-    *   @OA\Response(
-    *       response="default",
-    *       description="Ha ocurrido un error."
-    *   )
-    * )
-    */
+   
     public function show(Role $role)
     {
         if (!empty($role)) {
@@ -107,29 +43,7 @@ class RoleController extends Controller
         }
     }
 
-    /*
-    * @OA\Put(
-    *   path="/api/roles/{id}",
-    *   summary="Edit a role",
-    *   @OA\Parameter(
-    *       name="Name",
-    *       in="query",
-    *       description="name",
-    *       required=true,
-    *       @OA\Schema(
-    *           type="string"
-    *       )
-    *   ),
-    *   @OA\Response(
-    *       response=200,
-    *       description="Edits role"
-    *   ),
-    *   @OA\Response(
-    *       response="default",
-    *       description="Ha ocurrido un error."
-    *   )
-    * )
-    */
+ 
     public function update(Request $request, Role $role)
     {
         $role->name = $request['name'];
@@ -142,29 +56,7 @@ class RoleController extends Controller
             }
     }
 
-    /*
-    * @OA\Delete(
-    *   path="/api/roles/{id}",
-    *   summary="Delete one role",
-    *   @OA\Parameter(
-    *       name="id",
-    *       description="Role id",
-    *       required=true,
-    *       in="path",
-    *       @OA\Schema(
-    *           type="integer"
-    *       )
-    *   ),
-    *   @OA\Response(
-    *       response=200,
-    *       description="Erased"
-    *   ),
-    *   @OA\Response(
-    *       response="default",
-    *       description="Ha ocurrido un error."
-    *   )
-    * )
-    */
+
     public function destroy(Role $role)
     {
         if($role->name != 'ADMINISTRADOR' && $role->name!= 'ALUMNO' && $role->name!= 'PROFESOR'){

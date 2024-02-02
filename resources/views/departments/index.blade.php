@@ -34,7 +34,11 @@
                             <tbody>
                                 @foreach ($department->users as $user)
                                     <tr>
-                                        <td>{{ $user->surname1 }} {{ $user->surname2 }}, {{ $user->name }}</td>
+                                        <td>
+                                            <a href="{{ route('users.show', $user)}}" role="button">
+                                            {{ $user->surname1 }} {{ $user->surname2 }}, {{ $user->name }}
+                                            </a>
+                                        </td>
                                         <td>{{ $user->email }}</td>
                                         <td>{{ $user->phone_number1 }}</td>
                                     </tr>

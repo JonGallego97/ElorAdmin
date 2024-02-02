@@ -3,10 +3,12 @@
         <div class="row p-3 mb-2 bg-secondary-subtle rounded-pill">
             <div class="col">
                 <h1>
-                    @if(request()->is('admin/students*'))
+                    @if(Route::currentRouteName() == 'admin.students.index')
                         {{ __('Students') }}
-                    @elseif(request()->is('admin/teachers*'))
+                    @elseif(Route::currentRouteName() == 'admin.teachers.index')
                         {{ __('Teachers') }}
+                    @elseif(Route::currentRouteName() == 'admin.withoutRole.index')
+                        {{ __('UsersWithoutRole') }}
                     @else
                         {{ __('Users') }}
                     @endif
@@ -14,7 +16,7 @@
                 </h1>
             </div>
             <div class="col text-end">
-                <a href="{{ route('users.create') }}" class="me-2" role="button">
+                <a href="{{ route('admin.users.create') }}" class="me-2" role="button">
                     <i class="bi bi-person-plus fs-3"></i>
                 </a>
 
@@ -35,7 +37,7 @@
                 @foreach ($users as $user)
                 <tr>
                     <td>
-                        <a href="{{ route('users.show', $user)}}" role="button">
+                        <a href="{{ route('admin.users.show', $user)}}" role="button">
                             {{$user->name}}
                         </a>
                     </td>
@@ -44,7 +46,7 @@
                     <td>{{$user->email}}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="{{ route('users.edit', $user) }}" class="me-2" role="button">
+                            <a href="{{ route('admin.users.edit', $user) }}" class="me-2" role="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
@@ -62,17 +64,17 @@
             <div class="form-inline col">
                 <form
                 @if(request()->is('admin/students*'))
-                    action="{{ route('students.index') }}"
+                    action="{{ route('admin.students.index') }}"
                 @elseif(request()->is('admin/teachers*'))
-                    action="{{ route('teachers.index') }}"
+                    action="{{ route('admin.teachers.index') }}"
                 @endif
                 class="form-inline" method="GET" id="perPageForm">
                     <label class="mr-2" for="per_page">{{__('Show')}}{{__('Colon')}}</label>
                     <select class="form-control" name="per_page" id="per_page" onchange="document.getElementById('perPageForm').submit()">
-                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
-                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
-                        <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                        <option value="150" {{ request('per_page') == 150 ? 'selected' : '' }}>150</option>
+                        <option value="200" {{ request('per_page') == 200 ? 'selected' : '' }}>200</option>
                     </select>
                 </form>
             </div>

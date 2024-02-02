@@ -7,7 +7,7 @@
                 </h1>
             </div>
             <div class="col text-end">
-                <a href="{{ route('cycles.create') }}" class="me-2" role="button">
+                <a href="{{ route('admin.cycles.create') }}" class="me-2" role="button">
                     <i class="bi bi-person-plus fs-3"></i>
                 </a>
 
@@ -27,7 +27,7 @@
                 @foreach ($cycles as $cycle)
                 <tr>
                     <td>
-                        <a href="{{route('cycles.show', $cycle)}}" role="button">
+                        <a href="{{route('admin.cycles.show', $cycle)}}" role="button">
                             {{$cycle->name}}
                         </a>
                     </td>
@@ -35,7 +35,7 @@
                     <td>{{$cycle->count_students}}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="{{ route('cycles.edit', $cycle) }}" class="me-2" role="button">
+                            <a href="{{ route('admin.cycles.edit', $cycle) }}" class="me-2" role="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="cycles/destroy" data-type="{{__('cycle')}}" data-id="{{ $cycle->id }}" data-name="{{ $cycle->name }}" id="openModalBtn">

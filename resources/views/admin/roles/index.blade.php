@@ -7,7 +7,7 @@
                 </h1>
             </div>
             <div class="col text-end">
-                <a href="{{ route('roles.create') }}" class="me-2" role="button">
+                <a href="{{ route('admin.roles.create') }}" class="me-2" role="button">
                     <i class="bi bi-person-plus fs-3"></i>
                 </a>
 
@@ -26,14 +26,14 @@
                 @foreach ($roles as $role)
                 <tr>
                     <td>
-                        <a href="{{route('roles.show', $role)}}" role="button">
+                        <a href="{{route('admin.roles.show', $role)}}" role="button">
                             {{$role->name}}
                         </a>
                     </td>
                     <td>{{$role->count_people}}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="{{ route('roles.edit', $role) }}" class="me-2" role="button">
+                            <a href="{{ route('admin.roles.edit', $role) }}" class="me-2" role="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="roles/destroy" data-type="{{__('role')}}" data-id="{{ $role->id }}" data-name="{{ $role->name }}" id="openModalBtn">

@@ -111,7 +111,7 @@ class ModuleController extends Controller
             $module->cycles()->attach($cycles);
             
             if($created) {
-                return redirect()->route('modules.show',['module'=>$module])->with('success',__('successCreate'));
+                return redirect()->route('admin.modules.show',['module'=>$module])->with('success',__('successCreate'));
             } else {
                 return redirect()->back()->withErrors(['error' => __('errorCreate')]);
             }
@@ -222,7 +222,7 @@ class ModuleController extends Controller
             $module->cycles()->sync($cycles);
 
             if($updated) {
-                return redirect()->route('modules.show',['module'=>$module])->with('success',__('successUpdate'));
+                return redirect()->route('admin.modules.show',['module'=>$module])->with('success',__('successUpdate'));
             } else {
                 return redirect()->back()->withErrors('error', __('errorUpdate'));
             }
@@ -243,7 +243,7 @@ class ModuleController extends Controller
             $module = Module::find($moduleId);
             if ($module) {
                 $module->delete();
-                return redirect()->route('modules.index')->with('success', __('successDelete'));
+                return redirect()->route('admin.modules.index')->with('success', __('successDelete'));
             } else {
                 return redirect()->back()->withErrors('error', __('errorDelete'));
             }
@@ -258,7 +258,7 @@ class ModuleController extends Controller
             if ($module) {
                 $module->users()->detach($userId);
                 
-                return redirect()->route('modules.show',['$module'=>$module])->with('success',__('successDelete'));
+                return redirect()->route('admin.modules.show',['$module'=>$module])->with('success',__('successDelete'));
             } else {
                 return redirect()->back()->withErrors('error',__('errorDelete'));
             }

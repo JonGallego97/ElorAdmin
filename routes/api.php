@@ -9,6 +9,7 @@ use App\Http\Controllers\API\FirebaseController;
 
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\ModuleController;
+use App\Http\Controllers\API\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,3 +39,4 @@ Route::post('/users/{userId}/enroll/{cycleId}', [UserController::class, 'enrollS
 
 //FIREBASE
 Route::get('/firebase/fmcTesting', [FirebaseController::class, 'fcmTesting']);
+Route::get('/forgotPassword/{email}',[AuthController::class,'forgotPassword']);

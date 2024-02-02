@@ -77,7 +77,7 @@ class DepartmentController extends Controller
             $created = $department->save();
 
             if ($created) {
-                return redirect()->route('departments.show',['department'=>$department])->with('success',__('successCreate'));
+                return redirect()->route('admin.departments.show',['department'=>$department])->with('success',__('successCreate'));
             } else {
                 return redirect()->back()->withErrors('error',__('errorCreate'));
             }
@@ -134,7 +134,7 @@ class DepartmentController extends Controller
             $department->name = ucwords(strtolower($request->name));
             $result = $department->save();
             if($result) {
-                return redirect()->route('departments.show',['department'=>$department])->with('success',__('successUpdate'));
+                return redirect()->route('admin.departments.show',['department'=>$department])->with('success',__('successUpdate'));
             } else {
                 return redirect()->back()->withErrors('error', __('errorUpdate'));
             }
@@ -155,7 +155,7 @@ class DepartmentController extends Controller
             $department = Department::find($departmentId);
             if ($department) {
                 $department->delete();
-                return redirect()->route('departments.index')->with('success',__('successDelete'));
+                return redirect()->route('admin.departments.index')->with('success',__('successDelete'));
             } else {
                 return redirect()->back()->withErrors('error', __('errorDelete'));
             }
