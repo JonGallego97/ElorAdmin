@@ -53,24 +53,80 @@ class UserController extends Controller {
     }
 
 
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
 
         if ($this->ControllerFunctions->checkAdminRoute()) {
-            //si es admin
+
+            //Si viene de admin
             $perPage = $request->input('per_page', 10);
             $users = User::orderBy('name', 'asc')
             ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
-        }else if($request->role == 'PROFESOR'){
-            //si no es admin
-            
+            return view('admin.users.index',compact('users'));
+
         }else{
-            return view('admin.index',compact('users'));
+
+            $perPage = $request->input('per_page', 10);
+            $users = User::whereHas('roles', function ($query) {
+                $query->where('id', 2);
+            })
+                ->orderBy('name', 'asc')
+                ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+            $totalUsers = User::whereHas('roles', function ($query) {
+                $query->where('id', 2);
+            })->count();
+
+            $users->totalUsers = $totalUsers;
+            return view('users.index', ['users' => $users]);
+
+            $roleStudent = Role::where('name','ALUMNO')->first();
+            $roleTeacher = Role::where('name','PROFESOR')->first();
+            $logedUserRoles = Auth::user()->roles->pluck('id')->toArray();
+
+            switch(true) {
+                case in_array($roleStudent->id,$logedUserRoles):
+                    break;
+                case in_array($roleTeacher->id,$logedUserRoles):
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public function staff(Request $request)
+    {
+        //Ya esta pasado
+        $user = Auth::user(); // Obtener el usuario autenticado
+
+        if (User::find($user->id)->roles->first()->id == 2) {
+            $perPage = $request->input('per_page', 10);
+            $users = User::whereHas('roles', function ($query) {
+                $query->where('id', 2);
+            })
+                ->orderBy('name', 'asc')
+                ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+            $totalUsers = User::whereHas('roles', function ($query) {
+                $query->where('id', 2);
+            })->count();
+
+            $users->totalUsers = $totalUsers;
+        } else {
 
         }
+        return view('staff.index', ['users' => $users]);
+    }
 
+    public function staffShow(Request $request, $user1, $user2)
+    {
+        // Lógica para obtener la información de los usuarios según sus identificadores ($user1 y $user2)
+        $user1Data = User::findOrFail($user1);
+        $user2Data = User::findOrFail($user2);
 
-        return view('admin.users.index',compact('users'));
+        $user1= Auth::user(); // Obtener el usuario autenticado
+        // Lógica adicional...
+
+        // Retornar la vista con los datos de los usuarios
+    return view('staff.show', compact('user1Data', 'user2Data'), ['user1' => $user1]);
     }
 
     public function indexTeacher(Request $request)
@@ -467,9 +523,44 @@ class UserController extends Controller {
                     return view('admin.users.show', ['user' => $user])->with('imagePath','images/'.$fileName);
                     break;
             }
-        }else {
-            //si no es admin
+        } else {
+            if(Auth::user()->id == $user->id) {
+                 //Si no viene de admin
+                $user = Auth::user();
 
+                $usera = User::All();
+
+                $cycle = cycle::find($user->id);
+
+                // Verificar si el usuario autenticado tiene el rol deseado
+                if (User::find($user->id)->roles->first()->id == 2) {
+                    // Si tiene el rol deseado, filtrar los usuarios por ese rol
+                    $usera = User::whereHas('roles', function ($query) {
+                        $query->where('id', 2);
+                    })->get();
+                }
+                // Obtener los ciclos y módulos del usuario
+                $cycles = $user->cycles;
+
+                $usersInRole3ByModule=[];
+                foreach ($cycles as $cycles) {
+                    foreach ($cycles as $users) {
+                        if ($user->roles->first()->id == 2) {
+                        $usersInRole3ByModule=$users;
+                        }
+                    }
+                }
+
+                // Obtener los datos adicionales del usuario autenticado
+                $user = User::with('roles', 'cycles.modules', 'modules')->where('id', $user->id)->first();
+
+                return view('users.show', compact('user','usersInRole3ByModule','usera','cycle'));
+            } else {
+                // Lógica para obtener la información de los usuarios según sus identificadores ($user1 y $user2)
+                $user = User::where('id',$user->id)->first();
+                // Retornar la vista con los datos de los usuarios
+                return view('users.show', ['user' => $user]);
+            }
         }
 
     }

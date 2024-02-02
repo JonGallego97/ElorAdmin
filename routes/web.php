@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Password;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 
@@ -73,7 +73,7 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     Route::delete('modules/destroy/{moduleId}', [ModuleController::class, 'destroy'])->name('modules.destroy');
     Route::resource('modules', ModuleController::class);
     //Cycles
-    Route::resource('cycles', CycleController::class)->except(['delete']);
+    Route::resource('cycles', CycleController::class)->except(['delete','index']);
     Route::get('cycles/getCyclesByDepartment/{department_id}',[CycleController::class,'getCyclesByDepartment'])->name('cycles.getCyclesByDepartment');
     Route::controller(CycleController::class)->group(function () {
         Route::delete('cycles/destroyCycleModule/{cycleId}/{userId}','destroyCycleModule')->name('cycles.destroyCycleModule');
@@ -85,34 +85,18 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/person/{user}', [PersonController::class, 'index'])->name('person.index');
-    Route::get('/person/{user}/staff', [PersonController::class, 'staff'])->name('person.staff.index');
+    //Route::get('/users/{user}', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+    //Route::get('/users/{staff}', [UserController::class, 'staff'])->name('users.staff.index');
     //He cambiado admin por person por que sino se petaba con el index normal
-    Route::get('/person/departments', [DepartmentController::class, 'indexPerson'])->name('person.departments.index');
+    Route::get('/departments', [DepartmentController::class, 'index'])->name('departments.index');
     //He cambiardo admin por person person por que sino se petaba con el index normal
-    Route::get('/person/cycles', [CycleController::class, 'indexPerson'])->name('person.cycles.index');
-    Route::get('/person/{user1}/staff/{user2}', [PersonController::class, 'staffShow'])->name('persons.staff.show');
+    Route::get('/cycles', [CycleController::class, 'index'])->name('cycles.index');
+    
 
 });
 Auth::routes();
 
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-/* 
-Route::get('/forgot-password', function () {
-    return view('auth.forgot-password');
-})->middleware('guest')->name('password.request');
-
-Route::post('/forgot-password', function (Request $request) {
-    $request->validate(['email' => 'required|email']);
- 
-    $status = Password::sendResetLink(
-        $request->only('email')
-    );
- 
-    return $status === Password::RESET_LINK_SENT
-                ? back()->with(['status' => __($status)])
-                : back()->withErrors(['email' => __($status)]);
-})->middleware('guest')->name('password.email');
-
- */

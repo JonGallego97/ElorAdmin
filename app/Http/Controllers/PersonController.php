@@ -9,7 +9,7 @@ use App\Models\Cycle;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-class PersonController extends Controller
+/* class PersonController extends Controller
 {
     public function index(Request $request)
     {
@@ -84,3 +84,4 @@ class PersonController extends Controller
     return view('persons.staff.show', compact('user1Data', 'user2Data'), ['user1' => $user1]);
     }
 }
+ */
