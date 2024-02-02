@@ -13,7 +13,7 @@ class UserChatMessageSeeder extends Seeder
     public function run(): void
     {
         DB::table('chats')->insert([
-            'name' => 'Home',
+            'name' => 'Bienvenida',
             'is_Public' => '1',
             "created_at" => now(),
             "updated_at" => now(),
@@ -70,27 +70,5 @@ class UserChatMessageSeeder extends Seeder
         
         ]);
 
-        DB::table('messages')->insert([
-            'user_id' => '1',
-            'chat_id' => '1',
-            'content' => 'Bienvenido a la aplicación de Elorrieta-Errekamari',
-            'data_type' => 'TEXT',
-            "created_at" => now(),
-            "updated_at" => now(),
-        
-        ]);
-
-        DB::table('messages')->insert([
-            'user_id' => '2',
-            'chat_id' => '1',
-            'content' => 'Gracias por la bienvenida',
-            'data_type' => 'TEXT',
-            "created_at" => now(),
-            "updated_at" => now(),
-        
-        ]);
-        
-        
-        
     }
 }

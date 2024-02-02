@@ -3,7 +3,7 @@
 
 <div class="row align-items-md-stretch mb-4">
     <div class="col-md-6">
-        <a href="{{ route('admin.students.index') }} " style="text-decoration: none; color: inherit;">
+        <a href="{{ route('students.index') }} " style="text-decoration: none; color: inherit;">
             <div class="h-100 p-5 bg-body-tertiary border rounded-3 shadow">
                 <h2>{{__('Students')}}</h2>
 
@@ -21,7 +21,7 @@
     </div>
 
     <div class="col-md-6">
-        <a href="{{ route('admin.teachers.index') }} " style="text-decoration: none; color: inherit;">
+        <a href="{{ route('teachers.index') }} " style="text-decoration: none; color: inherit;">
             <div class="h-100 p-5 bg-body-tertiary border rounded-3 shadow">
                 <h2>{{__('Teachers')}}</h2>
                 <div class="row align-items-center">

@@ -12,7 +12,7 @@ class Module extends Model
 
     public function cycles()
     {
-        return $this->belongsToMany(Cycle::class);
+        return $this->belongsToMany(Cycle::class,'cycle_module');
     }
 
     public function users()
