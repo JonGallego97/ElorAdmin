@@ -27,15 +27,16 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                @if(Route::getCurrentRoute()->uri == 'admin')
-                <a class="navbar-brand" href="{{ url('/admin') }}">
+                @auth
+                <a class="navbar-brand" href="{{ url('/home') }}">
                     {{ config('app.name', 'ElorAdmin') }}
                 </a>
-                @else
-                <a class="navbar-brand" href="{{ url('/') }}">
+                @endauth
+                @guest
+                <a class="navbar-brand" href="{{ url('/login') }}">
                     {{ config('app.name', 'ElorAdmin') }}
                 </a>
-                @endif
+                @endguest
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>

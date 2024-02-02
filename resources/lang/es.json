@@ -103,5 +103,7 @@
     "errorMessageDepartmentEmpty": "Es necesario seleccionar un departamento",
     "errorStudentCantHaveMoreRoles": "Un estudiante no puede tener mas de un rol",
     "errorAlreadyInModule": "Ya esta en el modulo",
-    "errorAlreadyInCycle": "Ya esta en el ciclo"
+    "errorAlreadyInCycle": "Ya esta en el ciclo",
+    "UsersWithoutRole": "Usuarios sin Rol",
+    "Total": "Numero de"
 }

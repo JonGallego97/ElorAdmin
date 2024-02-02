@@ -16,7 +16,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('users.index') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('admin.users.index') }}">
                                     {{__('Users')}}
                                 </a>
                                 <div id="usuariosCollapse">
@@ -36,12 +36,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('departments.index') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('admin.departments.index') }}">
                                     {{__('Departments')}}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('cycles.index') }}">
+                                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('admin.cycles.index') }}">
                                     {{__('Cycles')}}
                                 </a>
                             </li>

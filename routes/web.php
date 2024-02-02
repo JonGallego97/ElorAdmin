@@ -49,12 +49,14 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     Route::put('users/{user}/addModule',[UserController::class,'addModule'])->name('users.addModule');
     Route::delete('users/destroy/{userId}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
-    Route::get('/students', [UserController::class, 'indexStudent'])->name('students.index');
-    Route::get('/teachers', [UserController::class, 'indexTeacher'])->name('teachers.index');
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    /* Route::get('/students', [UserController::class, 'indexStudent'])->name('students.index');
+    Route::get('/teachers', [UserController::class, 'indexTeacher'])->name('teachers.index'); */
+    Route::get('/students', [UserController::class, 'index'])->name('students.index');
+    Route::get('/teachers', [UserController::class, 'index'])->name('teachers.index');
+    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::post('/users/{user}/{userRoles}', [UserController::class, 'store'])->name('users.store');
     Route::post('/users/extra', [UserController::class, 'extra_create'])->name('users.extra_create');
-    Route::resource('users', UserController::class);
+    //Route::resource('users', UserController::class)-;
     //Roles
     Route::delete('roles/destroyRoleUser/{roleId}/{userId}', [RoleController::class, 'destroyRoleUser'])->name('roles.destroyRoleUser');
     Route::delete('roles/destroy/{roleId}', [RoleController::class, 'destroy'])->name('roles.destroy');
@@ -62,10 +64,10 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     //Departaments
     Route::resource('departments', DepartmentController::class);
     Route::controller(DepartmentController::class)->group(function () {
-        Route::delete('departments/destroyDepartmentUser/{departmentId}/{userId}', 'destroyDepartmentUser')->name('departments.destroyDepartmentUser');
-        Route::delete('departments/destroy/{departmentId}', 'destroy')->name('departments.destroy');
-        Route::post('departments/create','create')->name('departments.edit_create');
-        Route::get('departments','index')->name('departments.index');
+        Route::delete('/departments/destroyDepartmentUser/{departmentId}/{userId}', 'destroyDepartmentUser')->name('departments.destroyDepartmentUser');
+        Route::delete('/departments/destroy/{departmentId}', 'destroy')->name('departments.destroy');
+        Route::post('/departments/create','create')->name('departments.edit_create');
+        Route::get('/departments','index')->name('admin.departments.index');
     });
     
     //Modules
@@ -73,11 +75,12 @@ Route::prefix('admin')->middleware(['auth', 'checkRole'])->group(function () {
     Route::delete('modules/destroy/{moduleId}', [ModuleController::class, 'destroy'])->name('modules.destroy');
     Route::resource('modules', ModuleController::class);
     //Cycles
-    Route::resource('cycles', CycleController::class)->except(['delete','index']);
-    Route::get('cycles/getCyclesByDepartment/{department_id}',[CycleController::class,'getCyclesByDepartment'])->name('cycles.getCyclesByDepartment');
+    Route::resource('cycles', CycleController::class)->except(['delete']);
+    Route::get('/cycles/getCyclesByDepartment/{department_id}',[CycleController::class,'getCyclesByDepartment'])->name('cycles.getCyclesByDepartment');
     Route::controller(CycleController::class)->group(function () {
-        Route::delete('cycles/destroyCycleModule/{cycleId}/{userId}','destroyCycleModule')->name('cycles.destroyCycleModule');
-        Route::delete('cycles/destroy/{cycleId}','destroy')->name('cycles.destroy');
+        Route::delete('/cycles/destroyCycleModule/{cycleId}/{userId}','destroyCycleModule')->name('cycles.destroyCycleModule');
+        Route::delete('/cycles/destroy/{cycleId}','destroy')->name('cycles.destroy');
+        Route::get('/cycles','index')->name('admin.cycles.index');
     });
     // Route::delete('cycles/destroyCycleModule/{cycleId}/{userId}', [CycleController::class, 'destroyCycleModule'])->name('cycles.destroyCycleModule');
     // Route::delete('cycles/destroy/{cycleId}', [CycleController::class, 'destroy'])->name('cycles.destroy');

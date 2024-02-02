@@ -13,6 +13,8 @@ use App\Models\Cycle;
 use App\Http\Controllers\ControllerFunctions;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 
 class UserController extends Controller {
@@ -27,7 +29,7 @@ class UserController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function indexStudent(Request $request)
+/*     public function indexStudent(Request $request)
     {
 
         if ($this->ControllerFunctions->checkAdminRoute()) {
@@ -44,24 +46,85 @@ class UserController extends Controller {
             })->count();
 
             $users->totalUsers = $totalUsers;
+            return view('admin.users.index',compact('users'));
         }else {
-            //si no es admin
-
+            return redirect()->back()->with('error', __('errorNoAdmin'));
         }
 
-        return view('admin.users.index',compact('users'));
+        
     }
+
+    public function indexTeacher(Request $request)
+    {
+        if ($this->ControllerFunctions->checkAdminRoute()){
+            dd(Route::getCurrentRoute());
+            $perPage = $request->input('per_page', 10);
+            $users = User::whereHas('roles', function ($query) {
+                $query->where('id', 2);
+            })
+            ->orderBy('name', 'asc')
+            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+            $totalUsers = User::whereHas('roles', function ($query) {
+                $query->where('id', 2);
+            })->count();
+
+            $users->totalUsers = $totalUsers;
+            return view('admin.users.index',['users'=>$users]);
+        }else {
+            return redirect()->back()->with('error', __('errorNoAdmin'));
+        }
+        
+    } */
 
 
     public function index(Request $request) {
 
         if ($this->ControllerFunctions->checkAdminRoute()) {
+            $route = Route::getCurrentRoute()->uri;
+            $isTeachers = Str::contains($route,'admin/teachers');
+            $isStudents = Str::contains($route,'admin/students');
+            switch(true) {
+                case $isTeachers:
+                    $perPage = $request->input('per_page', 10);
+                    $users = User::whereHas('roles', function ($query) {
+                        $query->where('id', $this->ControllerFunctions->getTeacherRoleId());
+                    })
+                    ->orderBy('name', 'asc')
+                    ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+                    $totalUsers = User::whereHas('roles', function ($query) {
+                        $query->where('id', $this->ControllerFunctions->getTeacherRoleId());
+                    })->count();
+
+                    $users->totalUsers = $totalUsers;
+                    //return view('admin.users.index',['users'=>$users]);
+                    break;
+                case $isStudents:
+                    $perPage = $request->input('per_page', 10);
+                    $users = User::whereHas('roles', function ($query) {
+                        $query->where('id', $this->ControllerFunctions->getStudentRoleId());
+                    })
+                    ->orderBy('name', 'asc')
+                    ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+
+                    $totalUsers = User::whereHas('roles', function ($query) {
+                        $query->where('id', $this->ControllerFunctions->getStudentRoleId());
+                    })->count();
+
+                    $users->totalUsers = $totalUsers;
+                    //return view('admin.users.index',compact('users'));
+                    break;
+                default:
+                    $perPage = $request->input('per_page', 10);
+                    $users = User::orderBy('name', 'asc')
+                    ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+                    
+                    break;
+                    //return view('admin.users.index',compact('users'));
+            }
+            return view('admin.users.index',compact('users'));
 
             //Si viene de admin
-            $perPage = $request->input('per_page', 10);
-            $users = User::orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
-            return view('admin.users.index',compact('users'));
+            
 
         }else{
 
@@ -127,26 +190,6 @@ class UserController extends Controller {
 
         // Retornar la vista con los datos de los usuarios
     return view('staff.show', compact('user1Data', 'user2Data'), ['user1' => $user1]);
-    }
-
-    public function indexTeacher(Request $request)
-    {
-        if ($this->ControllerFunctions->checkAdminRoute()){
-            $perPage = $request->input('per_page', 10);
-            $users = User::whereHas('roles', function ($query) {
-                $query->where('id', 2);
-            })
-            ->orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
-            $totalUsers = User::whereHas('roles', function ($query) {
-                $query->where('id', 2);
-            })->count();
-
-            $users->totalUsers = $totalUsers;
-        }else {
-            return redirect()->back()->with('error', 'No eres ADMINISTRADOR');
-        }
-        return view('admin.users.index',['users'=>$users]);
     }
 
     /**
