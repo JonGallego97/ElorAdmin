@@ -105,5 +105,10 @@
     "errorAlreadyInModule": "Ya esta en el modulo",
     "errorAlreadyInCycle": "Ya esta en el ciclo",
     "UsersWithoutRole": "Usuarios sin Rol",
-    "Total": "Numero de"
+    "Total": "Numero de",
+    "errorIsDualFirstYear": "Los alumnos de primero no pueden estar en Dual",
+    "errorIsDualSecondYear": "Para los alumnos de Segundo se debe seleccionar Dual",
+    "errorMessageYearEmpty": "Es necesario seleccionar un año.",
+    "Personal": "Personal",
+    "TotalPersonal": "Total de personal:"
 }

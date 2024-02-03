@@ -60,7 +60,7 @@ class User extends Authenticatable
     //Relacion con Ciclos (Alumnos)
     public function cycles()
     {
-        return $this->belongsToMany(Cycle::class, 'cycle_users', 'user_id', 'cycle_id');
+        return $this->belongsToMany(Cycle::class, 'cycle_users', 'user_id', 'cycle_id')->withPivot('cycle_registration_number', 'year', 'is_dual', 'created_at');
     }
 
     public function hasRole($role)

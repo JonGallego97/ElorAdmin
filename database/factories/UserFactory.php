@@ -27,9 +27,6 @@ class UserFactory extends Factory
 
         $fakerSpain =  \Faker\Factory::create('es_ES');
 
-        $image = null;
-
-        $year = $fakerSpain->randomElement([1, 2]);
 
         $name = str_replace(['á', 'é', 'í', 'ó', 'ú', 'ñ'], ['a', 'e', 'i', 'o', 'u', 'n'], $fakerSpain->firstName);
         $surname1 = str_replace(['á', 'é', 'í', 'ó', 'ú', 'ñ'], ['a', 'e', 'i', 'o', 'u', 'n'], $fakerSpain->lastName);
@@ -74,10 +71,7 @@ class UserFactory extends Factory
             'phone_number1' => $fakerSpain->numerify('#########'),
             'phone_number2' => $fakerSpain->numerify('#########'),
             'image' => null,
-            'is_dual' => 0,
-
             'first_login' => $fakerSpain->boolean,
-            'year' => $year,
             'created_at' => now(),
             'updated_at' => now(),
         ];

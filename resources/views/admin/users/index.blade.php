@@ -9,6 +9,8 @@
                         {{ __('Teachers') }}
                     @elseif(Route::currentRouteName() == 'admin.withoutRole.index')
                         {{ __('UsersWithoutRole') }}
+                    @elseif(Route::currentRouteName() == 'admin.personal.index')
+                        {{ __('Personal') }}
                     @else
                         {{ __('Users') }}
                     @endif

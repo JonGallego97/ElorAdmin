@@ -69,10 +69,7 @@
                         <p><strong>{{__('Address')}}{{__('Colon')}}</strong> {{ $user['address'] }}</p>
                         <p><strong>{{__('PhoneNumber1')}}{{__('Colon')}}</strong> {{ $user['phone_number1'] }}</p>
                         <p><strong>{{__('PhoneNumber2')}}{{__('Colon')}}</strong> {{ $user['phone_number2'] }}</p>
-                        @if(in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
-                        <p><strong>{{__('Year')}}{{__('Colon')}}</strong> {{ $user['year'] }}</p>
-                        <p><strong>{{__('Dual')}}{{__('Colon')}}</strong> {{ $user['dual'] ? __('Yes') : __('No') }}</p>
-                        @elseif(!in_array('ADMINISTRADOR',$user->roles->pluck('name')->toArray()))
+                        @if(!in_array('ADMINISTRADOR',$user->roles->pluck('name')->toArray()) && !in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
                         <p><strong>{{__('Department')}}{{__('Colon')}}</strong> {{ $user['department']['name'] }}</p>
                         @endif
                         <!-- Otros detalles del usuario -->
@@ -107,9 +104,11 @@
                             <select class="form-control" id="newModule" name="newModule">
                                 <option value="null">{{__("Modules")}}</option>
                                 @foreach($allCyclesWithModules as $cycle)
-                                <optgroup label='-- {{$cycle->name}} --' data-department-id="{{$cycle->department_id}}">
-                                    @foreach($cycle->modules as $module)
-                                        <option value="{{$cycle->id}}/{{$module->id}}">{{$module->name}}</option>
+                                @if(!$cycle['modules']->isEmpty())
+                                <optgroup label='-- {{$cycle['name']}} --' data-department-id="{{$cycle['department_id']}}">
+                                @endif
+                                    @foreach($cycle['modules'] as $module)
+                                        <option value="{{$cycle['id']}}/{{$module['id']}}">{{$module['name']}}</option>
                                     @endforeach
                                 </optgroup>
                                 @endforeach
@@ -122,14 +121,12 @@
                         <div class="card mb-3">
                             <div class="card-header">
                                 <div class="row">
-                                    <div class="col">
-                                        <a href="{{route('cycles.show', $cycle['id'])}}" role="button">
+                                <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{ route('admin.cycles.show', $cycle['id']) }}" role="button">
                                             <h4>{{ $cycle['name'] }}</h4>
                                         </a>
-                                    </div>
-                                    <div class="col-auto">
                                         <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
-                                            <i class="bi bi-trash3 fs-6"></i>
+                                            <i class="bi bi-trash3 fs-5"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -159,7 +156,7 @@
                         <div class="col-5 mb-3">
                             <h3>{{__('Cycles')}}</h3>
                         </div>
-                        <div class="col-7 d-flex justify-content-end mb-3">
+                        <div class="col-6 d-flex justify-content-end mb-3">
                             <select class="form-control" id="newCycle" name="newCycle">
                                 <option value="null">{{__('Cycles')}}</optgroup>
                                 @foreach($departmentsWithCycles as $department)
@@ -169,6 +166,16 @@
                                     @endforeach
                                 @endforeach
                             </select>
+                            <select class="form-control" id="year" name="year">
+                                <option value="null">{{__('Year')}}</optgroup>
+                                <option value="1">{{__('FirstYear')}}</option>
+                                <option value="2">{{__('SecondYear')}}</option>
+                            </select>
+                            <select class="form-control" id="is_dual" name="is_dual" disabled="true">
+                                <option value="null">{{__('Dual')}}</optgroup>
+                                <option value="1">{{__('Yes')}}</option>
+                                <option value="0">{{__('No')}}</option>
+                            </select>
                             <button type="submit" class="col-2 ml-3 btn btn-primary" name="">{{__("addCycle")}}</button>
                         </div>
                     </form>
@@ -176,15 +183,26 @@
                         <div class="card mb-3">
                             <div class="card-header align-items-center">
                                 <div class="row">
-                                    <div class="col">
+                                    <div class="d-flex justify-content-between align-items-center">
                                         <a href="{{ route('admin.cycles.show', $cycle['id']) }}" role="button">
                                             <h4>{{ $cycle['name'] }}</h4>
                                         </a>
-                                    </div>
-                                    <div class="col-auto">
                                         <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
-                                            <i class="bi bi-trash3 fs-6"></i>
+                                            <i class="bi bi-trash3 fs-5"></i>
                                         </button>
+                                    </div>
+                                    <div>
+                                        <div>
+                                            {{ $cycle['year'] == 1 ? __('FirstYear') : ($cycle['year'] == 2 ? __('SecondYear') : '') }}
+                                        </div>
+                                        @if ($cycle['year'] == 2)
+                                        <div>
+                                            {{ $cycle['is_dual'] == 1 ? __('Yes') : ($cycle['is_dual'] == 0 ? __('no') : '') }}
+                                        </div>
+                                        @endif
+                                        <div>
+                                            {{$cycle['enrollYear']}}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -207,4 +225,29 @@
                 @endif
             </div>
         </div>
+        <script>
+            const yearSelect = document.getElementById("year");
+            const dualSelect = document.getElementById("is_dual");
+
+            const dualSelectnullOption = dualSelect.querySelector('option[value="null"]');
+
+            // Agrega un evento change al elemento select de Year
+            yearSelect.addEventListener("change", function() {
+                if (yearSelect.value !== "2" ) {
+                    // Si Year es 1, deshabilita el select de Dual y establece su valor en null
+                    dualSelect.disabled = true;
+                    dualSelect.value = "null";
+                } else {
+                    // Si Year no es 1, habilita el select de Dual
+                    dualSelect.disabled = false;
+                    dualSelectnullOption.disabled = true;
+                    dualSelect.value = 1;
+                }
+            });
+
+            document.addEventListener("DOMContentLoaded", function() {
+                
+            });
+        </script>
+
 @endsection

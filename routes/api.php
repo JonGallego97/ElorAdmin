@@ -10,6 +10,14 @@ use App\Http\Controllers\API\FirebaseController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\ModuleController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+
+
+use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,4 +47,12 @@ Route::post('/users/{userId}/enroll/{cycleId}', [UserController::class, 'enrollS
 
 //FIREBASE
 Route::get('/firebase/fmcTesting', [FirebaseController::class, 'fcmTesting']);
-Route::get('/forgotPassword/{email}',[AuthController::class,'forgotPassword']);
+
+Route::post('forgotPassword',[AuthController::class,'resetPassword']);
+Route::post('password/email',[ForgotPasswordController::class,'sendResetLinkEmail']);
+
+
+
+//Auth
+Route::post('login',[AuthController::class,'login'])->withoutMiddleware(['auth:sanctum']);
+Route::post('logout',[AuthController::class,'logout'])->middleware('auth:sanctum');

@@ -15,7 +15,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\App;
 
 
@@ -86,14 +86,19 @@ class UserController extends Controller {
             $isTeachers = Str::contains($route,'admin/teachers');
             $isStudents = Str::contains($route,'admin/students');
             $hasNoRole = str::contains($route,'admin/withoutRole');
+            $personal = str::contains($route,'admin/personal');
+
+
+            $perPage = $request->input('per_page', App::make('paginationCount'));
+
             switch(true) {
+
                 case $isTeachers:
-                    $perPage = $request->input('per_page', App::make('paginationCount'));
                     $users = User::whereHas('roles', function ($query) {
                         $query->where('id', $this->ControllerFunctions->getTeacherRoleId());
                     })
                     ->orderBy('name', 'asc')
-                    ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+                    ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'first_login', 'created_at', 'updated_at']);
                     $totalUsers = User::whereHas('roles', function ($query) {
                         $query->where('id', $this->ControllerFunctions->getTeacherRoleId());
                     })->count();
@@ -101,13 +106,13 @@ class UserController extends Controller {
                     $users->totalUsers = $totalUsers;
                     //return view('admin.users.index',['users'=>$users]);
                     break;
+
                 case $isStudents:
-                    $perPage = $request->input('per_page', 10);
                     $users = User::whereHas('roles', function ($query) {
                         $query->where('id', $this->ControllerFunctions->getStudentRoleId());
                     })
                     ->orderBy('name', 'asc')
-                    ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+                    ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'first_login', 'created_at', 'updated_at']);
 
                     $totalUsers = User::whereHas('roles', function ($query) {
                         $query->where('id', $this->ControllerFunctions->getStudentRoleId());
@@ -116,20 +121,37 @@ class UserController extends Controller {
                     $users->totalUsers = $totalUsers;
                     //return view('admin.users.index',compact('users'));
                     break;
+
                 case $hasNoRole:
-                    $perPage = $request->input('per_page', 10);
                     $users = User::doesntHave('roles')
                         ->orderBy('name', 'asc')
-                        ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+                        ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'first_login', 'created_at', 'updated_at']);
 
                     $totalUsers = User::doesntHave('roles')->count();
 
                     $users->totalUsers = $totalUsers;
                     break;
-                default:
+
+                case $personal:
                     $perPage = $request->input('per_page', 10);
+
+                    $users = User::whereHas('roles', function ($query) {
+                        $query->whereNotIn('name', ['alumno', 'profesor','administrador']);
+                    })
+                    ->orderBy('name', 'asc')
+                    ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'first_login', 'created_at', 'updated_at']);
+
+                    $totalUsers = User::whereHas('roles', function ($query) {
+                        $query->whereNotIn('name', ['alumno', 'profesor']);
+                    })
+                    ->count();
+
+                    $users->totalUsers = $totalUsers;
+                    break;
+
+                default:
                     $users = User::orderBy('name', 'asc')
-                    ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+                    ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'first_login', 'created_at', 'updated_at']);
                     
                     break;
                     //return view('admin.users.index',compact('users'));
@@ -401,11 +423,7 @@ class UserController extends Controller {
 
             
             //Datos Extra
-            if($isStudent){
-                $user->year = $request->year;
-                $user->is_dual = $request->is_dual;
-               
-            } else if(!$isAdmin) {
+            if(!$isAdmin && !$isStudent) {
                 $user->department_id = $request->department;     
             }
             $user->save();
@@ -413,7 +431,7 @@ class UserController extends Controller {
             // Ciclos
             
             if($isStudent){
-                $result = $this->enrollStudentInCycle($user->id,$request->cycle);
+                $result = $this->enrollStudentInCycle($user->id,$request->newCycle,$request->year,$request->is_dual);
             } elseif ($isTeacher) {
                 $modules = $request->input('modules');
                 foreach($modules as $module) {
@@ -464,12 +482,13 @@ class UserController extends Controller {
         $teacherRole = Role::select('id','name')->where('name','PROFESOR')->first();
         $isTeacher = in_array($teacherRole->id,$userRoles,false);
 
-        $user = User::with('roles','cycles.modules','department','modules')->where('id', $user->id)->first();
+        $user = User::with('roles','cycles.modules','department','modules','cycles')->where('id', $user->id)->first();
         $fileName =    $this->ControllerFunctions->createImageFromBase64($user);
 
         if ($this->ControllerFunctions->checkAdminRoute()) {
             //si es admin
             switch (true) {
+                ////////////////////////////////// ALUMNO //////////////////////////////////////////////////////////
                 case $isStudent:
                     $departmentsWithCycles = Department::whereHas('cycles', function ($query) use ($user) {
                         $query->whereNotExists(function ($subquery) use ($user) {
@@ -502,17 +521,26 @@ class UserController extends Controller {
                         if ($cycle) {
                             $cycleId = $cycle->id;
                             $cycleName = $cycle->name;
+                            $pivotData = $user->cycles()->where('cycle_id', $userModule->cycle_id)->first()->pivot;
+                            $registrationNumber = $pivotData->cycle_registration_number;
+                            $year = $pivotData->year;
+                            $enrollYear = $pivotData->created_at->format('Y');
+                            $is_dual = $pivotData->is_dual;
                     
-                            // Inicializar el array para el ciclo si aún no existe
+
                             if (!isset($userData[$cycleId])) {
                                 $userData[$cycleId] = [
                                     'id' => $cycleId,
                                     'name' => $cycleName,
+                                    'registrationNumber' => $registrationNumber,
+                                    'year' => $year,
+                                    'is_dual' => $is_dual,
+                                    'enrollYear' => $enrollYear,
                                     'modules' => []
                                 ];
                             }
                     
-                            // Obtener el módulo directamente usando el ID almacenado en module_user_cycle
+
                             $module = Module::find($userModule->module_id);
                     
                             if ($module) {
@@ -523,7 +551,7 @@ class UserController extends Controller {
                                     'hours' => $module->hours
                                 ];
                     
-                                // Agregar el módulo al array correspondiente al ciclo
+
                                 $userData[$cycleId]['modules'][] = $moduleData;
                             }
                         }
@@ -531,16 +559,17 @@ class UserController extends Controller {
                     return view('admin.users.show', ['user' => $user,'userData'=>$userData,'departmentsWithCycles'=>$departmentsWithCycles])->with('imagePath','images/'.$fileName);
                     break;
                 case $isTeacher:
-                    $userModules = $user->modules; // Obtener los módulos del usuario
+                    ////////////////////////////////// PROFESOR //////////////////////////////////////////////////////////
+                    $userModules = $user->modules; 
                     $cyclesWithModules = [];
 
                     foreach ($userModules as $module) {
-                        $moduleCycles = $module->cycles; // Obtener los ciclos relacionados con el módulo
+                        $moduleCycles = $module->cycles; 
                         foreach ($moduleCycles as $cycle) {
                             $cycleId = $cycle->id;
                             $cycleName = $cycle->name;
 
-                            // Verificar si el ciclo ya está en $cyclesWithModules por su 'id'
+
                             if (!array_key_exists($cycleId, $cyclesWithModules)) {
                                 $cyclesWithModules[$cycleId] = [
                                     'id' => $cycleId,
@@ -549,7 +578,6 @@ class UserController extends Controller {
                                 ];
                             }
 
-                            // Agregar el módulo al ciclo correspondiente
                             $cyclesWithModules[$cycleId]['modules'][] = [
                                 'id' => $module->id,
                                 'name' => $module->name,
@@ -558,12 +586,128 @@ class UserController extends Controller {
                             ];
                         }
                     }
-                    $allCyclesWithModules = Cycle::with('modules')
-                        ->whereHas('department', function ($query) use ($user) {
-                            $query->where('id', $user->department_id);
-                        })
-                        ->orderBy('department_id')
-                        ->get();
+
+                    $departmentEIE = ['name'=>"Empresa e Iniciativa Emprendedora",'modules'=>"Empresa e Iniciativa Emprendedora"];
+                    $departmentFOL = ['name'=>"FOL",'modules'=>"Formación y Orientación Laboral"];
+                    $departmentLanguages = ['name'=>"Idiomas",'modules' =>["Inglés","Inglés técnico","Segunda lengua extranjera"]];
+                    $department = Department::where('id',$user->department_id)->first();
+                    switch($department->name) {
+                        ////////////////////////////////// FOL //////////////////////////////////////////////////////////
+                        case $departmentFOL['name']:
+                            $modulesNames = $departmentFOL['modules'];
+                            // Obtén los ciclos que coinciden con el departamento del usuario
+                            $cycles = Cycle::with(['modules' => function ($query) use($modulesNames) {
+                                $query->where('name', $modulesNames);
+                            }])->orderBy('department_id')
+                                ->get();
+
+                            // Crea un array para almacenar los módulos ordenados por ciclo y módulo
+                            $allCyclesWithModules = [];
+
+                            foreach ($cycles as $cycle) {
+                                $cycleData = [
+                                    'id' => $cycle->id,
+                                    'name' => $cycle->name,
+                                    'department_id' => $cycle->department_id,
+                                    'modules' => $cycle->modules,
+                                ];
+                                $allCyclesWithModules[] = $cycleData;
+                            }
+                            
+                            $userModuleIds = $user->modules->pluck('id')->toArray();
+
+                            // Filtra los módulos del array $allCyclesWithModules para quitar los módulos en los que está inscrito el usuario
+                            foreach ($allCyclesWithModules as &$cycleData) {
+                                $cycleData['modules'] = $cycleData['modules']->reject(function ($module) use ($userModuleIds) {
+                                    return in_array($module->id, $userModuleIds);
+                                });
+                            }
+
+                            break;
+                        case $departmentEIE['name']:
+                            ////////////////////////////////// EIE //////////////////////////////////////////////////////////
+                            $modulesNames = $departmentEIE['modules'];
+                            // Obtén los ciclos que coinciden con el departamento del usuario
+                            $cycles = Cycle::with(['modules' => function ($query) use ($departmentEIE) {
+                                $query->where('name', $departmentEIE);
+                            }])->orderBy('department_id')
+                                ->get();
+
+                            // Crea un array para almacenar los módulos ordenados por ciclo y módulo
+                            $allCyclesWithModules = [];
+
+                            foreach ($cycles as $cycle) {
+                                $cycleData = [
+                                    'id' => $cycle->id,
+                                    'name' => $cycle->name,
+                                    'department_id' => $cycle->department_id,
+                                    'modules' => $cycle->modules,
+                                ];
+                                $allCyclesWithModules[] = $cycleData;
+                            }
+                            
+                            $userModuleIds = $user->modules->pluck('id')->toArray();
+
+                            // Filtra los módulos del array $allCyclesWithModules para quitar los módulos en los que está inscrito el usuario
+                            foreach ($allCyclesWithModules as &$cycleData) {
+                                $cycleData['modules'] = $cycleData['modules']->reject(function ($module) use ($userModuleIds) {
+                                    return in_array($module->id, $userModuleIds);
+                                });
+                            }
+                            break;
+                        case $departmentLanguages['name']:
+                            ////////////////////////////////// IDIOMAS //////////////////////////////////////////////////////////
+                            $moduleNames = $departmentLanguages['modules']; 
+
+                            // Obtén los ciclos que coinciden con el departamento del usuario y los módulos con los nombres en el array
+                            $cycles = Cycle::with(['modules' => function ($query) use ($moduleNames) {
+                                $query->whereIn('name', $moduleNames);
+                            }])->orderBy('department_id')
+                                ->get();
+
+                            $allCyclesWithModules = [];
+
+                            foreach ($cycles as $cycle) {
+                                $cycleData = [
+                                    'id' => $cycle->id,
+                                    'name' => $cycle->name,
+                                    'department_id' => $cycle->department_id,
+                                    'modules' => $cycle->modules,
+                                ];
+                                $allCyclesWithModules[] = $cycleData;
+                            }
+                            
+                            $userModuleIds = $user->modules->pluck('id')->toArray();
+
+                            // Filtra los módulos del array $allCyclesWithModules para quitar los módulos en los que está inscrito el usuario
+                            foreach ($allCyclesWithModules as &$cycleData) {
+                                $cycleData['modules'] = $cycleData['modules']->reject(function ($module) use ($userModuleIds) {
+                                    return in_array($module->id, $userModuleIds);
+                                });
+                            }
+                                break;
+                        default:
+                        ////////////////////////////////// DEFAULT //////////////////////////////////////////////////////////
+                            // Obtén los IDs de los módulos del usuario
+                            $userModuleIds = $user->modules->pluck('id')->toArray();
+
+                            // Obtén todos los ciclos con sus módulos, restringiendo por departamento
+                            $allCyclesWithModules = Cycle::with('modules')
+                                ->whereHas('department', function ($query) use ($user) {
+                                    $query->where('id', $user->department_id);
+                                })
+                                ->orderBy('department_id')
+                                ->get();
+
+                            // Filtra los módulos de cada ciclo para quitar los módulos del usuario
+                            $allCyclesWithModules->each(function ($cycle) use ($userModuleIds) {
+                                $cycle->modules = $cycle->modules->reject(function ($module) use ($userModuleIds) {
+                                    return in_array($module->id, $userModuleIds);
+                                });
+                            });
+                            break;
+                    }
+
                     return view('admin.users.show', ['user' => $user,'cyclesWithModules' => $cyclesWithModules,'allCyclesWithModules'=>$allCyclesWithModules])->with('imagePath','images/'.$fileName);
                     break;
                 default:
@@ -608,7 +752,7 @@ class UserController extends Controller {
             $user->name = $request->name;
             $user->save();
 
-            $this->enrollStudentInCycle($user->id,$request->newCycle);
+            $this->enrollStudentInCycle($user->id,$request->newCycle,$request->year,$request->is_dual);
 
             return redirect()->route('admin.users.show',['user'=>$user]);
             //return view('cycles.show',['user'=>$user]);
@@ -623,8 +767,18 @@ class UserController extends Controller {
     {
         if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
 
+            $messages = [
+                'newCycle.regex' => __('errorMessageCyclesEmpty'),
+                'year.in' => __('errorMessageYearEmpty'),
+            ];
+
+            $request->validate([
+                'newCycle' => ['regex:/^\d+$/u'],
+                'year' => ['in:1,2']
+            ],$messages);
+
             if(!in_array($request->newCycle,$user->cycles->pluck('id')->toArray())){
-                $this->enrollStudentInCycle($user->id,$request->newCycle);
+                $this->enrollStudentInCycle($user->id,$request->newCycle,$request->year,$request->is_dual);
             } else {
                 return redirect()->back()->withErrors('error','Already in that cycle');
             }
@@ -632,6 +786,7 @@ class UserController extends Controller {
         }
         
     }
+
      /**
      * Update the specified resource in storage.
      */
@@ -686,7 +841,7 @@ class UserController extends Controller {
         }
     }
 
-    public function enrollStudentInCycle($userId, $cycleId)
+    public function enrollStudentInCycle($userId, $cycleId,$year,$dual)
     {
         if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
             $user = User::findOrFail($userId);
@@ -694,7 +849,7 @@ class UserController extends Controller {
             if ($user->hasRole('ALUMNO')) {
                 // Asociar al estudiante con el ciclo
                 $lastRegistration = DB::table('cycle_users')->orderByDesc('cycle_registration_number')->first();
-                $sync_data = array(['cycle_id'=>$cycle->id,'cycle_registration_number' => $lastRegistration->cycle_registration_number+1,'registration_date'=>date('Y-m-d')]);
+                $sync_data = array(['cycle_id'=>$cycle->id,'cycle_registration_number' => $lastRegistration->cycle_registration_number+1,'year'=>$year,'is_dual'=>$dual]);
                 //dd($sync_data);
                 $user->cycles()->attach($sync_data);
 

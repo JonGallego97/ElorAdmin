@@ -54,6 +54,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'checkRole'])->group
     Route::get('/students', [UserController::class, 'index'])->name('students.index');
     Route::get('/teachers', [UserController::class, 'index'])->name('teachers.index');
     Route::get('/withoutRole', [UserController::class, 'index'])->name('withoutRole.index');
+    Route::get('/personal', [UserController::class, 'index'])->name('personal.index');
     // Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::post('/users/{user}/{userRoles}', [UserController::class, 'store'])->name('users.store');
     Route::post('/users/extra', [UserController::class, 'extra_create'])->name('users.extra_create');

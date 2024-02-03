@@ -2,7 +2,7 @@
 @section('nav')
 
 <div class="row align-items-md-stretch mb-4">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <a href="{{ route('admin.students.index') }} " style="text-decoration: none; color: inherit;">
             <div class="h-100 p-5 bg-body-tertiary border rounded-3 shadow">
                 <h2>{{__('Students')}}</h2>
@@ -20,13 +20,29 @@
         </a>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
         <a href="{{ route('admin.teachers.index') }} " style="text-decoration: none; color: inherit;">
             <div class="h-100 p-5 bg-body-tertiary border rounded-3 shadow">
                 <h2>{{__('Teachers')}}</h2>
                 <div class="row align-items-center">
                     <div class="col mr-2">
                         <p><h5><b>{{__('Total teachers')}} {{ $teachers }}</b></h5></p>
+                    </div>
+                    <div class="col-auto">
+                        <img src="{{ asset('images/admin/profesor/black.png') }}" style="width: 100px" alt="Teacher">
+                    </div>
+                </div>
+                <button class="btn btn-outline-secondary" type="button">{{__('View more')}}</button>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ route('admin.personal.index') }} " style="text-decoration: none; color: inherit;">
+            <div class="h-100 p-5 bg-body-tertiary border rounded-3 shadow">
+                <h2>{{__('Personal')}}</h2>
+                <div class="row align-items-center">
+                    <div class="col mr-2">
+                        <p><h5><b>{{__('TotalPersonal')}} {{ $personal }}</b></h5></p>
                     </div>
                     <div class="col-auto">
                         <img src="{{ asset('images/admin/profesor/black.png') }}" style="width: 100px" alt="Teacher">

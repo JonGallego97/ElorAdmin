@@ -182,14 +182,14 @@
                                         <p>No cycles found for this user.</p>
                                         @else
                                         @foreach ($user->cycles as $cycle)
-
                                         <div class="accordion-item">
                                             <h2 class="accordion-header" id="heading{{ $cycle->id }}">
                                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $cycle->id }}" aria-expanded="true" aria-controls="collapse{{ $cycle->id }}">
                                                     {{ $cycle->name }}
 
                                                     &nbsp;<small class="text-muted">{{ __('Registered') }}: {{ $cycle->created_at->toDateString() }}</small>
-                                                    &nbsp;<small class="text-muted">{{ __('Year') }}: {{ max(1, $cycle->year - date('Y')) }}</small>
+                                                    &nbsp;<small class="text-muted">{{ __('Year') }}: {{ $cycle->year}}</small>
+                                                    &nbsp;<small class="text-muted">{{ __('Dual') }}: {{ $cycle->is_dual}}</small>
                                                 </button>
 
                                             </h2>

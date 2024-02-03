@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ControllerFunctions;
 use App\Models\User;
 use App\Models\Cycle;
 use App\Models\Module;
@@ -14,11 +15,32 @@ use Illuminate\Validation\ValidationException;
 class UserController extends Controller
 {
 
+    private $ControllerFunctions;
+
+    function __construct() {
+        $this->ControllerFunctions = new ControllerFunctions;
+    }
+    //$this->ControllerFunctions->checkAdminRoute()
     
 
     /**
-     * Display a listing of the resource.
-     */
+    * @OA\Get(
+    *   path="/api/users",
+    *   tags={"Users"},
+    *   summary="Shows all users",
+    *   @OA\Response(
+    *       response=200,
+    *       description="Shows all users."
+    * ),
+    * @OA\Response(
+    *   response="default",
+    *   description="Error has ocurred."
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    *)
+    */
     public function index()
     {
         $users = User::with('roles','cycles.modules.users','chats')->orderBy('id', 'desc')->get();
@@ -32,20 +54,71 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
+    * @OA\Post(
+    *   path="/api/users",
+    *   summary="Create a user",
+    *   tags={"Users"},
+    *   @OA\Parameter(
+    *       name="Name",
+    *       in="query",
+    *       description="User Name",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Response(
+    *       response=200,
+    *       description="successful operation",
+    *       @OA\JsonContent(
+    *           type="string"
+    *       ),
+    *   ),
+    *   @OA\Response(
+    *       response=401,
+    *       description="Unauthenticated"
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    * )
+    */
     public function store(Request $request)
     {
 
     }
 
     /**
-     * Display the specified resource.
-     */
+    * @OA\Get(
+    *   path="/api/users/{id}",
+    *   tags={"Users"},
+    *   summary="Show one user",
+    *   @OA\Parameter(
+    *       name="id",
+    *       description="Incident id",
+    *       required=true,
+    *       in="path",
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Response(
+    *       response=200,
+    *       description="Shows Incident."
+    *   ),
+    *   @OA\Response(
+    *       response="default",
+    *       description="Ha ocurrido un error."
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    * )
+    */
     public function show(int $id)
     {
         $user = new User();
-        $user = User::with('department','roles','cycles.modules.users', 'chats.messages','chats.users')->where('id', $id)->first();
+        $user = User::with('cycles')->where('id', $id)->first();
         if (optional($user)->id!== null) {
             return response()->json(['user' => $user])
                 ->setStatusCode(Response::HTTP_OK);
@@ -56,8 +129,125 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     */
+    * @OA\Put(
+    *   path="/api/users/{id}",
+    *   tags={"Users"},
+    *   summary="Edit an user",
+    *   @OA\Parameter(
+    *       name="id",
+    *       description="User id",
+    *       required=true,
+    *       in="path",
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="name",
+    *       in="query",
+    *       description="The title of the incident",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="surname1",
+    *       in="query",
+    *       description="{{__('Surname1')}}",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="surname2",
+    *       in="query",
+    *       description="Second Surname",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="address",
+    *       in="query",
+    *       description="Address",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="Priority",
+    *       in="query",
+    *       description="Priority of the incident",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="dni",
+    *       in="query",
+    *       description="Documentation Number",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="phone_number1",
+    *       in="query",
+    *       description="Telephone Number 1",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="phone_number2",
+    *       in="query",
+    *       description="Telephone Number 2",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="roles[]",
+    *       in="query",
+    *       description="Roles",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="array",
+    *           @OA\Items(
+    *               type="integer"
+    *           )
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="department_id",
+    *       in="query",
+    *       description="Department ID",
+    *       required=false,
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Response(
+    *       response=200,
+    *       description="Mostrar el post especificado."
+    *   ),
+    *   @OA\Response(
+    *       response="default",
+    *       description="Ha ocurrido un error."
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    * )
+    */
     public function update(Request $request, User $user)
     {
         try {
@@ -87,9 +277,44 @@ class UserController extends Controller
         }
     }
 
+
     /**
-     * Update password of the specified resource in storage.
-     */
+    * @OA\Put(
+    *   path="/api/users/{user}/update-password",
+    *   tags={"Users"},
+    *   summary="Cambiar contraseña",
+    *   @OA\Parameter(
+    *       name="id",
+    *       description="User id",
+    *       required=true,
+    *       in="path",
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="password",
+    *       in="query",
+    *       description="Password",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Response(
+    *       response=201,
+    *       description="Contraseña cambiada correctamente."
+    *   ),
+    *   @OA\Response(
+    *       response="default",
+    *       description="Ha ocurrido un error."
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    * )
+    */
+    
     public function updatePassword(Request $request, $id)
     {
         try {
@@ -125,11 +350,44 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     */
+    * @OA\Delete(
+    *   path="/api/users/{id}",
+    *   summary="Delete user",
+    *   tags={"Users"},
+    *   @OA\Parameter(
+    *       name="id",
+    *       description="User ID",
+    *       required=true,
+    *       in="path",
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Response(
+    *       response=200,
+    *       description="User deleted."
+    *   ),
+    *   @OA\Response(
+    *       response="default",
+    *       description="Ha ocurrido un error."
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    * )
+    */
     public function destroy(User $user)
     {
-        //
+        if($this->ControllerFunctions->checkAdminRole() && $user->id != 0){
+            $deleted = $user->delete();
+            if ($deleted) {
+                return response()->json(['user'=>$user])->setStatusCode(Response::HTTP_NO_CONTENT);
+            } else {
+                return response()->json(['user'=>$user])->setStatusCode(Response::HTTP_BAD_REQUEST);
+            }
+        }else {
+            return response()->json(['error' => 'El usuario '. $user->name . ' no se puede eliminar'], Response::HTTP_BAD_REQUEST);
+        }
     }
 
     public function enrollStudentInCycle($userId, $cycleId)

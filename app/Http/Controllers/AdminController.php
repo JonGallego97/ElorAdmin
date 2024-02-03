@@ -35,6 +35,9 @@ class AdminController extends Controller
         $cycles = Cycle::all()->count();
         $modules = Module::all()->count();
         $usersWithoutRole = User::whereDoesntHave('roles')->count();
-        return view('admin.index',['users'=>$users, 'departments'=> $departments, 'cycles'=> $cycles, 'students' => $students, 'teachers' => $teachers,'usersWithoutRole'=>$usersWithoutRole,'modules'=>$modules]);
+        $personal = $users = User::whereHas('roles', function ($query) {
+            $query->whereNotIn('name', ['alumno', 'profesor','administrador']);
+        })->count();
+        return view('admin.index',['users'=>$users, 'departments'=> $departments, 'cycles'=> $cycles, 'students' => $students, 'teachers' => $teachers,'usersWithoutRole'=>$usersWithoutRole,'modules'=>$modules,'personal'=>$personal]);
     }
 }

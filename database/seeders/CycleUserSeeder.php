@@ -40,14 +40,22 @@ class CycleUserSeeder extends Seeder
         $userStudents->each(function ($user) use ($cycles,&$lastRegistrationNumber) {
 
             $registrationNumber = ++$lastRegistrationNumber;
-            $registrationDate = rand(strtotime("01/01/1990"),strtotime(today()));
-            $registrationDate = date('Y-m-d',$registrationDate);
             $cycleId = $cycles->random(1)->pluck('id')->toArray();
+            $year = rand(1,2);
+            if($year == 2) {
+                $is_dual = rand(0,1);
+            } else {
+                $is_dual = null;
+            }
+            
+            $random_date = date('Y-m-d', mt_rand(strtotime('1990-01-01'), time()));
             $user->cycles()->attach(
                 $cycleId,
                 [
                     'cycle_registration_number' => $registrationNumber,
-                    'registration_date' => $registrationDate
+                    'year' => $year,
+                    'is_dual' => $is_dual,
+                    'created_at' => $random_date,
                 ]
             );
             $cycles = Cycle::with('modules')->where('id',$cycleId[0])->get();

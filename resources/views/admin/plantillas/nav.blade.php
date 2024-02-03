@@ -32,6 +32,10 @@
                                                 {{__('Teachers')}}</a>
                                         </li>
                                         <li class="nav-item">
+                                            <a class="  ml-3 small nav-link{{ Route::is('admin.personal.index') ? ' font-weight-bold' : '' }}" href="{{ route('admin.personal.index') }}">
+                                                {{__('Personal')}}</a>
+                                        </li>
+                                        <li class="nav-item {{ Route::is('admin.withoutRole.index') ? ' active' : '' }}">
                                             <a class="  ml-3 small nav-link{{ Route::is('admin.withoutRole.index') ? ' font-weight-bold' : '' }}" href="{{ route('admin.withoutRole.index') }}">
                                                 {{__('UsersWithoutRole')}}</a>
                                         </li>

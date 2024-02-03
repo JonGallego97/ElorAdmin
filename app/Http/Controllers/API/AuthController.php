@@ -4,31 +4,51 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Response;
 
-/*
-* @OA\Info(title="API", version="1.0")
-* ),
-*/
+    
 
 
 class AuthController extends Controller
 {
-    /*
-    * @OA\Get(
-    *   path="/api/forgotPassword/{email}",
-    *   summary="Reset Password",
+
+    /**
+    * @OA\Post(
+    *   path="/api/login",
+    *   tags={"Auth"},
+    *   summary="Login",
     *   @OA\Parameter(
     *       name="email",
-    *       description="Email",
+    *       description="email",
     *       required=true,
-    *       in="path",
+    *       in="query",
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="password",
+    *       description="password",
+    *       required=true,
+    *       in="query",
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="device_name",
+    *       description="device name",
+    *       required=true,
+    *       in="query",
     *       @OA\Schema(
     *           type="string"
     *       )
     *   ),
     *   @OA\Response(
     *       response=200,
-    *       description="Shows role."
+    *       description="Shows Incident."
     *   ),
     *   @OA\Response(
     *       response="default",
@@ -36,49 +56,53 @@ class AuthController extends Controller
     *   )
     * )
     */
-    public function resetPassword(String $email)
-    {
-        dd($request);
-        $messages = [
-            'name.required' => __('errorMessageNameEmpty'),
-            'name.email' => __('errorMessageNameLettersOnly'),
-        ];
-
+    public function login(Request $request){
         $request->validate([
-            'name' =>['required','email']
-        ],$messages);
-        return redirect()->route('password.email',['$request'=>$request]);
+            'email' => 'required|email',
+            'password' => 'required',
+            'device_name' => 'required',
+            ]);
+        $user = User::where('email', $request->email)->first();
+        if (! $user || ! Hash::check($request->password, $user->password)){
+            return response()->json([
+            'message' => ['Username or password incorrect'],
+            ])->setStatusCode(Response::HTTP_UNAUTHORIZED);
+        }
+            // FIXME: queremos dejar más dispositivos?
+            // $user->tokens()->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User logged in successfully',
+            'name' => $user->name,
+            'token' => $user->createToken($request->device_name)
+            ->plainTextToken,
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+    * @OA\Post(
+    *   path="/api/logout",
+    *   summary="logout",
+    *   tags={"Auth"},
+    *   @OA\Response(
+    *       response=200,
+    *       description="Deslogeado."
+    *   ),
+    *   @OA\Response(
+    *       response="default",
+    *       description="Ha ocurrido un error."
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    * )
+    */
+    public function logout(Request $request){
+        dd($request);
+        $request->user()->currentAccessToken()->delete();
+        return response()->json([
+        'status' => 'success',
+        'message' => 'User logged out successfully'
+        ])->setStatusCode(Response::HTTP_OK);
     }
 }

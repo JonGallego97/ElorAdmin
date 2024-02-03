@@ -11,8 +11,23 @@ use Symfony\Component\HttpFoundation\Response;
 class DepartmentController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
+    * @OA\Get(
+    *   path="/api/departments",
+    *   tags={"Departments"},
+    *   summary="Shows departments",
+    *   @OA\Response(
+    *       response=200,
+    *       description="Shows all departments."
+    * ),
+    * @OA\Response(
+    *   response="default",
+    *   description="Error has ocurred."
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    *)
+    */
     public function index()
     {
         $departments = Department::orderBy('name')->get();
@@ -22,8 +37,35 @@ class DepartmentController extends Controller
 
    
     /**
-     * Store a newly created resource in storage.
-     */
+    * @OA\Post(
+    *   path="/api/departments",
+    *   summary="Create a department",
+    *   tags={"Departments"},
+    *   @OA\Parameter(
+    *       name="name",
+    *       in="query",
+    *       description="Department Name",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Response(
+    *       response=200,
+    *       description="successful operation",
+    *       @OA\JsonContent(
+    *           type="string"
+    *       ),
+    *   ),
+    *   @OA\Response(
+    *       response=401,
+    *       description="Unauthenticated"
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    * )
+    */
     public function store(Request $request)
     {
         $deparment = new Department();
@@ -39,8 +81,32 @@ class DepartmentController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
+    * @OA\Get(
+    *   path="/api/departments/{id}",
+    *   summary="Shows one department",
+    *   tags={"Departments"},
+    *   @OA\Parameter(
+    *       name="id",
+    *       description="Department ID",
+    *       required=true,
+    *       in="path",
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Response(
+    *       response=200,
+    *       description="Shows department."
+    *   ),
+    *   @OA\Response(
+    *       response="default",
+    *       description="Ha ocurrido un error."
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    * )
+    */
     public function show(Department $department)
     {
         if ($department) {
@@ -54,8 +120,41 @@ class DepartmentController extends Controller
 
 
     /**
-     * Update the specified resource in storage.
-     */
+    * @OA\Put(
+    *   path="/api/departments/{id}",
+    *   summary="Edit a department",
+    *   tags={"Departments"},
+    *   @OA\Parameter(
+    *       name="id",
+    *       description="Department ID",
+    *       required=true,
+    *       in="path",
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="name",
+    *       in="query",
+    *       description="Name of the Department",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Response(
+    *       response=200,
+    *       description="Mostrar el post especificado."
+    *   ),
+    *   @OA\Response(
+    *       response="default",
+    *       description="Ha ocurrido un error."
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    * )
+    */
     public function update(Request $request, Department $department)
     {
         $department->name = $request->name;
@@ -70,8 +169,32 @@ class DepartmentController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     */
+    * @OA\Delete(
+    *   path="/api/departments/{id}",
+    *   summary="Delete department",
+    *   tags={"Departments"},
+    *   @OA\Parameter(
+    *       name="id",
+    *       description="Department ID",
+    *       required=true,
+    *       in="path",
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Response(
+    *       response=200,
+    *       description="Shows Incident."
+    *   ),
+    *   @OA\Response(
+    *       response="default",
+    *       description="Ha ocurrido un error."
+    *   ),
+    *   security={
+    *       {"bearerAuth": {}}
+    *   }
+    * )
+    */
     public function destroy(Department $department)
     {
         $deleted = $department->delete();
