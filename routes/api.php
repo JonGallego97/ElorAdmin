@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\PasswordResetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\DepartmentController;
@@ -35,6 +36,8 @@ Route::resources([
 
 Route::put('users/{user}/update-password', UserController::class.'@updatePassword');
 Route::post('/users/{userId}/enroll/{cycleId}', [UserController::class, 'enrollStudentInCycle']);
+Route::post('/password/reset', [PasswordResetController::class, 'sendResetLinkEmail']);
+
 
 //FIREBASE
 Route::get('/firebase/fmcTesting', [FirebaseController::class, 'fcmTesting']);
