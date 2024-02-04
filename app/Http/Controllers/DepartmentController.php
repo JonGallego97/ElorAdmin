@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 
 class DepartmentController extends Controller
 {
@@ -25,7 +26,7 @@ class DepartmentController extends Controller
     public function index(Request $request)
     {
         if ($this->ControllerFunctions->checkAdminRoute()) {
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $departments = Department::orderBy('name', 'asc')->paginate($perPage);
             foreach ($departments as $department) {
                 $department->count_people = DB::table('users')->where('department_id', $department->id)->count();
@@ -93,7 +94,7 @@ class DepartmentController extends Controller
     public function show(Request $request, Department $department)
     {
         if($this->ControllerFunctions->checkAdminRoute()){
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $department->users = User::where('department_id', $department->id)->paginate($perPage);
 
             return view('admin.departments.show', ['department' => $department]);
@@ -171,7 +172,7 @@ class DepartmentController extends Controller
                 $user->department_id = null;
                 $user->save();
                 $department = Department::find($departmentId);
-                $perPage = $request->input('per_page', 10);
+                $perPage = $request->input('per_page', App::make('paginationCount'));
                 $department->users = User::where('department_id', $department->id)->paginate($perPage);
                 return view('admin.departments.show',['department'=>$department])->with('success',__('successDelete'));
             } else {

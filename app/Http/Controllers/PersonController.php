@@ -54,7 +54,7 @@ use Illuminate\Http\Request;
     $user = Auth::user(); // Obtener el usuario autenticado
 
     if (User::find($user->id)->roles->first()->id == 2) {
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', App::make('paginationCount'));
         $users = User::whereHas('roles', function ($query) {
             $query->where('id', 2);
         })

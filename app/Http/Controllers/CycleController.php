@@ -142,7 +142,7 @@ class CycleController extends Controller
     }
 
     private function cycleModule(Request $request, $cycleId){
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', App::make('paginationCount'));
         return Module::join('cycle_module', 'modules.id', '=', 'cycle_module.module_id')
         ->where('cycle_module.cycle_id', $cycleId)
         ->select('modules.*')

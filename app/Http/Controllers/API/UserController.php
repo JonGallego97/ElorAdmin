@@ -10,6 +10,7 @@ use App\Models\Module;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -43,14 +44,42 @@ class UserController extends Controller
     */
     public function index()
     {
-        $users = User::with('roles','cycles.modules.users','chats')->orderBy('id', 'desc')->get();
+        /* $users = User::with('roles','cycles.modules.users','chats')->orderBy('id', 'desc')->get();
 
         if ($users->isNotEmpty()) {
             return response()->json(['users' => $users, 'count' => $users->count()] )->setStatusCode(Response::HTTP_OK);
         } else {
             return response()->json(['users' => $users])->setStatusCode(Response::HTTP_NO_CONTENT);
-        }
+        } */
+        //$perPage = $request->input('per_page', App::make('paginationCount'));
+        $perPage = App::make('paginationCount');
+        $users = User::with('roles', 'cycles.modules.users', 'chats')
+                 ->orderBy('id', 'desc')
+                 ->paginate($perPage);
 
+        // Comprueba si hay usuarios disponibles
+        if ($users->isNotEmpty()) {
+            // Prepara los datos de paginación para la respuesta
+            $paginationData = [
+                'total' => $users->total(), // Número total de datos
+                'per_page' => $users->perPage(), // Datos por página
+                'current_page' => $users->currentPage(), // Página actual
+                'last_page' => $users->lastPage(), // Última página
+                'next_page_url' => $users->nextPageUrl(), // URL de la próxima página
+                'prev_page_url' => $users->previousPageUrl(), // URL de la página anterior
+                'from' => $users->firstItem(), // Número del primer ítem en la página
+                'to' => $users->lastItem() // Número del último ítem en la página
+            ];
+
+            // Devuelve los usuarios junto con los datos de paginación
+            return response()->json([
+                'users' => $users->items(), // O usa simplemente $users para incluir los datos de paginación automáticamente
+                'pagination' => $paginationData,
+            ])->setStatusCode(Response::HTTP_OK);
+        } else {
+            // Devuelve respuesta para indicar que no hay contenido
+            return response()->json(['message' => 'No users found'])->setStatusCode(Response::HTTP_NO_CONTENT);
+        }
     }
 
     /**
@@ -59,12 +88,87 @@ class UserController extends Controller
     *   summary="Create a user",
     *   tags={"Users"},
     *   @OA\Parameter(
-    *       name="Name",
+    *       name="name",
     *       in="query",
-    *       description="User Name",
+    *       description="Name",
     *       required=true,
     *       @OA\Schema(
     *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="surname1",
+    *       in="query",
+    *       description="{{__('Surname1')}}",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="surname2",
+    *       in="query",
+    *       description="Second Surname",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="address",
+    *       in="query",
+    *       description="Address",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="dni",
+    *       in="query",
+    *       description="Documentation Number",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="phone_number1",
+    *       in="query",
+    *       description="Telephone Number 1",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="phone_number2",
+    *       in="query",
+    *       description="Telephone Number 2",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="integer"
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="roles[]",
+    *       in="query",
+    *       description="Roles",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="array",
+    *           @OA\Items(
+    *               type="integer"
+    *           )
+    *       )
+    *   ),
+    *   @OA\Parameter(
+    *       name="department_id",
+    *       in="query",
+    *       description="Department ID",
+    *       required=false,
+    *       @OA\Schema(
+    *           type="integer"
     *       )
     *   ),
     *   @OA\Response(
@@ -145,7 +249,7 @@ class UserController extends Controller
     *   @OA\Parameter(
     *       name="name",
     *       in="query",
-    *       description="The title of the incident",
+    *       description="Name",
     *       required=true,
     *       @OA\Schema(
     *           type="string"
@@ -154,7 +258,7 @@ class UserController extends Controller
     *   @OA\Parameter(
     *       name="surname1",
     *       in="query",
-    *       description="{{__('Surname1')}}",
+    *       description="First Surname",
     *       required=true,
     *       @OA\Schema(
     *           type="string"
@@ -176,15 +280,6 @@ class UserController extends Controller
     *       required=true,
     *       @OA\Schema(
     *           type="string"
-    *       )
-    *   ),
-    *   @OA\Parameter(
-    *       name="Priority",
-    *       in="query",
-    *       description="Priority of the incident",
-    *       required=true,
-    *       @OA\Schema(
-    *           type="integer"
     *       )
     *   ),
     *   @OA\Parameter(

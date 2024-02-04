@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
+
 
 class RoleController extends Controller
 {
@@ -27,7 +29,7 @@ class RoleController extends Controller
     {
 
         if ($this->ControllerFunctions->checkAdminRoute()) {
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $roles = Role::orderBy('name', 'asc')->paginate($perPage);
             foreach ($roles as $role) {
                 $role->count_people = DB::table('role_users')->where('role_id', $role->id)->count();
@@ -90,7 +92,7 @@ class RoleController extends Controller
 
 
     private function getRoleUsers(Request $request, Role $role){
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', App::make('paginationCount'));
         return $users = User::whereHas('roles', function ($query) use ($role) {
             $query->where('id', $role->id);
         })->paginate($perPage);

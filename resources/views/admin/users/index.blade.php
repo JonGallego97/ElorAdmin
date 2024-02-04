@@ -62,13 +62,19 @@
             </tbody>
         </table>
         <div class="row">
-            @if ($users->total() > 10)
+            @if ($users->total() > App::make('paginationCount'))
             <div class="form-inline col">
                 <form
                 @if(request()->is('admin/students*'))
                     action="{{ route('admin.students.index') }}"
                 @elseif(request()->is('admin/teachers*'))
                     action="{{ route('admin.teachers.index') }}"
+                @elseif(request()->is('admin/teachers*'))
+                    action="{{ route('admin.withoutRole.index') }}"
+                @elseif(request()->is('admin/teachers*'))
+                    action="{{ route('admin.persons.index') }}"
+                @else
+                    action="{{ route('admin.users.index') }}"
                 @endif
                 class="form-inline" method="GET" id="perPageForm">
                     <label class="mr-2" for="per_page">{{__('Show')}}{{__('Colon')}}</label>

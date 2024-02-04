@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\App;
 
 class DepartmentController extends Controller
 {
@@ -30,9 +31,35 @@ class DepartmentController extends Controller
     */
     public function index()
     {
-        $departments = Department::orderBy('name')->get();
+        /* $departments = Department::orderBy('name')->get();
         return response()->json(['departments' => $departments])
-        ->setStatusCode(Response::HTTP_OK);
+        ->setStatusCode(Response::HTTP_OK); */
+        $perPage = App::make('paginationCount');
+        $departments = Department::orderBy('name')->paginate($perPage);
+
+        // Comprueba si hay usuarios disponibles
+        if ($departments->isNotEmpty()) {
+            // Prepara los datos de paginación para la respuesta
+            $paginationData = [
+                'total' => $departments->total(), // Número total de datos
+                'per_page' => $departments->perPage(), // Datos por página
+                'current_page' => $departments->currentPage(), // Página actual
+                'last_page' => $departments->lastPage(), // Última página
+                'next_page_url' => $departments->nextPageUrl(), // URL de la próxima página
+                'prev_page_url' => $departments->previousPageUrl(), // URL de la página anterior
+                'from' => $departments->firstItem(), // Número del primer ítem en la página
+                'to' => $departments->lastItem() // Número del último ítem en la página
+            ];
+
+            // Devuelve los usuarios junto con los datos de paginación
+            return response()->json([
+                'departments' => $departments->items(), // O usa simplemente $users para incluir los datos de paginación automáticamente
+                'pagination' => $paginationData,
+            ])->setStatusCode(Response::HTTP_OK);
+        } else {
+            // Devuelve respuesta para indicar que no hay contenido
+            return response()->json(['message' => 'No users found'])->setStatusCode(Response::HTTP_NO_CONTENT);
+        }
     }
 
    

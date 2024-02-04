@@ -177,15 +177,15 @@
                 </tbody>
             </table>
             <div class="row">
-                @if ($module->students->total() > 10)
+                @if ($module->students->total() > App::make('paginationCount'))
                 <div class="form-inline col">
                     <form class="form-inline" method="GET" id="perPageForm">
                         <label class="mr-2" for="per_page">{{__('Show')}}{{__('Colon')}}</label>
                         <select class="form-control" name="per_page" id="per_page" onchange="document.getElementById('perPageForm').submit()">
-                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                            <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
-                            <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
-                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                            <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                            <option value="150" {{ request('per_page') == 150 ? 'selected' : '' }}>150</option>
+                            <option value="200" {{ request('per_page') == 200 ? 'selected' : '' }}>200</option>
                         </select>
                     </form>
                 </div>

@@ -16,7 +16,7 @@ class AuthController extends Controller
 
     /**
     * @OA\Post(
-    *   path="/api/login",
+    *   path="/api/auth/login",
     *   tags={"Auth"},
     *   summary="Login",
     *   @OA\Parameter(
@@ -62,26 +62,29 @@ class AuthController extends Controller
             'password' => 'required',
             'device_name' => 'required',
             ]);
+
         $user = User::where('email', $request->email)->first();
+
         if (! $user || ! Hash::check($request->password, $user->password)){
             return response()->json([
             'message' => ['Username or password incorrect'],
             ])->setStatusCode(Response::HTTP_UNAUTHORIZED);
         }
-            // FIXME: queremos dejar más dispositivos?
-            // $user->tokens()->delete();
+
+        // FIXME: queremos dejar más dispositivos?
+        // $user->tokens()->delete();
         return response()->json([
             'status' => 'success',
             'message' => 'User logged in successfully',
             'name' => $user->name,
             'token' => $user->createToken($request->device_name)
             ->plainTextToken,
-        ]);
-    }
+            ]);
+        }
 
-    /**
+   /**
     * @OA\Post(
-    *   path="/api/logout",
+    *   path="/api/auth/logout",
     *   summary="logout",
     *   tags={"Auth"},
     *   @OA\Response(
@@ -98,7 +101,6 @@ class AuthController extends Controller
     * )
     */
     public function logout(Request $request){
-        dd($request);
         $request->user()->currentAccessToken()->delete();
         return response()->json([
         'status' => 'success',

@@ -36,7 +36,7 @@ class UserController extends Controller {
 
         if ($this->ControllerFunctions->checkAdminRoute()) {
             //si es admin
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $users = User::whereHas('roles', function ($query) {
                 $query->where('id', 3);
             })
@@ -60,7 +60,7 @@ class UserController extends Controller {
     {
         if ($this->ControllerFunctions->checkAdminRoute()){
             dd(Route::getCurrentRoute());
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $users = User::whereHas('roles', function ($query) {
                 $query->where('id', 2);
             })
@@ -88,7 +88,18 @@ class UserController extends Controller {
             $hasNoRole = str::contains($route,'admin/withoutRole');
             $personal = str::contains($route,'admin/personal');
 
+            /*
+            en config/pagination.php  
+            <?php
 
+            return [
+                'per_page' => 15,
+            ];
+
+            $posts = Post::paginate(config('pagination.per_page'));
+
+            */
+            
             $perPage = $request->input('per_page', App::make('paginationCount'));
 
             switch(true) {
@@ -98,7 +109,7 @@ class UserController extends Controller {
                         $query->where('id', $this->ControllerFunctions->getTeacherRoleId());
                     })
                     ->orderBy('name', 'asc')
-                    ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'first_login', 'created_at', 'updated_at']);
+                    ->paginate($perPage);
                     $totalUsers = User::whereHas('roles', function ($query) {
                         $query->where('id', $this->ControllerFunctions->getTeacherRoleId());
                     })->count();
@@ -133,7 +144,7 @@ class UserController extends Controller {
                     break;
 
                 case $personal:
-                    $perPage = $request->input('per_page', 10);
+                    $perPage = $request->input('per_page', App::make('paginationCount'));
 
                     $users = User::whereHas('roles', function ($query) {
                         $query->whereNotIn('name', ['alumno', 'profesor','administrador']);
@@ -163,7 +174,7 @@ class UserController extends Controller {
 
         }else{
 
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $users = User::whereHas('roles', function ($query) {
                 $query->where('id', 2);
             })
@@ -197,7 +208,7 @@ class UserController extends Controller {
         $user = Auth::user(); // Obtener el usuario autenticado
 
         if (User::find($user->id)->roles->first()->id == 2) {
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $users = User::whereHas('roles', function ($query) {
                 $query->where('id', 2);
             })

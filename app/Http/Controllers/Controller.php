@@ -30,7 +30,26 @@ use Illuminate\Routing\Controller as BaseController;
 *@OA\Tag(
 *     name="Departments",
 *     description="CRUD of Departments"
+* ),
+*@OA\Tag(
+*     name="Modules",
+*     description="CRUD of Modules"
 * )
+*/
+
+/**
+* @OA\Info(title="ElorAdmin API", version="2.0"),
+* @OA\SecurityScheme(
+* in="header",
+* scheme="bearer",
+* bearerFormat="JWT",
+* securityScheme="bearerAuth",
+* type="http",
+* ),
+*@OA\Tag(
+*     name="Auth",
+*     description="CRUD of Auth"
+* ),
 */
 
 class Controller extends BaseController

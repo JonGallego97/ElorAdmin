@@ -110,5 +110,6 @@
     "errorIsDualSecondYear": "Para los alumnos de Segundo se debe seleccionar Dual",
     "errorMessageYearEmpty": "Es necesario seleccionar un año.",
     "Personal": "Personal",
-    "TotalPersonal": "Total de personal:"
+    "TotalPersonal": "Total de personal:",
+    "errorAttachCycle": "Error al asignarle el cycle"
 }

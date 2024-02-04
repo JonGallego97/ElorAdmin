@@ -2,15 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\DepartmentController;
-use App\Http\Controllers\API\CycleController;
-use App\Http\Controllers\API\UserController;
-use App\Http\Controllers\API\FirebaseController;
 
-use App\Http\Controllers\API\RoleController;
-use App\Http\Controllers\API\ModuleController;
-use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\API\V1\AuthController;
+
 
 
 use App\Models\User;
@@ -30,52 +24,35 @@ use Illuminate\Support\Str;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+/* Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::resources([
-        'departments' => DepartmentController::class,
-        'roles' => RoleController::class,
-        'cycles' => CycleController::class,
-        'users' => UserController::class,
-        'modules' => ModuleController::class,
-    ]);
-});
-
-Route::group(['middleware' => 'auth'], function() {
-    
-
-    Route::group(['prefix' => 'auth'], function() {
-        Route::post('logout',[AuthController::class,'logout']);
-    });
-
-});
-
-Route::group(['prefix' => 'auth'], function() {
-    Route::post('login',[AuthController::class,'login']);
-})->withoutMiddleware(['auth:sanctum']);
-
-
+Route::resources([
+    'departments' => DepartmentController::class,
+    'roles' => RoleController::class,
+    'cycles' => CycleController::class,
+    'users' => UserController::class,
+    'modules' => ModuleController::class
+]);
 
 Route::put('users/{user}/update-password', [UserController::class.'@updatePassword']);
 Route::post('/users/{userId}/enroll/{cycleId}', [UserController::class, 'enrollStudentInCycle']);
 
 //FIREBASE
-Route::get('/firebase/fmcTesting', [FirebaseController::class, 'fcmTesting']);
+Route::get('/firebase/fmcTesting', [FirebaseController::class, 'fcmTesting']); */
 
+/* Route::post('login',[AuthController::class,'login'])->withoutMiddleware(['auth:sanctum']);
+Route::post('logout',[AuthController::class,'logout'])->middleware('auth:sanctum'); */
 
+$versionAPI = "v1";
 
-
-/* Route::group(['prefix' => 'v1'], function() {
+Route::group(['prefix' => $versionAPI], function() {
     Route::group(['prefix' => 'auth'], function() {
         Route::post('login',[AuthController::class,'login'])->withoutMiddleware(['auth:sanctum']);
         Route::post('logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
     });
-    Route::group(['prefix' => 'roles', function() {
+    /* Route::group(['prefix' => 'roles', function() {
         Route::resources(['roles' => RoleController::class]);
     }]);
     Route::group(['prefix' => 'departments', function() {
@@ -91,13 +68,6 @@ Route::get('/firebase/fmcTesting', [FirebaseController::class, 'fcmTesting']);
     }]);
     Route::group(['prefix' => 'modules', function() {
         Route::resources(['modules' => ModuleController::class]);
-    }]);
+    }]); */
 });
-
-Route::group(['prefix' => 'v2'], function() {
-    Route::group(['prefix' => 'auth'], function() {
-        Route::post('login',[AuthController::class,'login'])->withoutMiddleware(['auth:sanctum']);
-        Route::post('logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
-    });
-}); */
 
