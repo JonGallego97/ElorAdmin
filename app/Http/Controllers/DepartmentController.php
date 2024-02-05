@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 
 class DepartmentController extends Controller
 {
@@ -25,7 +26,7 @@ class DepartmentController extends Controller
     public function index(Request $request)
     {
         if ($this->ControllerFunctions->checkAdminRoute()) {
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $departments = Department::orderBy('name', 'asc')->paginate($perPage);
             foreach ($departments as $department) {
                 $department->count_people = DB::table('users')->where('department_id', $department->id)->count();
@@ -53,7 +54,7 @@ class DepartmentController extends Controller
     {
         $departments = Department::withCount('users')->orderBy('users_count')->get();
 
-        return view('persons.departments.index', ['departments' => $departments]) ;
+        return view('departments.index', ['departments' => $departments]) ;
 
     }
     /**
@@ -77,7 +78,7 @@ class DepartmentController extends Controller
             $created = $department->save();
 
             if ($created) {
-                return redirect()->route('departments.show',['department'=>$department])->with('success',__('successCreate'));
+                return redirect()->route('admin.departments.show',['department'=>$department])->with('success',__('successCreate'));
             } else {
                 return redirect()->back()->withErrors('error',__('errorCreate'));
             }
@@ -93,7 +94,7 @@ class DepartmentController extends Controller
     public function show(Request $request, Department $department)
     {
         if($this->ControllerFunctions->checkAdminRoute()){
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $department->users = User::where('department_id', $department->id)->paginate($perPage);
 
             return view('admin.departments.show', ['department' => $department]);
@@ -134,7 +135,7 @@ class DepartmentController extends Controller
             $department->name = ucwords(strtolower($request->name));
             $result = $department->save();
             if($result) {
-                return redirect()->route('departments.show',['department'=>$department])->with('success',__('successUpdate'));
+                return redirect()->route('admin.departments.show',['department'=>$department])->with('success',__('successUpdate'));
             } else {
                 return redirect()->back()->withErrors('error', __('errorUpdate'));
             }
@@ -155,7 +156,7 @@ class DepartmentController extends Controller
             $department = Department::find($departmentId);
             if ($department) {
                 $department->delete();
-                return redirect()->route('departments.index')->with('success',__('successDelete'));
+                return redirect()->route('admin.departments.index')->with('success',__('successDelete'));
             } else {
                 return redirect()->back()->withErrors('error', __('errorDelete'));
             }
@@ -171,7 +172,7 @@ class DepartmentController extends Controller
                 $user->department_id = null;
                 $user->save();
                 $department = Department::find($departmentId);
-                $perPage = $request->input('per_page', 10);
+                $perPage = $request->input('per_page', App::make('paginationCount'));
                 $department->users = User::where('department_id', $department->id)->paginate($perPage);
                 return view('admin.departments.show',['department'=>$department])->with('success',__('successDelete'));
             } else {

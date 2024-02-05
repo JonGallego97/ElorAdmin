@@ -3,7 +3,7 @@
 @section('nav')
 
 <div class="container">
-    <form class="mt-2" name="extra_create_platform" action="{{ route('users.store') }}" method="POST">
+    <form class="mt-2" name="extra_create_platform" action="{{ route('admin.users.store') }}" method="POST">
         @csrf
         <div class="row">
             <!-- Solo para editar si no es alumno ni admin -->

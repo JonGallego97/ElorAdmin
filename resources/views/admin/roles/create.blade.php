@@ -11,9 +11,9 @@
         <form class="mt-2" name="create_platform"
 
             @if($role->id != null)
-                action="{{route('roles.update', $role)}}"
+                action="{{route('admin.roles.update', $role)}}"
             @else
-                action="{{route('roles.store')}}"
+                action="{{route('admin.roles.store')}}"
             @endif
 
             method="POST" enctype="multipart/form-data">

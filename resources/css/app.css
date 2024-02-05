@@ -1,3 +1,5 @@
+a  { color:#046484; } /* CSS link color */
+
 /* Modo claro */
 body[data-bs-theme="light"] {
     background-color: #ffffff;
@@ -9,5 +11,9 @@ body[data-bs-theme="light"] {
 body[data-bs-theme="dark"] {
     background-color: #212529;
     color: #ffffff;
+}
+
+.ms-3 {
+    margin-left: 0.75rem; /* Ajusta el margen según tus necesidades */
 }
 

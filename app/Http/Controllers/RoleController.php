@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
+
 
 class RoleController extends Controller
 {
@@ -27,7 +29,7 @@ class RoleController extends Controller
     {
 
         if ($this->ControllerFunctions->checkAdminRoute()) {
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $roles = Role::orderBy('name', 'asc')->paginate($perPage);
             foreach ($roles as $role) {
                 $role->count_people = DB::table('role_users')->where('role_id', $role->id)->count();
@@ -76,7 +78,7 @@ class RoleController extends Controller
             if($result) {
                 /* $role->users = $this->getRoleUsers($request, $role);
                 return view('admin.roles.show', ['role' => $role]); */
-                return redirect()->route('roles.show',['role'=>$role])->with('success',__('successCreate'));
+                return redirect()->route('admin.roles.show',['role'=>$role])->with('success',__('successCreate'));
             } else {
                 return redirect()->back()->withErrors(['error' => __('errorCreate')]);
             }
@@ -90,7 +92,7 @@ class RoleController extends Controller
 
 
     private function getRoleUsers(Request $request, Role $role){
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', App::make('paginationCount'));
         return $users = User::whereHas('roles', function ($query) use ($role) {
             $query->where('id', $role->id);
         })->paginate($perPage);
@@ -130,7 +132,7 @@ class RoleController extends Controller
                 $role->users()->detach($userId);
                 /* $role->users = $this->getRoleUsers($request, $role);
                 return view('admin.roles.show',['role'=>$role]); */
-                return redirect()->route('roles.show',['role'=>$role])->with('success',__('successUpdate'));
+                return redirect()->route('admin.roles.show',['role'=>$role])->with('success',__('successUpdate'));
             } else {
                 return redirect()->back()->withErrors('error', __('errorDelete'));
             }
@@ -163,7 +165,7 @@ class RoleController extends Controller
             $updated = $role->save();
 
             if($updated) {
-                return redirect()->route('roles.show',['role'=>$role])->with('success',__('successUpdate'));
+                return redirect()->route('admin.roles.show',['role'=>$role])->with('success',__('successUpdate'));
             } else {
                 return redirect()->back()->withErrors('error', __('errorUpdate'));
             }
@@ -185,7 +187,7 @@ class RoleController extends Controller
             if ($role) {
                 if($role->name != 'ADMINISTRADOR' && $role->name!= 'ALUMNO' && $role->name!= 'PROFESOR'){
                     $role->delete();
-                    return redirect()->route('roles.index')->with('success', 'Rol eliminado exitosamente.');
+                    return redirect()->route('admin.roles.index')->with('success', 'Rol eliminado exitosamente.');
                 }else{
                     return redirect()->back()->withErrors('error', __('errorCantDeleteRole'));
                 }

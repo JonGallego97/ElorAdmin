@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\App;
+
 class CycleController extends Controller
 {
     private $ControllerFunctions;
@@ -28,7 +30,7 @@ class CycleController extends Controller
     public function index(Request $request)
     {
         if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $cycles = Cycle::orderBy('name', 'asc')->paginate($perPage);
             foreach ($cycles as $cycle) {
                 $cycle->count_students = Cycle::join('cycle_users', 'cycles.id', '=', 'cycle_users.cycle_id')
@@ -42,21 +44,21 @@ class CycleController extends Controller
             $cycles->totalCycles = Cycle::count();
             return view('admin.cycles.index', compact('cycles'));
         }else {
-            //si no es admin
+            // Obtener todos los ciclos formativos
+            $cycle = Cycle::all();
+
+            // Obtener todos los módulos ordenados alfabéticamente
+            $module = Module::orderBy('name', 'asc')->get();
+
+            return view('cycles.index', compact('cycle', 'module'));
 
         }
-        $cycle = Cycle::orderBy('name','asc')->get();
-        return view('cycles.index',['cycles'=>$cycle]);
+        /* $cycle = Cycle::orderBy('name','asc')->get();
+        return view('cycles.index',['cycles'=>$cycle]); */
     }
     public function indexPerson()
     {
-         // Obtener todos los ciclos formativos
-         $cycle = Cycle::all();
-
-         // Obtener todos los módulos ordenados alfabéticamente
-         $module = Module::orderBy('name', 'asc')->get();
-
-         return view('persons.cycles.index', compact('cycle', 'module'));
+         
      }
     /**
      * Show the form for creating a new resource.
@@ -100,7 +102,7 @@ class CycleController extends Controller
             if($result) {
                 $modules = $request->input('modules', []);
                 $cycle->modules()->attach($modules);
-                return redirect()->route('cycles.show',['cycle'=>$cycle])->with('success',__('successCreate'));
+                return redirect()->route('admin.cycles.show',['cycle'=>$cycle])->with('success',__('successCreate'));
             } else {
                 return redirect()->back()->withErrors('success',__('successUpdate'));
             }
@@ -140,7 +142,7 @@ class CycleController extends Controller
     }
 
     private function cycleModule(Request $request, $cycleId){
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', App::make('paginationCount'));
         return Module::join('cycle_module', 'modules.id', '=', 'cycle_module.module_id')
         ->where('cycle_module.cycle_id', $cycleId)
         ->select('modules.*')
@@ -206,7 +208,7 @@ class CycleController extends Controller
             $result = $cycle->save();
 
             if ($result) {
-                return redirect()->route('cycles.show',['cycle'=>$cycle])->with('success',__('successUpdate'));
+                return redirect()->route('admin.cycles.show',['cycle'=>$cycle])->with('success',__('successUpdate'));
             } else {
                 return redirect()->back()->withErrors('error', __('errorUpdate'));
             }
@@ -225,7 +227,7 @@ class CycleController extends Controller
             $cycle = Cycle::find($cycleId);
             if ($cycle) {
                 $cycle->delete();
-                return redirect()->route('cycles.index')->with('success', __('successDelete'));
+                return redirect()->route('admin.cycles.index')->with('success', __('successDelete'));
             } else {
                 return redirect()->back()->withErrors('error',__('errorDelete'));
             }
@@ -245,7 +247,7 @@ class CycleController extends Controller
                     $module->count_students = $this->moduleStudentsCount($module->id,$cycle->id);
                 }
                 $cycle->department = Department::find($cycle->department_id); */
-                return redirect()->route('cycles.show',['$cycle'=>$cycle])->with('success',__('successDelete'));
+                return redirect()->route('admin.cycles.show',['$cycle'=>$cycle])->with('success',__('successDelete'));
             } else {
                 return redirect()->back()->withErrors('error',__('errorDelete'));
             }

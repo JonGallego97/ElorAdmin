@@ -8,8 +8,10 @@ use App\Models\Department;
 use App\Models\Cycle;
 use App\Models\Role;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\App;
 
 
 class ModuleController extends Controller
@@ -28,7 +30,7 @@ class ModuleController extends Controller
     public function index(Request $request)
     {
         if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
-            $perPage = $request->input('per_page', 10);
+            $perPage = $request->input('per_page', App::make('paginationCount'));
             $modules = Module::orderBy('name','asc')->paginate($perPage);
 
             $roleTeacher = Role::where('name','PROFESOR')->first();
@@ -105,12 +107,18 @@ class ModuleController extends Controller
     
             $created = $module->save();
     
-            //$cycles = $request->cycle;
-            $cycles = $request->input('cycles', []);
-            $module->cycles()->attach($cycles);
             
             if($created) {
-                return redirect()->route('modules.show',['module'=>$module])->with('success',__('successCreate'));
+                $cycles = $request->input('cycles', []);
+                $attached = $module->cycles()->attach($cycles);
+                if($attached) {
+                    return redirect()->route('admin.modules.show',['module'=>$module])->with('success',__('successCreate'));
+                } else {
+                    $module->delete();
+                    return redirect()->back()->withErrors(['error' => __('errorAttachCycle')]);
+                }
+
+                
             } else {
                 return redirect()->back()->withErrors(['error' => __('errorCreate')]);
             }
@@ -165,7 +173,7 @@ class ModuleController extends Controller
     }
 
     private function teachers(Request $request, Module $module){
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', App::make('paginationCount'));
         return $teachers = User::join('module_user_cycle', 'users.id', '=', 'module_user_cycle.user_id')
             ->join('role_users', 'users.id', '=', 'role_users.user_id')
             ->where('role_users.role_id', 2)
@@ -175,7 +183,7 @@ class ModuleController extends Controller
     }
 
     private function students(Request $request, Module $module){
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', App::make('paginationCount'));
         return $students = User::join('module_user_cycle', 'users.id', '=', 'module_user_cycle.user_id')
             ->join('role_users', 'users.id', '=', 'role_users.user_id')
             ->where('role_users.role_id', 3)
@@ -214,14 +222,18 @@ class ModuleController extends Controller
             $module->name = ucfirst(strtolower($request->name));
             $module->hours = $request->hours;
 
-            $updated = $module->save();
-
-            //$cycles = $request->cycle;
-            $cycles = $request->input('cycles', []);
-            $module->cycles()->sync($cycles);
+            $updated = $module->save();          
 
             if($updated) {
-                return redirect()->route('modules.show',['module'=>$module])->with('success',__('successUpdate'));
+                $cycles = $request->input('cycles', []);
+                $synced = $module->cycles()->sync($cycles);
+            
+                if($synced) {
+                    return redirect()->route('admin.modules.show',['module'=>$module])->with('success',__('successUpdate'));
+                } else {
+                    return redirect()->back()->withErrors(['error' => __('errorAttachCycle')]);
+                }
+                
             } else {
                 return redirect()->back()->withErrors('error', __('errorUpdate'));
             }
@@ -242,7 +254,7 @@ class ModuleController extends Controller
             $module = Module::find($moduleId);
             if ($module) {
                 $module->delete();
-                return redirect()->route('modules.index')->with('success', __('successDelete'));
+                return redirect()->route('admin.modules.index')->with('success', __('successDelete'));
             } else {
                 return redirect()->back()->withErrors('error', __('errorDelete'));
             }
@@ -257,7 +269,7 @@ class ModuleController extends Controller
             if ($module) {
                 $module->users()->detach($userId);
                 
-                return redirect()->route('modules.show',['$module'=>$module])->with('success',__('successDelete'));
+                return redirect()->route('admin.modules.show',['$module'=>$module])->with('success',__('successDelete'));
             } else {
                 return redirect()->back()->withErrors('error',__('errorDelete'));
             }
