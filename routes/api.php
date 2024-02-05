@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\PasswordResetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\DepartmentController;
@@ -38,20 +39,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-
-
-
 Route::group(['middleware' => 'auth'], function() {
     Route::group(['prefix' => 'auth'], function() {
         Route::post('logout',[AuthController::class,'logout']);
     });
-
 });
 
-
-
-
-
+Route::put('users/{user}/update-password', UserController::class.'@updatePassword');
+Route::post('/users/{userId}/enroll/{cycleId}', [UserController::class, 'enrollStudentInCycle']);
+Route::post('/password/reset', [PasswordResetController::class, 'sendResetLinkEmail']);
 
 
 //FIREBASE
