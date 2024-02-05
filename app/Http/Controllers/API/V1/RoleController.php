@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Role;
@@ -13,7 +13,7 @@ class RoleController extends Controller
 {
     /**
     * @OA\Get(
-    *   path="/api/roles",
+    *   path="/api/v1/roles",
     *   tags={"Roles"},
     *   summary="Shows roles",
     *   @OA\Response(
@@ -71,7 +71,7 @@ class RoleController extends Controller
 
     /**
     * @OA\Post(
-    *   path="/api/roles",
+    *   path="/api/v1/roles",
     *   summary="Create a role",
     *   tags={"Roles"},
     *   @OA\Parameter(
@@ -135,7 +135,7 @@ class RoleController extends Controller
 
     /**
     * @OA\Get(
-    *   path="/api/roles/{id}",
+    *   path="/api/v1/roles/{id}",
     *   summary="Shows one role",
     *   tags={"Roles"},
     *   @OA\Parameter(
@@ -194,7 +194,7 @@ class RoleController extends Controller
 
     /**
     * @OA\Put(
-    *   path="/api/roles/{id}",
+    *   path="/api/v1/roles/{id}",
     *   summary="Edit a role",
     *   tags={"Roles"},
     *   @OA\Parameter(
@@ -250,7 +250,7 @@ class RoleController extends Controller
 
     /**
     * @OA\Delete(
-    *   path="/api/roles/{id}",
+    *   path="/api/v1/roles/{id}",
     *   summary="Delete roles",
     *   tags={"Roles"},
     *   @OA\Parameter(

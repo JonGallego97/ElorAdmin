@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cycle;
@@ -14,7 +14,7 @@ class CycleController extends Controller
 {
     /**
     * @OA\Get(
-    *   path="/api/cycles",
+    *   path="/api/v1/cycles",
     *   tags={"Cycles"},
     *   summary="Shows cycles",
     *   @OA\Response(
@@ -81,7 +81,7 @@ class CycleController extends Controller
 
     /**
     * @OA\Post(
-    *   path="/api/cycles",
+    *   path="/api/v1/cycles",
     *   summary="Create a cycle",
     *   tags={"Cycles"},
     *   @OA\Parameter(
@@ -168,7 +168,7 @@ class CycleController extends Controller
 
     /**
     * @OA\Get(
-    *   path="/api/cycles/{id}",
+    *   path="/api/v1/cycles/{id}",
     *   summary="Shows one cycle",
     *   tags={"Cycles"},
     *   @OA\Parameter(
@@ -217,7 +217,7 @@ class CycleController extends Controller
 
     /**
     * @OA\Put(
-    *   path="/api/cycles/{id}",
+    *   path="/api/v1/cycles/{id}",
     *   summary="Edit a cycle",
     *   tags={"Roles"},
     *   @OA\Parameter(
@@ -287,7 +287,7 @@ class CycleController extends Controller
 
     /**
     * @OA\Delete(
-    *   path="/api/cycles/{id}",
+    *   path="/api/v1/cycles/{id}",
     *   summary="Delete cycle",
     *   tags={"Cycles"},
     *   @OA\Parameter(

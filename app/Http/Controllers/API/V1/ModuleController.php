@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\V1;
 
 use App\Models\Module;
 use Illuminate\Http\Request;
@@ -17,7 +17,7 @@ class ModuleController extends Controller
 {
     /**
     * @OA\Get(
-    *   path="/api/modules",
+    *   path="/api/v1/modules",
     *   tags={"Modules"},
     *   summary="Shows modules",
     *   @OA\Response(
@@ -86,7 +86,7 @@ class ModuleController extends Controller
 
     /**
     * @OA\Post(
-    *   path="/api/modules",
+    *   path="/api/v1/modules",
     *   summary="Create a module",
     *   tags={"Modules"},
     *   @OA\Parameter(
@@ -191,7 +191,7 @@ class ModuleController extends Controller
 
     /**
     * @OA\Get(
-    *   path="/api/modules/{id}",
+    *   path="/api/v1/modules/{id}",
     *   summary="Shows one module",
     *   tags={"Modules"},
     *   @OA\Parameter(
@@ -229,7 +229,7 @@ class ModuleController extends Controller
 
     /**
     * @OA\Put(
-    *   path="/api/modules/{id}",
+    *   path="/api/v1/modules/{id}",
     *   summary="Edit a Module",
     *   tags={"Modules"},
     *   @OA\Parameter(
@@ -340,7 +340,7 @@ class ModuleController extends Controller
 
      /**
     * @OA\Delete(
-    *   path="/api/modules/{id}",
+    *   path="/api/v1/modules/{id}",
     *   summary="Delete modules",
     *   tags={"Modules"},
     *   @OA\Parameter(

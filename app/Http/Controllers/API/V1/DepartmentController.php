@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
 
@@ -13,7 +13,7 @@ class DepartmentController extends Controller
 {
     /**
     * @OA\Get(
-    *   path="/api/departments",
+    *   path="/api/v1/departments",
     *   tags={"Departments"},
     *   summary="Shows departments",
     *   @OA\Response(
@@ -65,7 +65,7 @@ class DepartmentController extends Controller
    
     /**
     * @OA\Post(
-    *   path="/api/departments",
+    *   path="/api/v1/departments",
     *   summary="Create a department",
     *   tags={"Departments"},
     *   @OA\Parameter(
@@ -109,7 +109,7 @@ class DepartmentController extends Controller
 
     /**
     * @OA\Get(
-    *   path="/api/departments/{id}",
+    *   path="/api/v1/departments/{id}",
     *   summary="Shows one department",
     *   tags={"Departments"},
     *   @OA\Parameter(
@@ -148,7 +148,7 @@ class DepartmentController extends Controller
 
     /**
     * @OA\Put(
-    *   path="/api/departments/{id}",
+    *   path="/api/v1/departments/{id}",
     *   summary="Edit a department",
     *   tags={"Departments"},
     *   @OA\Parameter(
@@ -197,7 +197,7 @@ class DepartmentController extends Controller
 
     /**
     * @OA\Delete(
-    *   path="/api/departments/{id}",
+    *   path="/api/v1/departments/{id}",
     *   summary="Delete department",
     *   tags={"Departments"},
     *   @OA\Parameter(

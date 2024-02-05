@@ -2,16 +2,16 @@
     "openapi": "3.0.0",
     "info": {
         "title": "ElorAdmin API",
-        "version": "2.0"
+        "version": "1.0"
     },
     "paths": {
-        "/api/auth/login": {
+        "/api/v1/auth/login": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
                 "summary": "Login",
-                "operationId": "f77777235d676b651c9465807d8f9485",
+                "operationId": "bab3fbc2592f5537c990acc6071592fa",
                 "parameters": [
                     {
                         "name": "email",
@@ -51,13 +51,13 @@
                 }
             }
         },
-        "/api/auth/logout": {
+        "/api/v1/auth/logout": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
                 "summary": "logout",
-                "operationId": "c4b3c6f1776909e546a421283c044ac3",
+                "operationId": "1a307e1f34681659d83cf736528e39aa",
                 "responses": {
                     "200": {
                         "description": "Deslogeado."
@@ -73,13 +73,13 @@
                 ]
             }
         },
-        "/api/cycles": {
+        "/api/v1/cycles": {
             "get": {
                 "tags": [
                     "Cycles"
                 ],
                 "summary": "Shows cycles",
-                "operationId": "f951d8ce358a5e631d599e533a1a4500",
+                "operationId": "f91e03c2ccc5e776b0d1b87919cef5f5",
                 "responses": {
                     "200": {
                         "description": "Shows all cycles."
@@ -102,7 +102,7 @@
                     "Cycles"
                 ],
                 "summary": "Create a cycle",
-                "operationId": "7bab19dfe654a8051390639bd09db3b9",
+                "operationId": "ff8256d7028a61adc81baa5191a1bbcd",
                 "parameters": [
                     {
                         "name": "name",
@@ -183,13 +183,13 @@
                 ]
             }
         },
-        "/api/cycles/{id}": {
+        "/api/v1/cycles/{id}": {
             "get": {
                 "tags": [
                     "Cycles"
                 ],
                 "summary": "Shows one cycle",
-                "operationId": "0e14b7ed1b51bf042607858f2a4fd8b4",
+                "operationId": "7f2c404b166b9aaee92791b525180374",
                 "parameters": [
                     {
                         "name": "id",
@@ -226,7 +226,7 @@
                     "Roles"
                 ],
                 "summary": "Edit a cycle",
-                "operationId": "8f7bbbc095786139b2484d9c26108afb",
+                "operationId": "99f6e0db8eef90833b85119f766063a8",
                 "parameters": [
                     {
                         "name": "id",
@@ -284,7 +284,7 @@
                     "Cycles"
                 ],
                 "summary": "Delete cycle",
-                "operationId": "aaf49e8f58b2dc2fe1d380128aa6d7c9",
+                "operationId": "0978d08e6e4ef5314559e5a5712ad488",
                 "parameters": [
                     {
                         "name": "id",
@@ -317,13 +317,13 @@
                 ]
             }
         },
-        "/api/departments": {
+        "/api/v1/departments": {
             "get": {
                 "tags": [
                     "Departments"
                 ],
                 "summary": "Shows departments",
-                "operationId": "df38d359b0c63417850ab2ba3d01b776",
+                "operationId": "a18c645dda0c729dd550ecbda8e569e5",
                 "responses": {
                     "200": {
                         "description": "Shows all departments."
@@ -343,7 +343,7 @@
                     "Departments"
                 ],
                 "summary": "Create a department",
-                "operationId": "32f3fd3e3899fc86df65810cbc20454a",
+                "operationId": "58ee7c6eebb9fd443b90fc742d1a6650",
                 "parameters": [
                     {
                         "name": "name",
@@ -377,13 +377,13 @@
                 ]
             }
         },
-        "/api/departments/{id}": {
+        "/api/v1/departments/{id}": {
             "get": {
                 "tags": [
                     "Departments"
                 ],
                 "summary": "Shows one department",
-                "operationId": "d48658e19ff31bd95393320496c26c32",
+                "operationId": "3c5dbe8223877621086383ad6383be22",
                 "parameters": [
                     {
                         "name": "id",
@@ -414,7 +414,7 @@
                     "Departments"
                 ],
                 "summary": "Edit a department",
-                "operationId": "9307f9be6499625e2ca294326e41232d",
+                "operationId": "11f121e707a906bf70154d909a1760d0",
                 "parameters": [
                     {
                         "name": "id",
@@ -454,7 +454,7 @@
                     "Departments"
                 ],
                 "summary": "Delete department",
-                "operationId": "b4e08de5d9fc8d48358348cc7d2fe5d4",
+                "operationId": "7ffe0009b5af875f257ac981153ba48a",
                 "parameters": [
                     {
                         "name": "id",
@@ -481,13 +481,13 @@
                 ]
             }
         },
-        "/api/modules": {
+        "/api/v1/modules": {
             "get": {
                 "tags": [
                     "Modules"
                 ],
                 "summary": "Shows modules",
-                "operationId": "2e94a3c5aa6628f36f22988ceb189fcc",
+                "operationId": "014112d63304ad1add3ddf81d99acf98",
                 "responses": {
                     "200": {
                         "description": "Shows all modules."
@@ -513,7 +513,7 @@
                     "Modules"
                 ],
                 "summary": "Create a module",
-                "operationId": "ba4fe3a1c551c9128c95e18e680e2bc7",
+                "operationId": "be758186174898afa8cbc63394ae9d1e",
                 "parameters": [
                     {
                         "name": "name",
@@ -577,13 +577,13 @@
                 ]
             }
         },
-        "/api/modules/{id}": {
+        "/api/v1/modules/{id}": {
             "get": {
                 "tags": [
                     "Modules"
                 ],
                 "summary": "Shows one module",
-                "operationId": "a37173ec33ec4f217431701c5d603d73",
+                "operationId": "9b7dfbdab264e152cbe7c27bb5058672",
                 "parameters": [
                     {
                         "name": "id",
@@ -614,7 +614,7 @@
                     "Modules"
                 ],
                 "summary": "Edit a Module",
-                "operationId": "25c4e23296978bc56610e638d49a37b5",
+                "operationId": "a0ce2ceda296b40fc14a85b08fb72725",
                 "parameters": [
                     {
                         "name": "id",
@@ -684,7 +684,7 @@
                     "Modules"
                 ],
                 "summary": "Delete modules",
-                "operationId": "7362cedaa8c4ee544a48c9288a6819ed",
+                "operationId": "c20cbc62fc2dceb078eb5c3be481ba75",
                 "parameters": [
                     {
                         "name": "id",
@@ -714,13 +714,30 @@
                 ]
             }
         },
-        "/api/roles": {
+        "/api/v1/reto/version": {
+            "get": {
+                "tags": [
+                    "Reto"
+                ],
+                "summary": "Shows Reto",
+                "operationId": "10a5d5a68b0b403bf6c96eaf8c823469",
+                "responses": {
+                    "200": {
+                        "description": "Shows Reto."
+                    },
+                    "default": {
+                        "description": "Error has ocurred."
+                    }
+                }
+            }
+        },
+        "/api/v1/roles": {
             "get": {
                 "tags": [
                     "Roles"
                 ],
                 "summary": "Shows roles",
-                "operationId": "6cd48af64dafcf1c85923dba47e841a4",
+                "operationId": "e6c067bbe99d1de0bd63b3b71c967055",
                 "responses": {
                     "200": {
                         "description": "Shows all roles."
@@ -743,7 +760,7 @@
                     "Roles"
                 ],
                 "summary": "Create a role",
-                "operationId": "4eb1ce389f63b4dbfcc5b002014636e1",
+                "operationId": "aa8a6acc347e377aeda5e11bdcd9ae98",
                 "parameters": [
                     {
                         "name": "name",
@@ -790,13 +807,13 @@
                 ]
             }
         },
-        "/api/roles/{id}": {
+        "/api/v1/roles/{id}": {
             "get": {
                 "tags": [
                     "Roles"
                 ],
                 "summary": "Shows one role",
-                "operationId": "d932a477623c1c931444dcc799f1eb0a",
+                "operationId": "e02cc8b3171fc0743c729942f57fc238",
                 "parameters": [
                     {
                         "name": "id",
@@ -853,7 +870,7 @@
                     "Roles"
                 ],
                 "summary": "Edit a role",
-                "operationId": "e0fa8b9f9f9cfb6c7e51a7609dd35dcd",
+                "operationId": "4e4d3312f7bab1eb667b3abca6ce07f1",
                 "parameters": [
                     {
                         "name": "id",
@@ -899,7 +916,7 @@
                     "Roles"
                 ],
                 "summary": "Delete roles",
-                "operationId": "a0c87b804be9d37055fc6f936cbacb1b",
+                "operationId": "39ba61de45fd66fe8f90a5eb56a091b7",
                 "parameters": [
                     {
                         "name": "id",
@@ -932,13 +949,13 @@
                 ]
             }
         },
-        "/api/users": {
+        "/api/v1/users": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Shows all users",
-                "operationId": "d7a57f4d7de18fb0f92501172472c9b6",
+                "operationId": "fbe4abc6115f6a931262eefde634d1f9",
                 "responses": {
                     "200": {
                         "description": "Shows all users."
@@ -958,7 +975,7 @@
                     "Users"
                 ],
                 "summary": "Create a user",
-                "operationId": "9fea6f2adcb69614c521a7733358382d",
+                "operationId": "243db3d4e5f82ed07ca14dc2bf82410c",
                 "parameters": [
                     {
                         "name": "name",
@@ -1067,13 +1084,13 @@
                 ]
             }
         },
-        "/api/users/{id}": {
+        "/api/v1/users/{id}": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Show one user",
-                "operationId": "40a5104e23b52137e78c3d3ac48b88a8",
+                "operationId": "05dabd18926420b0d890e4fc40b53825",
                 "parameters": [
                     {
                         "name": "id",
@@ -1104,7 +1121,7 @@
                     "Users"
                 ],
                 "summary": "Edit an user",
-                "operationId": "b166772cec9714067040e77cf14beeba",
+                "operationId": "f1b6ca0c6427f48f79ba9e3abc6c4a42",
                 "parameters": [
                     {
                         "name": "id",
@@ -1219,7 +1236,7 @@
                     "Users"
                 ],
                 "summary": "Delete user",
-                "operationId": "ce06860a51ab016ef66e753544fe4563",
+                "operationId": "d2cba55c56618a8c24287a7fe2b89a60",
                 "parameters": [
                     {
                         "name": "id",
@@ -1246,13 +1263,13 @@
                 ]
             }
         },
-        "/api/users/{user}/update-password": {
+        "/api/v1/users/{user}/update-password": {
             "put": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Cambiar contraseña",
-                "operationId": "7008d625e7ab1280f8e1958869d02dc7",
+                "operationId": "21ba33c1e94a00d14c85c0e5a2cd449f",
                 "parameters": [
                     {
                         "name": "id",
@@ -1287,6 +1304,23 @@
                     }
                 ]
             }
+        },
+        "/api/v2/reto/version": {
+            "get": {
+                "tags": [
+                    "Reto"
+                ],
+                "summary": "Shows Reto",
+                "operationId": "9899414c522da4b3a3859e06acde14cd",
+                "responses": {
+                    "200": {
+                        "description": "Shows Reto."
+                    },
+                    "default": {
+                        "description": "Error has ocurred."
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -1301,8 +1335,28 @@
     },
     "tags": [
         {
+            "name": "Reto",
+            "description": "CRUD of Reto"
+        },
+        {
             "name": "Auth",
             "description": "CRUD of Auth"
+        },
+        {
+            "name": "Users",
+            "description": "CRUD of Users"
+        },
+        {
+            "name": "Roles",
+            "description": "CRUD of Roles"
+        },
+        {
+            "name": "Departments",
+            "description": "CRUD of Departments"
+        },
+        {
+            "name": "Modules",
+            "description": "CRUD of Modules"
         }
     ]
 }

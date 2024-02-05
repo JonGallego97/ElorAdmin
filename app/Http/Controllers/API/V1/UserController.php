@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ControllerFunctions;
@@ -26,7 +26,7 @@ class UserController extends Controller
 
     /**
     * @OA\Get(
-    *   path="/api/users",
+    *   path="/api/v1/users",
     *   tags={"Users"},
     *   summary="Shows all users",
     *   @OA\Response(
@@ -53,7 +53,7 @@ class UserController extends Controller
         } */
         //$perPage = $request->input('per_page', App::make('paginationCount'));
         $perPage = App::make('paginationCount');
-        $users = User::with('roles', 'cycles.modules.users', 'chats')
+        $users = User::with('roles')
                  ->orderBy('id', 'desc')
                  ->paginate($perPage);
 
@@ -84,7 +84,7 @@ class UserController extends Controller
 
     /**
     * @OA\Post(
-    *   path="/api/users",
+    *   path="/api/v1/users",
     *   summary="Create a user",
     *   tags={"Users"},
     *   @OA\Parameter(
@@ -194,7 +194,7 @@ class UserController extends Controller
 
     /**
     * @OA\Get(
-    *   path="/api/users/{id}",
+    *   path="/api/v1/users/{id}",
     *   tags={"Users"},
     *   summary="Show one user",
     *   @OA\Parameter(
@@ -234,7 +234,7 @@ class UserController extends Controller
 
     /**
     * @OA\Put(
-    *   path="/api/users/{id}",
+    *   path="/api/v1/users/{id}",
     *   tags={"Users"},
     *   summary="Edit an user",
     *   @OA\Parameter(
@@ -375,7 +375,7 @@ class UserController extends Controller
 
     /**
     * @OA\Put(
-    *   path="/api/users/{user}/update-password",
+    *   path="/api/v1/users/{user}/update-password",
     *   tags={"Users"},
     *   summary="Cambiar contraseña",
     *   @OA\Parameter(
@@ -446,7 +446,7 @@ class UserController extends Controller
 
     /**
     * @OA\Delete(
-    *   path="/api/users/{id}",
+    *   path="/api/v1/users/{id}",
     *   summary="Delete user",
     *   tags={"Users"},
     *   @OA\Parameter(

@@ -16,6 +16,10 @@ use Illuminate\Routing\Controller as BaseController;
 * type="http",
 * ),
 *@OA\Tag(
+*     name="Reto",
+*     description="CRUD of Reto"
+* ),
+*@OA\Tag(
 *     name="Auth",
 *     description="CRUD of Auth"
 * ),
@@ -35,21 +39,6 @@ use Illuminate\Routing\Controller as BaseController;
 *     name="Modules",
 *     description="CRUD of Modules"
 * )
-*/
-
-/**
-* @OA\Info(title="ElorAdmin API", version="2.0"),
-* @OA\SecurityScheme(
-* in="header",
-* scheme="bearer",
-* bearerFormat="JWT",
-* securityScheme="bearerAuth",
-* type="http",
-* ),
-*@OA\Tag(
-*     name="Auth",
-*     description="CRUD of Auth"
-* ),
 */
 
 class Controller extends BaseController
