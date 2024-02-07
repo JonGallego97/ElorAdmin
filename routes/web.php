@@ -74,7 +74,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'checkRole'])->group
         Route::post('/departments/create','create')->name('departments.edit_create');
         Route::get('/departments','index')->name('departments.index');
     });
-    
+
     //Modules
     Route::delete('modules/destroyModuleUser/{moduleId}/{userId}', [ModuleController::class, 'destroyModuleUser'])->name('modules.destroyModuleUser');
     Route::delete('modules/destroy/{moduleId}', [ModuleController::class, 'destroy'])->name('modules.destroy');
@@ -101,10 +101,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/departments', [DepartmentController::class, 'index'])->name('departments.index');
     //He cambiardo admin por person person por que sino se petaba con el index normal
     Route::get('/cycles', [CycleController::class, 'index'])->name('cycles.index');
-    
 
 });
 Auth::routes();
 
-
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+

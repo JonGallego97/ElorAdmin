@@ -23,6 +23,7 @@ class UserSeeder extends Seeder
         //Profesores - Deben de ser 80
         RoleUser::factory()->count(80)->create(['role_id' => "2"]);
 
+
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('name', 'PROFESOR');
         })->get();

@@ -61,6 +61,12 @@ class User extends Authenticatable
     public function cycles()
     {
         return $this->belongsToMany(Cycle::class, 'cycle_users', 'user_id', 'cycle_id')->withPivot('cycle_registration_number', 'year', 'is_dual', 'created_at');
+
+    }
+    //relacion con modulos y ciclos para users no admin, no alumnos
+    public function cycles1() {
+        return $this->belongsToMany(Cycle::class, 'cycle_users', 'user_id', 'cycle_id');
+
     }
 
     public function hasRole($role)

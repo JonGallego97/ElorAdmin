@@ -53,123 +53,45 @@
                             </div>
                         </div>
                     </div>
-                    <hr>
-                        @if (Auth::user()->hasRole('PROFESOR') && isset($usera))
-                        <div class="accordion" id="accordionExample">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        <h3>{{__('Modules')}}</h3>
-                                    </button>
-                                </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
+                        @if (Auth::user()->hasRole('PROFESOR'))
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3>
+                                    {{__('Modules')}}
+                                </h3>
+                                     <div class="accordion" id="accordionExample">
+                                        <div class="accordion-item">
+                                            @foreach($moduleName as $module)
+                                            <h2 class="accordion-header" id="heading {{ $module->id }}">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $module->id}}" aria-expanded="true" aria-controls="collapse{{ $module->id }}">
+                                                    {{ $module->code }} {{ $module->name }}
+                                                </button>
+                                            </h2>
+                                            <div id="collapse{{ $module->id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ $module->id}}" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">{{__('Name')}} </th>
+                                                                <th scope="col">{{__('Email')}} </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($module->students as $studentNameModel)
 
-                                    <div class="card-body">
-                                        @foreach ($user['cycles'] as $cycle)
-                                        <h3>{{$cycle['name'] }}</h3>
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">{{__('Nº')}}</th>
-                                                    <th scope="col">{{__('Name')}}</th>
-                                                    <th scope="col">{{__('Hours')}}</th>
-                                                    <th scope="col">{{__('Users')}}</th>
 
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($user['modules'] as $module)
-                                                    @if ($user['modules']->contains('id', $module['id']))
-                                                        <tr>
-                                                            <td>{{ $module['code'] }}</td>
-                                                            <td>
-                                                                {{ $module['name'] }}
-                                                            </td>
-                                                            <td>({{ $module['hours'] }} {{__('Hours')}})</td>
-                                                            <td>
-
-                                                                <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#usersCollapse{{ $module->id }}" aria-expanded="false" aria-controls="usersCollapse{{ $module->id }}">
-                                                                    Show Users
-                                                                </button>
-                                                                <div class="collapse" id="usersCollapse{{ $module->id }}">
-                                                                    <table class="table table-striped">
-                                                                        <thead>
-
-                                                                            <tr>
-                                                                                <th scope="col">{{__('Name')}}</th>
-                                                                                <th scope="col">{{__('email')}}</th>
-
-                                                                            </tr>
-
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                @if ($usersInRole3ByModule)
-                                                                                @foreach ($usersInRole3ByModule as $user)
-                                                                                    <tr>
-                                                                                        <td>{{ $user->name }}</td>
-                                                                                        <td>{{ $user->email }}</td>
-                                                                                    </tr>
-                                                                                @endforeach
-                                                                            @else
-                                                                                <tr>
-                                                                                    <td colspan="2">No users found</td>
-                                                                                </tr>
-                                                                            @endif
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    @endif
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        <h3>{{__('Staff')}}</h3>
-                                    </button>
-                                </h2>
-                                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-
-                                        <div class="card mb-3">
-
-                                            <div class="card-body">
-                                                <h5>{{__('Teachers')}}</h5>
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col">{{__('Name')}}</th>
-                                                            <th scope="col">{{__('Surname1')}}</th>
-                                                            <th scope="col">{{__('Surname2')}}</th>
-                                                            <th scope="col">{{__('Mail')}}</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($usera as $Auser)
-                                                        <tr>
-                                                            <td>
-                                                                {{$Auser->name}}
-                                                            </td>
-                                                            <td>{{$Auser->surname1}}</td>
-                                                            <td>{{$Auser->surname2}}</td>
-                                                            <td>{{$Auser->email}}</td>
-                                                        </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
+                                                            <tr>
+                                                                <td>{{ $studentNameModel->name }}</td>
+                                                                <td>{{ $studentNameModel->email }}</td>
+                                                            </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
+                                            @endforeach
                                         </div>
                                     </div>
-                                </div>
                             </div>
                         </div>
                         @elseif (Auth::user()->hasRole('ALUMNO'))
@@ -188,8 +110,21 @@
                                                     {{ $cycle->name }}
 
                                                     &nbsp;<small class="text-muted">{{ __('Registered') }}: {{ $cycle->created_at->toDateString() }}</small>
-                                                    &nbsp;<small class="text-muted">{{ __('Year') }}: {{ $cycle->year}}</small>
-                                                    &nbsp;<small class="text-muted">{{ __('Dual') }}: {{ $cycle->is_dual}}</small>
+                                                    &nbsp;<small class="text-muted">{{ __('Year') }}:
+                                                        @if($cycle->year == 1)
+                                                        1
+                                                    @else
+                                                        2
+                                                    @endif
+
+                                                    </small>
+                                                    &nbsp;<small class="text-muted">{{ __('Dual') }}:
+                                                        @if($cycle->is_dual == 1)
+                                                            Sí
+                                                        @else
+                                                            No
+                                                        @endif
+                                                    </small>
                                                 </button>
 
                                             </h2>
@@ -203,21 +138,20 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach ($cycle->sortedModules  as $module)
+                                                            @foreach($moduleName as $module)
                                                                     <tr>
                                                                         <td>{{ $module->name }}</td>
-                                                                        @foreach ($usera as $aUser)
-                                                                            @if ($aUser->hasRole('PROFESOR'))
-                                                                                <td>
-                                                                                    <a href="{{ route('users.show', $aUser)}}" role="button">
-                                                                                    {{ $aUser->surname1 }} {{ $aUser->surname2 }}, {{ $aUser->name }}
+                                                                        <td>
+                                                                            @foreach ($module->teachers as $teacher)
+                                                                                <li>
+                                                                                    <a href="{{ route('users.show', $teacher->id) }}" role="button">
+                                                                                            {{ $teacher->surname1 }} {{ $teacher->surname2 }}, {{ $teacher->name }}
                                                                                     </a>
-                                                                                </td>
-                                                                            @break
-                                                                            @endif
-                                                                    @endforeach
+                                                                                </li>
+                                                                            @endforeach
+                                                                        </td>
                                                                     </tr>
-                                                            @endforeach
+                                                                @endforeach
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -226,6 +160,47 @@
 
                                     @endforeach
                                     @endif
+                                </div>
+                            </div>
+                        @endif
+                        @if (Auth::user()->department)
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                        <h3>{{__('Department')}}</h3>
+
+                                    <div class="accordion" id="accordionExample">
+
+
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="heading{{ $user->department->id }}">
+
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $user->department->id }}" aria-expanded="true" aria-controls="collapse{{ $user->department->id }}">
+                                                    {{ $user->department->name}}
+                                                </button>
+
+                                            </h2>
+                                            <div id="collapse{{ $user->department->id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ $user->department->id }}" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">{{__('Name')}} </th>
+                                                                <th scope="col">{{__('Email')}} </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($usersInSameDepartment  as $userD)
+                                                                    <tr>
+                                                                        <td>{{ $userD->name }}</td>
+                                                                        <td>{{ $userD->email }}</td>
+                                                                    </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         @endif

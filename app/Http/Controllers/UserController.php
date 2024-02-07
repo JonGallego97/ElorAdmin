@@ -28,57 +28,6 @@ class UserController extends Controller {
     }
     //$this->ControllerFunctions->checkAdminRoute()
 
-    /**
-     * Display a listing of the resource.
-     */
-/*     public function indexStudent(Request $request)
-    {
-
-        if ($this->ControllerFunctions->checkAdminRoute()) {
-            //si es admin
-            $perPage = $request->input('per_page', App::make('paginationCount'));
-            $users = User::whereHas('roles', function ($query) {
-                $query->where('id', 3);
-            })
-            ->orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
-
-            $totalUsers = User::whereHas('roles', function ($query) {
-                $query->where('id', 3);
-            })->count();
-
-            $users->totalUsers = $totalUsers;
-            return view('admin.users.index',compact('users'));
-        }else {
-            return redirect()->back()->with('error', __('errorNoAdmin'));
-        }
-
-        
-    }
-
-    public function indexTeacher(Request $request)
-    {
-        if ($this->ControllerFunctions->checkAdminRoute()){
-            dd(Route::getCurrentRoute());
-            $perPage = $request->input('per_page', App::make('paginationCount'));
-            $users = User::whereHas('roles', function ($query) {
-                $query->where('id', 2);
-            })
-            ->orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
-            $totalUsers = User::whereHas('roles', function ($query) {
-                $query->where('id', 2);
-            })->count();
-
-            $users->totalUsers = $totalUsers;
-            return view('admin.users.index',['users'=>$users]);
-        }else {
-            return redirect()->back()->with('error', __('errorNoAdmin'));
-        }
-        
-    } */
-
-
     public function index(Request $request) {
 
         if ($this->ControllerFunctions->checkAdminRoute()) {
@@ -88,18 +37,6 @@ class UserController extends Controller {
             $hasNoRole = str::contains($route,'admin/withoutRole');
             $personal = str::contains($route,'admin/personal');
 
-            /*
-            en config/pagination.php  
-            <?php
-
-            return [
-                'per_page' => 15,
-            ];
-
-            $posts = Post::paginate(config('pagination.per_page'));
-
-            */
-            
             $perPage = $request->input('per_page', App::make('paginationCount'));
 
             switch(true) {
@@ -163,14 +100,12 @@ class UserController extends Controller {
                 default:
                     $users = User::orderBy('name', 'asc')
                     ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'first_login', 'created_at', 'updated_at']);
-                    
+
                     break;
                     //return view('admin.users.index',compact('users'));
             }
             return view('admin.users.index',compact('users'));
 
-            //Si viene de admin
-            
 
         }else{
 
@@ -178,27 +113,18 @@ class UserController extends Controller {
             $users = User::whereHas('roles', function ($query) {
                 $query->where('id', 2);
             })
-                ->orderBy('name', 'asc')
-                ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
+            ->orderByDesc('surname1')
+            ->orderByDesc('name')
+            ->orderByDesc('email')
+            ->orderByDesc('phone_number1')
+                ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'first_login',  'created_at', 'updated_at']);
             $totalUsers = User::whereHas('roles', function ($query) {
                 $query->where('id', 2);
             })->count();
 
             $users->totalUsers = $totalUsers;
             return view('users.index', ['users' => $users]);
-
-            $roleStudent = Role::where('name','ALUMNO')->first();
-            $roleTeacher = Role::where('name','PROFESOR')->first();
-            $logedUserRoles = Auth::user()->roles->pluck('id')->toArray();
-
-            switch(true) {
-                case in_array($roleStudent->id,$logedUserRoles):
-                    break;
-                case in_array($roleTeacher->id,$logedUserRoles):
-                    break;
-                default:
-                    break;
-            }
+          
         }
     }
 
@@ -313,7 +239,7 @@ class UserController extends Controller {
             $roleName = Role::select('name')->where('id',$userRole)->first();
             $userRolesNames[$userRole] = $roleName->name;
         }
-       
+
 
 
         $user = new User();
@@ -343,7 +269,7 @@ class UserController extends Controller {
             'Ú' => 'U',
             'Ñ' => 'N'
         );
-        
+
         $userName = strtr($userName, $tilesList);
         $domainName = "@elorrieta-errekamari.com";
 
@@ -376,7 +302,7 @@ class UserController extends Controller {
         } else {
             return view('admin.users.extra_create', ['user_id'=>$user->id,'userRolesNames'=>$userRolesNames,'languageModules' => $languageModules, 'roles'=> $roles,'departments' => $departments,'cycles' => $cycles]);
         }
-       
+
     }
 
 
@@ -417,8 +343,8 @@ class UserController extends Controller {
                     ],$messages);
                     break;
             }
-            
-            
+
+
 
             $user = User::with('roles')->where('id', $request->user_id)->first();
 
@@ -430,17 +356,19 @@ class UserController extends Controller {
             $isTeacher = in_array($teacherRole->id,$userRoles,false);
             $adminRole = Role::select('id','name')->where('name','ADMINISTRADOR')->first();
             $isAdmin = in_array($adminRole->id,$userRoles,false);
-            
 
-            
+
+
             //Datos Extra
             if(!$isAdmin && !$isStudent) {
+                $user->department_id = $request->department;
                 $user->department_id = $request->department;     
+
             }
             $user->save();
 
             // Ciclos
-            
+
             if($isStudent){
                 $result = $this->enrollStudentInCycle($user->id,$request->newCycle,$request->year,$request->is_dual);
             } elseif ($isTeacher) {
@@ -451,24 +379,11 @@ class UserController extends Controller {
                     $module_id = $modulesArray[1];
                     $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
                 }
-                /* if(is_array($request->input('modules'))) {
-                    foreach($modules as $module) {
-                        $modulesArray = explode("/",$module);
-                        $cycle_id = $modulesArray[0];
-                        $module_id = $modulesArray[1];
-                        $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
-                    }
-                } else {
-                    $modulesArray = explode("/",$request->modules);
-                    $cycle_id = $modulesArray[0];
-                    $module_id = $modulesArray[1];
-                    $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
-                } */
-                
+
             } else {
                 $result = true;
             }
-            
+
             if($result) {
                 return redirect()->route('admin.users.show',['user'=>$user]);
             } else {
@@ -478,7 +393,7 @@ class UserController extends Controller {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
 
-        
+
     }
 
     /**
@@ -537,7 +452,6 @@ class UserController extends Controller {
                             $year = $pivotData->year;
                             $enrollYear = $pivotData->created_at->format('Y');
                             $is_dual = $pivotData->is_dual;
-                    
 
                             if (!isset($userData[$cycleId])) {
                                 $userData[$cycleId] = [
@@ -550,10 +464,9 @@ class UserController extends Controller {
                                     'modules' => []
                                 ];
                             }
-                    
 
                             $module = Module::find($userModule->module_id);
-                    
+
                             if ($module) {
                                 $moduleData = [
                                     'id' => $module->id,
@@ -561,7 +474,6 @@ class UserController extends Controller {
                                     'name' => $module->name,
                                     'hours' => $module->hours
                                 ];
-                    
 
                                 $userData[$cycleId]['modules'][] = $moduleData;
                             }
@@ -571,6 +483,7 @@ class UserController extends Controller {
                     break;
                 case $isTeacher:
                     ////////////////////////////////// PROFESOR //////////////////////////////////////////////////////////
+                
                     $userModules = $user->modules; 
                     $cyclesWithModules = [];
 
@@ -624,7 +537,7 @@ class UserController extends Controller {
                                 ];
                                 $allCyclesWithModules[] = $cycleData;
                             }
-                            
+
                             $userModuleIds = $user->modules->pluck('id')->toArray();
 
                             // Filtra los módulos del array $allCyclesWithModules para quitar los módulos en los que está inscrito el usuario
@@ -656,7 +569,7 @@ class UserController extends Controller {
                                 ];
                                 $allCyclesWithModules[] = $cycleData;
                             }
-                            
+
                             $userModuleIds = $user->modules->pluck('id')->toArray();
 
                             // Filtra los módulos del array $allCyclesWithModules para quitar los módulos en los que está inscrito el usuario
@@ -668,6 +581,7 @@ class UserController extends Controller {
                             break;
                         case $departmentLanguages['name']:
                             ////////////////////////////////// IDIOMAS //////////////////////////////////////////////////////////
+
                             $moduleNames = $departmentLanguages['modules']; 
 
                             // Obtén los ciclos que coinciden con el departamento del usuario y los módulos con los nombres en el array
@@ -687,7 +601,7 @@ class UserController extends Controller {
                                 ];
                                 $allCyclesWithModules[] = $cycleData;
                             }
-                            
+
                             $userModuleIds = $user->modules->pluck('id')->toArray();
 
                             // Filtra los módulos del array $allCyclesWithModules para quitar los módulos en los que está inscrito el usuario
@@ -795,7 +709,7 @@ class UserController extends Controller {
             }
             return redirect()->route('admin.users.show',['user'=>$user]);
         }
-        
+
     }
 
      /**
@@ -820,12 +734,12 @@ class UserController extends Controller {
             } else {
                 return redirect()->back()->withErrors('error',__('errorAlreadyInModule'));
             }
-            
+
         } else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
-        
-        
+
+
     }
 
     /**
@@ -833,7 +747,7 @@ class UserController extends Controller {
      */
     public function destroy(Request $request,$userId)
     {
-        
+
         if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
             $user = User::find($userId);
             if($user->id != 0){
@@ -846,7 +760,7 @@ class UserController extends Controller {
             } else {
                 return redirect()->back()->withErrors('error', __('errorAdminCantBeDeleted'));
             }
-            
+
         }else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
@@ -879,7 +793,7 @@ class UserController extends Controller {
         } else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
-        
+
     }
 
     public function enrollTeacherInModule($userId, $moduleId,$cycleId)
@@ -907,7 +821,7 @@ class UserController extends Controller {
         } else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
-        
+
     }
 
     public function editRoles(Request $request, User  $user) {
@@ -925,7 +839,7 @@ class UserController extends Controller {
         } else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
-        
+
     }
 
     public function editCycles(Request $request, User $user) {
@@ -933,7 +847,7 @@ class UserController extends Controller {
         if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
             $cycleList = $request->input('selectedCycles');
             $cyclesArray = explode(',', $cycleList);
-            
+
             $cycles = Cycle::whereIn('id', $cyclesArray)
             ->with('modules')
             ->get();
@@ -945,14 +859,14 @@ class UserController extends Controller {
         } else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
-        
+
     }
 
     public function destroyUserCycle(Request $request, $cycleId, $userId){
         if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
             $user = User::find($userId);
             if ($user) {
-                
+
                 $modules = DB::table('module_user_cycle')->where('user_id', $user->id)
                 ->where('cycle_id',$cycleId)->get();
 
@@ -977,7 +891,7 @@ class UserController extends Controller {
             $user = User::find($userId);
             if ($user) {
                 $user->modules()->detach($moduleId);
-                
+
                 return redirect()->route('admin.users.show',['user'=>$user])->with('success',__('successDelete'));
             } else {
                 return redirect()->back()->withErrors('error',__('errorDelete'));

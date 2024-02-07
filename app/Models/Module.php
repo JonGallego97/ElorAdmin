@@ -21,4 +21,8 @@ class Module extends Model
     {
         return $this->belongsToMany(User::class);
     }
+     //relacion con modulos y ciclos para users no admin, no alumnos
+     public function users1() {
+        return $this->belongsToMany(User::class, 'user_id', 'module_id', 'user_id');
+    }
 }
