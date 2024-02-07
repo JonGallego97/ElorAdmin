@@ -35,8 +35,8 @@
     "New": "nuevo",
     "Create": "Crear",
     "Delete": "Eliminar",
-    "Teacher": "profesor",
-    "teacher": "Profesor",
+    "Teacher": "Profesor",
+    "teacher": "profesor",
     "Year": "Año",
     "Dual": "Dual",
     "Yes": "Si",
@@ -103,5 +103,13 @@
     "errorMessageDepartmentEmpty": "Es necesario seleccionar un departamento",
     "errorStudentCantHaveMoreRoles": "Un estudiante no puede tener mas de un rol",
     "errorAlreadyInModule": "Ya esta en el modulo",
-    "errorAlreadyInCycle": "Ya esta en el ciclo"
+    "errorAlreadyInCycle": "Ya esta en el ciclo",
+    "UsersWithoutRole": "Usuarios sin Rol",
+    "Total": "Numero de",
+    "errorIsDualFirstYear": "Los alumnos de primero no pueden estar en Dual",
+    "errorIsDualSecondYear": "Para los alumnos de Segundo se debe seleccionar Dual",
+    "errorMessageYearEmpty": "Es necesario seleccionar un año.",
+    "Personal": "Personal",
+    "TotalPersonal": "Total de personal:",
+    "errorAttachCycle": "Error al asignarle el cycle"
 }

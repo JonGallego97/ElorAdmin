@@ -11,9 +11,9 @@
         <form class="mt-2" name="create_platform"
 
             @if($module->id != null)
-                action="{{route('modules.update', $module)}}"
+                action="{{route('admin.modules.update', $module)}}"
             @else
-                action="{{route('modules.store')}}"
+                action="{{route('admin.modules.store')}}"
             @endif
 
             method="POST" enctype="multipart/form-data">

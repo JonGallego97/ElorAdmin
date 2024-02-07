@@ -7,7 +7,7 @@
                 </h1>
             </div>
             <div class="col text-end">
-                <a href="{{ route('departments.create') }}" class="me-2" Department="button">
+                <a href="{{ route('admin.departments.create') }}" class="me-2" Department="button">
                     <i class="bi bi-person-plus fs-3"></i>
                 </a>
 
@@ -26,14 +26,14 @@
                 @foreach ($departments as $department)
                 <tr>
                     <td>
-                        <a href="{{route('departments.show', $department)}}" Department="button">
+                        <a href="{{route('admin.departments.show', $department)}}" Department="button">
                             {{$department->name}}
                         </a>
                     </td>
                     <td>{{$department->count_people}}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="{{ route('departments.edit', $department) }}" class="me-2" Department="button">
+                            <a href="{{ route('admin.departments.edit', $department) }}" class="me-2" Department="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments/destroy" data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">
@@ -47,7 +47,7 @@
             </tbody>
         </table>
         <div class="row">
-            @if ($departments->totalDepartments > 10)
+            @if ($departments->totalDepartments > App::make('paginationCount'))
 
             <div class="form-inline col">
                 <form
@@ -59,10 +59,10 @@
                     class="form-inline" method="GET" id="perPageForm">
                     <label class="mr-2" for="per_page">{{__('Show')}}{{__('Colon')}}</label>
                     <select class="form-control" name="per_page" id="per_page" onchange="document.getElementById('perPageForm').submit()">
-                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
-                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
-                        <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                        <option value="150" {{ request('per_page') == 150 ? 'selected' : '' }}>150</option>
+                        <option value="200" {{ request('per_page') == 200 ? 'selected' : '' }}>200</option>
                     </select>
                 </form>
             </div>

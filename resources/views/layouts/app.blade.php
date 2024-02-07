@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'ElorChat') }}</title>
+    <title>{{ config('app.name', 'ElorAdmin') }}</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -25,11 +25,21 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="data-bs-theme navbar navbar-expand-md shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/admin') }}">
-                    {{ config('app.name', 'ElorChat') }}
+                @auth
+                <a href="#" class="btn btn-primary d-md-none ms-3" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
+                    <i class="bi bi-arrow-bar-right"></i>
                 </a>
+                <a class="navbar-brand" href="{{ url('/home') }}">
+                    {{ config('app.name', 'ElorAdmin') }}
+                </a>
+                @endauth
+                @guest
+                <a class="navbar-brand" href="{{ url('/login') }}">
+                    {{ config('app.name', 'ElorAdmin') }}
+                </a>
+                @endguest
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>

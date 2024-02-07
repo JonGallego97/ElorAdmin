@@ -9,7 +9,7 @@ use App\Models\Cycle;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-class PersonController extends Controller
+/* class PersonController extends Controller
 {
     public function index(Request $request)
     {
@@ -54,7 +54,7 @@ class PersonController extends Controller
     $user = Auth::user(); // Obtener el usuario autenticado
 
     if (User::find($user->id)->roles->first()->id == 2) {
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', App::make('paginationCount'));
         $users = User::whereHas('roles', function ($query) {
             $query->where('id', 2);
         })
@@ -84,3 +84,4 @@ class PersonController extends Controller
     return view('persons.staff.show', compact('user1Data', 'user2Data'), ['user1' => $user1]);
     }
 }
+ */

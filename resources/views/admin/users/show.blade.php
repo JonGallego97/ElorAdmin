@@ -1,7 +1,6 @@
 @extends('admin.plantillas.nav')
 
 @section('nav')
-    <div class="container">
         <div class="row p-3 mb-2 bg-secondary-subtle rounded-pill">
             <div class="col">
                 <h1>
@@ -22,17 +21,17 @@
             <div class="col text-end">
                 @switch(true)
                     @case(str_contains(url()->previous(),'users'))
-                        <a href="{{ route('users.index') }}" class="me-2" role="button">
+                        <a href="{{ route('admin.users.index') }}" class="me-2" role="button">
                             <i class="bi bi-arrow-90deg-left fs-3"></i>
                         </a>
                         @break
                     @case(str_contains(url()->previous(),'teachers'))
-                        <a href="{{ route('teachers.index') }}" class="me-2" role="button">
+                        <a href="{{ route('admin.teachers.index') }}" class="me-2" role="button">
                             <i class="bi bi-arrow-90deg-left fs-3"></i>
                         </a>
                         @break
                     @case(str_contains(url()->previous(),'students'))
-                        <a href="{{ route('students.index') }}" class="me-2" role="button">
+                        <a href="{{ route('admin.students.index') }}" class="me-2" role="button">
                             <i class="bi bi-arrow-90deg-left fs-3"></i>
                         </a>
                         @break
@@ -53,7 +52,7 @@
                     </div>
                     @endif
                     <div class="col d-flex justify-content-end">
-                        <a href="{{ route('users.edit', $user) }}" class="me-2" role="button">
+                        <a href="{{ route('admin.users.edit', $user) }}" class="me-2" role="button">
                             <i class="bi bi-pencil-square fs-3"></i>
                         </a>
                         <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
@@ -70,10 +69,7 @@
                         <p><strong>{{__('Address')}}{{__('Colon')}}</strong> {{ $user['address'] }}</p>
                         <p><strong>{{__('PhoneNumber1')}}{{__('Colon')}}</strong> {{ $user['phone_number1'] }}</p>
                         <p><strong>{{__('PhoneNumber2')}}{{__('Colon')}}</strong> {{ $user['phone_number2'] }}</p>
-                        @if(in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
-                        <p><strong>{{__('Year')}}{{__('Colon')}}</strong> {{ $user['year'] }}</p>
-                        <p><strong>{{__('Dual')}}{{__('Colon')}}</strong> {{ $user['dual'] ? __('Yes') : __('No') }}</p>
-                        @elseif(!in_array('ADMINISTRADOR',$user->roles->pluck('name')->toArray()))
+                        @if(!in_array('ADMINISTRADOR',$user->roles->pluck('name')->toArray()) && !in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
                         <p><strong>{{__('Department')}}{{__('Colon')}}</strong> {{ $user['department']['name'] }}</p>
                         @endif
                         <!-- Otros detalles del usuario -->
@@ -91,14 +87,14 @@
                         </select>
                     </div>
                     <div class="col d-flex justify-content-end">
-                        <!-- photo -->
-                        <img src="{{ asset($imagePath) }}" alt="Imagen" />
+                        <!-- photos -->
+                        <img src="{{ asset($imagePath) }}" alt="Imagen" style="max-width: 100%; max-height: 200px;" />
                     </div>
                 </div>
                 <hr>
                 <!-- Si tiene el rol de Profesor -->
                 @if(in_array('PROFESOR',$user->roles->pluck('name')->toArray()))
-                    <form class="row form" name="add_module" action="{{ route('users.addModule',$user) }}" method="POST">
+                    <form class="row form" name="add_module" action="{{ route('admin.users.addModule',$user) }}" method="POST">
                         @method('PUT')
                         @csrf
                         <div class="col-5 mb-3">
@@ -108,9 +104,11 @@
                             <select class="form-control" id="newModule" name="newModule">
                                 <option value="null">{{__("Modules")}}</option>
                                 @foreach($allCyclesWithModules as $cycle)
-                                <optgroup label='-- {{$cycle->name}} --' data-department-id="{{$cycle->department_id}}">
-                                    @foreach($cycle->modules as $module)
-                                        <option value="{{$cycle->id}}/{{$module->id}}">{{$module->name}}</option>
+                                @if(!$cycle['modules']->isEmpty())
+                                <optgroup label='-- {{$cycle['name']}} --' data-department-id="{{$cycle['department_id']}}">
+                                @endif
+                                    @foreach($cycle['modules'] as $module)
+                                        <option value="{{$cycle['id']}}/{{$module['id']}}">{{$module['name']}}</option>
                                     @endforeach
                                 </optgroup>
                                 @endforeach
@@ -122,16 +120,23 @@
                     @foreach ($cyclesWithModules as $cycle)
                         <div class="card mb-3">
                             <div class="card-header">
-                                <a href="{{route('cycles.show', $cycle['id'])}}" role="button">
-                                    <h4>{{ $cycle['name'] }}</h4>
-                                </a>
+                                <div class="row">
+                                <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{ route('admin.cycles.show', $cycle['id']) }}" role="button">
+                                            <h4>{{ $cycle['name'] }}</h4>
+                                        </a>
+                                        <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
+                                            <i class="bi bi-trash3 fs-5"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <h5>{{__('Modules')}}</h5>
                                 <ul>
                                     @foreach ($cycle['modules'] as $module)
                                         <div class="d-flex align-items-center">
-                                            <li>{{ $module['code'] }} - <a href="{{ route('modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
+                                            <li>{{ $module['code'] }} - <a href="{{ route('admin.modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
                                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserModule" data-type="" data-id="{{ $module['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $module['name'] }}" id="openModalBtn">
                                                 <i class="bi bi-trash3 fs-6"></i>
                                             </button>
@@ -145,13 +150,13 @@
 
                 <!-- Si tiene el rol de Alumno -->
                 @if(in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
-                <form class="row form" name="add_cycle" action="{{ route('users.addCycle',$user) }}" method="POST">
+                <form class="row form" name="add_cycle" action="{{ route('admin.users.addCycle',$user) }}" method="POST">
                         @method('PUT')
                         @csrf
                         <div class="col-5 mb-3">
                             <h3>{{__('Cycles')}}</h3>
                         </div>
-                        <div class="col-7 d-flex justify-content-end mb-3">
+                        <div class="col-6 d-flex justify-content-end mb-3">
                             <select class="form-control" id="newCycle" name="newCycle">
                                 <option value="null">{{__('Cycles')}}</optgroup>
                                 @foreach($departmentsWithCycles as $department)
@@ -161,21 +166,44 @@
                                     @endforeach
                                 @endforeach
                             </select>
+                            <select class="form-control" id="year" name="year">
+                                <option value="null">{{__('Year')}}</optgroup>
+                                <option value="1">{{__('FirstYear')}}</option>
+                                <option value="2">{{__('SecondYear')}}</option>
+                            </select>
+                            <select class="form-control" id="is_dual" name="is_dual" disabled="true">
+                                <option value="null">{{__('Dual')}}</optgroup>
+                                <option value="1">{{__('Yes')}}</option>
+                                <option value="0">{{__('No')}}</option>
+                            </select>
                             <button type="submit" class="col-2 ml-3 btn btn-primary" name="">{{__("addCycle")}}</button>
                         </div>
                     </form>
                     @foreach ($userData as $cycle)
                         <div class="card mb-3">
-                            <div class="card-header row align-items-center">
-                                <div class="col">
-                                    <a href="{{ route('cycles.show', $cycle['id']) }}" role="button">
-                                        <h4>{{ $cycle['name'] }}</h4>
-                                    </a>
-                                </div>
-                                <div class="col-auto">
-                                    <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
-                                        <i class="bi bi-trash3 fs-6"></i>
-                                    </button>
+                            <div class="card-header align-items-center">
+                                <div class="row">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{ route('admin.cycles.show', $cycle['id']) }}" role="button">
+                                            <h4>{{ $cycle['name'] }}</h4>
+                                        </a>
+                                        <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
+                                            <i class="bi bi-trash3 fs-5"></i>
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <div>
+                                            {{ $cycle['year'] == 1 ? __('FirstYear') : ($cycle['year'] == 2 ? __('SecondYear') : '') }}
+                                        </div>
+                                        @if ($cycle['year'] == 2)
+                                        <div>
+                                            {{ $cycle['is_dual'] == 1 ? __('Yes') : ($cycle['is_dual'] == 0 ? __('no') : '') }}
+                                        </div>
+                                        @endif
+                                        <div>
+                                            {{$cycle['enrollYear']}}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -184,7 +212,7 @@
                                 <ul>
                                     @foreach ($cycle['modules'] as $module)
                                     <div class="d-flex align-items-center">
-                                        <li>{{ $module['code'] }} - <a href="{{ route('modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
+                                        <li>{{ $module['code'] }} - <a href="{{ route('admin.modules.show', $module['id']) }}" role="button">{{ $module['name'] }}</a> ({{ $module['hours'] }} {{__('Hours')}})</li>
                                         <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserModule" data-type="" data-id="{{ $module['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $module['name'] }}" id="openModalBtn">
                                             <i class="bi bi-trash3 fs-6"></i>
                                         </button>
@@ -197,5 +225,29 @@
                 @endif
             </div>
         </div>
-    </div>
+        <script>
+            const yearSelect = document.getElementById("year");
+            const dualSelect = document.getElementById("is_dual");
+
+            const dualSelectnullOption = dualSelect.querySelector('option[value="null"]');
+
+            // Agrega un evento change al elemento select de Year
+            yearSelect.addEventListener("change", function() {
+                if (yearSelect.value !== "2" ) {
+                    // Si Year es 1, deshabilita el select de Dual y establece su valor en null
+                    dualSelect.disabled = true;
+                    dualSelect.value = "null";
+                } else {
+                    // Si Year no es 1, habilita el select de Dual
+                    dualSelect.disabled = false;
+                    dualSelectnullOption.disabled = true;
+                    dualSelect.value = 1;
+                }
+            });
+
+            document.addEventListener("DOMContentLoaded", function() {
+                
+            });
+        </script>
+
 @endsection

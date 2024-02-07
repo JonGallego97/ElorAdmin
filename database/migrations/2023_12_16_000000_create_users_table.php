@@ -23,9 +23,7 @@ return new class extends Migration
             $table->integer('phone_number1')->nullable();
             $table->integer('phone_number2')->nullable();
             $table->longText('image')->nullable();
-            $table->boolean('is_dual')->default(0);
             $table->boolean('first_login')->default(true);
-            $table->integer('year')->nullable()->default(null);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

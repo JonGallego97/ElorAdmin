@@ -4,7 +4,7 @@
 
 <div class="container">
     <div id="user_data" data-user={{$user->roles}}></div>
-    <form class="mt-2" name="edit_create_platform" action="{{ Route::currentRouteName() == 'users.edit' ? route('users.update', $user) : route('users.extra_create', $user) }}" method="POST">
+    <form class="mt-2" name="edit_create_platform" action="{{ Route::currentRouteName() == 'admin.users.edit' ? route('admin.users.update', $user) : route('admin.users.extra_create', $user) }}" method="POST">
         @csrf
         @if(Route::currentRouteName() == 'users.edit')
         @method('PUT')
@@ -69,7 +69,7 @@
                 <input type="text" class="form-control" id="address" name="address" required
                     value="{{$user->address}}"/>
             </div>
-            @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()) && Route::currentRouteName() == 'users.edit')
+            @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()) && Route::currentRouteName() == 'admin.users.edit')
                 <div class="col form-group mb-3">
                     <label for="department" class="form-label">{{__("Department")}}</label>
                     <select class="form-control" name="department">
@@ -83,7 +83,7 @@
                         @endforeach
                     </select>
                 </div>
-            @elseif (Route::currentRouteName() == 'users.edit')
+            @elseif (Route::currentRouteName() == 'admin.users.edit')
                 <div class="col form-group mb-3">
                     <label for="dual" class="form-label">{{__("Dual")}}</label>
                     <select class="form-control" name="dual">
@@ -103,7 +103,7 @@
         <hr>
 
         <hr class="my-4">
-        @if(Route::currentRouteName() == 'users.create')
+        @if(Route::currentRouteName() == 'admin.users.create')
             <div class="row">
                 <div id="rolesContainer" class="col-4 form-group mb-3" style="max-height: 200px; overflow-y: auto;">
                     <div class="d-flex justify-content-between align-items-center">
@@ -128,7 +128,7 @@
 
 
         <!-- Si viene del edit -->
-        @if(Route::currentRouteName() == 'users.edit')
+        @if(Route::currentRouteName() == 'admin.users.edit')
         <div class="form-group mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <h3>{{__("Roles")}}</h3>
@@ -187,7 +187,7 @@
         <!-- Modals -->
 
         <!-- Si viene del edit -->
-        @if(Route::currentRouteName() == 'users.edit')
+        @if(Route::currentRouteName() == 'admin.users.edit')
         <div class="modal fade" id="rolesModal" tabindex="-1" aria-labelledby="rolesModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
@@ -206,12 +206,12 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                        <form id="editRolesForm" action="{{ route('users.editRoles', ['user' => $user]) }}" method="POST" style="display: none;">
+                        <form id="editRolesForm" action="{{ route('admin.users.editRoles', ['user' => $user]) }}" method="POST" style="display: none;">
                         @method('PUT')
                         @csrf
                         </form>
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="editRolesBtn">{{__('Edit')}}</button>
-                        <form id="editRolesForm" action="{{ route('users.editRoles', ['user' => $user]) }}" method="POST">
+                        <form id="editRolesForm" action="{{ route('admin.users.editRoles', ['user' => $user]) }}" method="POST">
                         @method('PUT')
                         @csrf
                             <input type="hidden" name="selectedRoles" id="selectedRolesInput" value="">
@@ -240,11 +240,11 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                        <form id="editCyclesForm" action="{{ route('users.editCycles', $user) }}" method="GET" style="display: none;">
+                        <form id="editCyclesForm" action="{{ route('admin.users.editCycles', $user) }}" method="GET" style="display: none;">
                         </form>
                         <button type="button" class="btn btn-primary" id="editCyclesBtn">{{__('Edit')}}</button>
 
-                        <form id="editCyclesFormSubmit" action="{{ route('users.editCycles', $user) }}" method="POST">
+                        <form id="editCyclesFormSubmit" action="{{ route('admin.users.editCycles', $user) }}" method="POST">
                             @method('PUT')
                             @csrf
                             <input type="hidden" name="selectedCycles" id="selectedCyclesInput" value="">
@@ -272,11 +272,11 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                        <form id="editModulesForm" action="{{ route('users.editModules', $user) }}" method="GET" style="display: none;">
+                        <form id="editModulesForm" action="{{ route('admin.users.editModules', $user) }}" method="GET" style="display: none;">
                         </form>
                         <button type="button" class="btn btn-primary" id="editModulesBtn">{{__('Edit')}}</button>
 
-                        <form id="editModulesFormSubmit" action="{{ route('users.editModules', $user) }}" method="GET">
+                        <form id="editModulesFormSubmit" action="{{ route('admin.users.editModules', $user) }}" method="GET">
                             <input type="hidden" name="selectedModules" id="selectedModulesInput" value="">
                             <button type="submit" id="editListDeModules" class="btn btn-primary" style="display: none;">{{__('Edit')}}</button>
                         </form>
@@ -288,7 +288,7 @@
 
 
         <button type="submit" class="btn btn-primary" name="">
-            @if(Route::currentRouteName() == 'users.edit')
+            @if(Route::currentRouteName() == 'admin.users.edit')
                 {{__("Update")}}
             @else
                 {{__("Create")}}

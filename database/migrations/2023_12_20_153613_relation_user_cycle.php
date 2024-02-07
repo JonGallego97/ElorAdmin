@@ -16,7 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('cycle_id');
             $table->unsignedBigInteger('cycle_registration_number');
-            $table->date('registration_date');
+            $table->integer('year');
+            $table->boolean('is_dual')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
