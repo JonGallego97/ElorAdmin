@@ -21,6 +21,7 @@
             <th scope="col">{{__('Surname1')}}</th>
             <th scope="col">{{__('Surname2')}}</th>
             <th scope="col">{{__('Mail')}}</th>
+            <th scope="col">{{__('PhoneNumber')}}</th>
 
         </tr>
     </thead>
@@ -32,11 +33,10 @@
                     {{$user->name}}
                 </a>
             </td>
-
             <td>{{$user->surname1}}</td>
             <td>{{$user->surname2}}</td>
             <td>{{$user->email}}</td>
-
+            <td>{{$user->phone_number1}}</td>
         </tr>
         @endforeach
     </tbody>
