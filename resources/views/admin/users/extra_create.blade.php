@@ -116,19 +116,7 @@
             modulesDiv.style.visibility = "visible";
         }
     } */
-    function handleDropdownChange() {
-        var selectedDepartmentId = $("#department").val();
-        
-        // Oculta todos los bloques de departamento
-        $(".department-block").hide();
-        
-        // Muestra solo el bloque del departamento seleccionado
-        $(".department_" + selectedDepartmentId).show();
-
-        if (selectedDepartmentId == 0) {
-            $(".department-block").show();
-        }
-    }
+    
 
 </script>
 @endsection

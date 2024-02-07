@@ -172,9 +172,15 @@ class UserController extends Controller {
         if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
             //si es admin
             $user = new User();
+
             $roles = Role::select('id','name')->orderBy("id")->get();
             $departments = Department::select('id','name')->orderBy("name")->get();
-            $cycles = Cycle::select('id','name')->orderBy('name')->get();
+            $cycles = Cycle::with('modules')->orderBy('department_id')->get();
+
+            $languageModulesCodes = Module::whereIn('name', ['Inglés Técnico', 'Inglés', 'Segunda lengua extranjera'])->pluck('code')->toArray();
+            $languageModules = Cycle::with(['modules' => function ($query) use ($languageModulesCodes) {
+                $query->where('code', $languageModulesCodes);
+            }])->get();
 
             return view('admin.users.edit_create', ['user'=>$user,'roles'=>$roles,'departments' => $departments,'cycles' => $cycles]);
 
@@ -189,47 +195,7 @@ class UserController extends Controller {
         $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
         $teacherRole = Role::select('id','name')->where('name','PROFESOR')->first();
 
-        $messages = [
-            'name.required' => __('errorMessageNameEmpty'),
-            'name.regex' => __('errorMessageNameLettersOnly'),
-            'surname1.required' => __('errorMessageNameEmpty'),
-            'surname1.regex' => __('errorMessageNameLettersOnly'),
-            'surname2.required' => __('errorMessageNameEmpty'),
-            'surname2.regex' => __('errorMessageNameLettersOnly'),
-            'dni.required' => __('errorMessageNameEmpty'),
-            'dni.regex' => __('errorDNILettersAndNumbersOnly'),
-            'address.required' => __('errorMessageCodeEmpty'),
-            'address.string' => __('errorMessageCodeInteger'),
-            'code.unique' => __('errorModuleCodeExists'),
-            'phone_number1.required' => __('errorTelephoneIsRequired'),
-            'phone_number1.integer' => __('errorTelephoneMustBeInteger'),
-            'phone_number2.required' => __('errorTelephoneIsRequired'),
-            'phone_number2.integer' => __('errorTelephoneMustBeInteger'),
-            'roles.required' => __('errorRoleRequired'),
-            'roles.array' => __('errorRoleRequired'),
-        ];
-
-        $request->validate([
-            'name' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
-            'surname1' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
-            'surname2' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
-            'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
-                if (!$this->ControllerFunctions->checkDni($value)) {
-                    $fail(__('errorInvalidDNI'));
-                }
-            }],
-            'address' =>['required','string'],
-            'phone_number1' =>['required','integer'],
-            'phone_number2' =>['required','integer'],
-            'year' => ['nullable','integer'],
-            'is_dual' => ['boolean'],
-            'roles' => ['required','array',function ($attribute, $value, $fail) use ($request,$studentRole) {
-                $userRoles = $request->input('roles', []);
-                if (in_array($studentRole->id,$userRoles,false) && count($userRoles)!=1) {
-                    $fail(__('errorStudentCantHaveMoreRoles'));
-                }
-            }],
-        ],$messages);
+        
 
         $userRoles = $request->input('roles', []);
 
@@ -314,6 +280,23 @@ class UserController extends Controller {
         if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
 
             $messages = [
+                'name.required' => __('errorMessageNameEmpty'),
+                'name.regex' => __('errorMessageNameLettersOnly'),
+                'surname1.required' => __('errorMessageNameEmpty'),
+                'surname1.regex' => __('errorMessageNameLettersOnly'),
+                'surname2.required' => __('errorMessageNameEmpty'),
+                'surname2.regex' => __('errorMessageNameLettersOnly'),
+                'dni.required' => __('errorMessageNameEmpty'),
+                'dni.regex' => __('errorDNILettersAndNumbersOnly'),
+                'address.required' => __('errorMessageCodeEmpty'),
+                'address.string' => __('errorMessageCodeInteger'),
+                'code.unique' => __('errorModuleCodeExists'),
+                'phone_number1.required' => __('errorTelephoneIsRequired'),
+                'phone_number1.integer' => __('errorTelephoneMustBeInteger'),
+                'phone_number2.required' => __('errorTelephoneIsRequired'),
+                'phone_number2.integer' => __('errorTelephoneMustBeInteger'),
+                'roles.required' => __('errorRoleRequired'),
+                'roles.array' => __('errorRoleRequired'),
                 'cycles.required' => __('errorMessageCyclesEmpty'),
                 'department.required' => __('errorMessageDepartmentEmpty'),
                 'department.not_in' => __('errorMessageDepartmentEmpty'),
@@ -322,31 +305,130 @@ class UserController extends Controller {
                 'modules.required' => __('errorModulesEmpty'),
                 'modules.array' => __('errorModulesEmpty'),
             ];
-
-            $user = User::where('id',$request->user_id)->first();
-
-            switch (true){
+            
+            $user = User::where('id', $request->user_id)->first();
+            
+            switch (true) {
                 case $user->hasRole("ALUMNO"):
                     $request->validate([
+                        'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'surname1' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'surname2' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
+                            if (!$this->ControllerFunctions->checkDni($value)) {
+                                $fail(__('errorInvalidDNI'));
+                            }
+                        }],
+                        'address' => ['required', 'string'],
+                        'phone_number1' => ['required', 'integer'],
+                        'phone_number2' => ['required', 'integer'],
+                        'year' => ['nullable', 'integer'],
+                        'is_dual' => ['boolean'],
+                        'roles' => ['required', 'array', function ($attribute, $value, $fail) use ($request) {
+                            $userRoles = $request->input('roles', []);
+                            if (in_array($this->ControllerFunctions->getStudentRoleId(), $userRoles, false) && count($userRoles) != 1) {
+                                $fail(__('errorStudentCantHaveMoreRoles'));
+                            }
+                        }],
                         'cycle' => ['required'],
-                    ],$messages);
+                    ], $messages);
                     break;
+            
                 case $user->hasRole("PROFESOR"):
                     $request->validate([
-                        'department' =>['required','not_in:0'],
-                        'modules' =>['required','array'],
-                    ],$messages);
+                        'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'surname1' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'surname2' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
+                            if (!$this->ControllerFunctions->checkDni($value)) {
+                                $fail(__('errorInvalidDNI'));
+                            }
+                        }],
+                        'address' => ['required', 'string'],
+                        'phone_number1' => ['required', 'integer'],
+                        'phone_number2' => ['required', 'integer'],
+                        'year' => ['nullable', 'integer'],
+                        'is_dual' => ['boolean'],
+                        'roles' => ['required', 'array', function ($attribute, $value, $fail) use ($request) {
+                            $userRoles = $request->input('roles', []);
+                            if (in_array($this->ControllerFunctions->getStudentRoleId(), $userRoles, false) && count($userRoles) != 1) {
+                                $fail(__('errorStudentCantHaveMoreRoles'));
+                            }
+                        }],
+                        'department' => ['required', 'not_in:0'],
+                        'modules' => ['required', 'array'],
+                    ], $messages);
                     break;
+            
                 default:
                     $request->validate([
-                        'department' =>['required','not_in:0'],
-                    ],$messages);
+                        'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'surname1' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'surname2' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
+                            if (!$this->ControllerFunctions->checkDni($value)) {
+                                $fail(__('errorInvalidDNI'));
+                            }
+                        }],
+                        'address' => ['required', 'string'],
+                        'phone_number1' => ['required', 'integer'],
+                        'phone_number2' => ['required', 'integer'],
+                        'year' => ['nullable', 'integer'],
+                        'is_dual' => ['boolean'],
+                        'roles' => ['required', 'array', function ($attribute, $value, $fail) use ($request) {
+                            $userRoles = $request->input('roles', []);
+                            if (in_array($this->ControllerFunctions->getStudentRoleId(), $userRoles, false) && count($userRoles) != 1) {
+                                $fail(__('errorStudentCantHaveMoreRoles'));
+                            }
+                        }],
+                        'department' => ['required', 'not_in:0'],
+                    ], $messages);
                     break;
             }
 
+            $userRoles = $request->input('roles', []);
 
 
-            $user = User::with('roles')->where('id', $request->user_id)->first();
+            $userRolesNames = Array();
+            foreach ($userRoles as $userRole) {
+                $roleName = Role::select('name')->where('id',$userRole)->first();
+                $userRolesNames[$userRole] = $roleName->name;
+            }
+
+            $user = new User();
+            $user->name = ucfirst(strtolower($request->name));
+            $user->surname1 = ucfirst(strtolower($request->surname1));
+            $user->surname2 = ucfirst(strtolower($request->surname2));
+            $user->dni = $request->dni;
+            $user->address = ucwords(strtolower($request->address));
+            $user->phone_number1 = $request->phone_number1;
+            $user->phone_number2 = $request->phone_number2;
+            $user->first_login = false;
+            $user->image = null;
+
+            $userName =  $user->name . "." . $user->surname1 . substr($user->surname2,0,2);
+            $userName = str_replace(" ","",$userName);
+            $tilesList = array(
+                'á' => 'a',
+                'é' => 'e',
+                'í' => 'i',
+                'ó' => 'o',
+                'ú' => 'u',
+                'ñ' => 'n',
+                'Á' => 'A',
+                'É' => 'E',
+                'Í' => 'I',
+                'Ó' => 'O',
+                'Ú' => 'U',
+                'Ñ' => 'N'
+            );
+            
+            $userName = strtr($userName, $tilesList);
+            $domainName = "@elorrieta-errekamari.com";
+
+            $user->email = strtolower($userName . $domainName);
+
+            $user->password = bcrypt(str_replace(".","",$userName) . date("Y"));
 
             $userRoles = $user->roles->pluck('id')->toArray();
 
@@ -358,20 +440,19 @@ class UserController extends Controller {
             $isAdmin = in_array($adminRole->id,$userRoles,false);
 
 
-
-            //Datos Extra
             if(!$isAdmin && !$isStudent) {
-                $user->department_id = $request->department;
-                $user->department_id = $request->department;     
+                $user->department_id = $request->department; 
 
             }
+
             $user->save();
 
-            // Ciclos
+            $user->roles()->attach($userRoles);
 
-            if($isStudent){
+            // Ciclos            
+            if($user->hasRole("ALUMNO")){
                 $result = $this->enrollStudentInCycle($user->id,$request->newCycle,$request->year,$request->is_dual);
-            } elseif ($isTeacher) {
+            } elseif ($user->hasRole("PROFESOR")) {
                 $modules = $request->input('modules');
                 foreach($modules as $module) {
                     $modulesArray = explode("/",$module);
@@ -392,8 +473,6 @@ class UserController extends Controller {
         } else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
-
-
     }
 
     /**
@@ -661,8 +740,8 @@ class UserController extends Controller {
             //si es admin
             $departments = Department::select('id','name')->orderBy("name")->get();
             $roles = Role::all();
-            $cycles_modules = Cycle::with('modules')->get();
-            return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles, 'cycles_modules'=>$cycles_modules,'departments' => $departments]);
+            $user->load('roles');
+            return view('admin.users.edit_create', ['user'=>$user, 'roles'=> $roles,'departments' => $departments]);
         }else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
@@ -674,12 +753,83 @@ class UserController extends Controller {
     public function update(Request $request, User $user)
     {
         if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
+            
+            $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
+
+            $messages = [
+                'name.required' => __('errorMessageNameEmpty'),
+                'name.regex' => __('errorMessageNameLettersOnly'),
+                'surname1.required' => __('errorMessageNameEmpty'),
+                'surname1.regex' => __('errorMessageNameLettersOnly'),
+                'surname2.required' => __('errorMessageNameEmpty'),
+                'surname2.regex' => __('errorMessageNameLettersOnly'),
+                'dni.required' => __('errorMessageNameEmpty'),
+                'dni.regex' => __('errorDNILettersAndNumbersOnly'),
+                'address.required' => __('errorMessageCodeEmpty'),
+                'address.string' => __('errorMessageCodeInteger'),
+                'code.unique' => __('errorModuleCodeExists'),
+                'phone_number1.required' => __('errorTelephoneIsRequired'),
+                'phone_number1.integer' => __('errorTelephoneMustBeInteger'),
+                'phone_number2.required' => __('errorTelephoneIsRequired'),
+                'phone_number2.integer' => __('errorTelephoneMustBeInteger'),
+                'roles.required' => __('errorRoleRequired'),
+                'roles.array' => __('errorRoleRequired'),
+            ];
+    
+            $request->validate([
+                'name' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                'surname1' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                'surname2' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
+                    if (!$this->ControllerFunctions->checkDni($value)) {
+                        $fail(__('errorInvalidDNI'));
+                    }
+                }],
+                'address' =>['required','string'],
+                'phone_number1' =>['required','integer'],
+                'phone_number2' =>['required','integer'],
+                'roles' => ['required','array',function ($attribute, $value, $fail) use ($request,$studentRole) {
+                    $userRoles = $request->input('roles', []);
+                    if (in_array($studentRole->id,$userRoles,false) && count($userRoles)!=1) {
+                        $fail(__('errorStudentCantHaveMoreRoles'));
+                    }
+                }],
+            ],$messages);
+
+
             $user->name = $request->name;
-            $user->save();
+            $user->surname1 = $request->surname1;
+            $user->surname2 = $request->surname2;
+            $user->dni = $request->dni;
+            $user->address = $request->address;
+            $user->phone_number1 = $request->phone_number1;
+            $user->phone_number2 = $request->phone_number2;
+            $user->department_id = $request->department;
+
+            $result = $user->save();
+
+            if($result) {
+                $arraysAreEqual = ($request->roles == $user->roles());
+                if (!$arraysAreEqual) {
+                    switch(true) {
+                        case !in_array($this->ControllerFunctions->getStudentRoleId(),$request->roles):
+                            $user->cycles()->detach();
+                            $user->modules()->detach();
+                            break;
+                        case !in_array($this->ControllerFunctions->getTeacherRoleId(),$request->roles):
+                            $user->modules()->detach();
+                            break;
+                    }
+                    $user->roles()->sync($request->roles);
+                }
+                return redirect()->route('admin.users.show',['user'=>$user]);
+            } else {
+                return redirect()->back()->withErrors('error','Already in that cycle');
+            }
 
             $this->enrollStudentInCycle($user->id,$request->newCycle,$request->year,$request->is_dual);
 
-            return redirect()->route('admin.users.show',['user'=>$user]);
+            
             //return view('cycles.show',['user'=>$user]);
         }
 

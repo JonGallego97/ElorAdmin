@@ -46,7 +46,7 @@
                     <div class="col-md-4">
                         <h2>{{ $user['name'] }} {{ $user['surname1'] }} {{ $user['surname2'] }}</h2>
                     </div>
-                    @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()) && !in_array('ADMINISTRADOR',$user->roles->pluck('name')->toArray()))
+                    @if(!$user->hasRole("ALUMNO") && !$user->hasRole("ADMINISTRADOR"))
                     <div class="col-md-4">
                         <h2>{{ $user['department']['name'] }}</h2>
                     </div>
@@ -93,7 +93,7 @@
                 </div>
                 <hr>
                 <!-- Si tiene el rol de Profesor -->
-                @if(in_array('PROFESOR',$user->roles->pluck('name')->toArray()))
+                @if($user->hasRole("PROFESOR"))
                     <form class="row form" name="add_module" action="{{ route('admin.users.addModule',$user) }}" method="POST">
                         @method('PUT')
                         @csrf

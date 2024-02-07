@@ -4,14 +4,14 @@
 
 <div class="container">
     <div id="user_data" data-user={{$user->roles}}></div>
-    <form class="mt-2" name="edit_create_platform" action="{{ Route::currentRouteName() == 'admin.users.edit' ? route('admin.users.update', $user) : route('admin.users.extra_create', $user) }}" method="POST">
+    <form class="mt-2" name="edit_create_platform" action="{{ Route::currentRouteName() == 'admin.users.edit' ? route('admin.users.update', $user) : route('admin.users.store', $user) }}" method="POST">
         @csrf
-        @if(Route::currentRouteName() == 'users.edit')
+        @if(Route::currentRouteName() == 'admin.users.edit')
         @method('PUT')
         @endif
         <div class="form-group mb-3">
             <h1>
-                @if(Route::currentRouteName() == 'users.edit')
+                @if(Route::currentRouteName() == 'admin.users.edit')
                 {{__("Edit")}}
                 @else
                 {{__("Create")}}
@@ -30,49 +30,81 @@
             </h1>
         </div>
         <div class="row">
-            <div class="col form-group mb-3">
-                <label for="name" class="form-label">{{__("Name")}}</label>
-                <input type="text" class="form-control" id="name" name="name" required
-                    value="{{$user->name}}"/>
+            <div class="col-8 form-group mb-3">
+                <div class="row">
+                    <div class="col md-4">
+                        <label for="dni" class="form-label">{{__("DNI")}}</label>
+                        <input type="text" class="form-control" id="dni" name="dni" required
+                            value="{{$user->dni}}"/>
+                    </div>
+                    <div class="col form-group mb-3">
+                        <label for="name" class="form-label">{{__("Name")}}</label>
+                        <input type="text" class="form-control" id="name" name="name" required
+                            value="{{$user->name}}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class=" col form-group mb-3">
+                        <label for="surname1" class="form-label">{{__("Surname1")}}</label>
+                        <input type="text" class="form-control" id="surname1" name="surname1" required
+                            value="{{$user->surname1}}"/>
+                    </div>
+                    <div class="col form-group mb-3">
+                        <label for="surname2" class="form-label">{{__("Surname2")}}</label>
+                        <input type="text" class="form-control" id="surname2" name="surname2" required
+                            value="{{$user->surname2}}"/>
+                    </div>
+                </div>
             </div>
-            <div class=" col form-group mb-3">
-                <label for="surname1" class="form-label">{{__("Surname1")}}</label>
-                <input type="text" class="form-control" id="surname1" name="surname1" required
-                    value="{{$user->surname1}}"/>
+            <div id="rolesContainer" class="col-3 form-group mb-3" style="max-height: 180px; overflow-y: auto; border: 1px solid #ccc; border-radius: 5px;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>{{__("Roles")}}</h3>
+                </div>
+                @foreach ($roles as $role)
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="roles[]" id="role_{{ $role->name }}" value="{{ $role->id }}"
+                            @if(Route::currentRouteName() == 'admin.users.create')
+                                @if((str_contains(url()->previous(),'teachers') && $role->name == 'PROFESOR') || (str_contains(url()->previous(),'students') && $role->name == 'ALUMNO'))
+                                    checked
+                                @endif
+                                @if($role->name == 'ALUMNO')
+                                    onclick="handleAlumnoCheckbox(this)"
+                                @endif
+                                @if($role->name == 'PROFESOR')
+                                    onclick="handleProfesorCheckbox(this)"
+                                @endif
+                            @elseif(Route::currentRouteName() == 'admin.users.edit')
+                                @if($role->name == 'ALUMNO')
+                                    onclick="handleAlumnoCheckbox(this)"
+                                @endif
+                                @if($user->hasRole($role->name))
+                                    checked
+                                @endif
+                            @endif
+                        >
+                        <label class="form-check-label" for="role_{{ $role->id }}">
+                            {{ $role->name }}
+                        </label>
+                    </div>
+                @endforeach
             </div>
-            <div class="col form-group mb-3">
-                <label for="surname2" class="form-label">{{__("Surname2")}}</label>
-                <input type="text" class="form-control" id="surname2" name="surname2" required
-                    value="{{$user->surname2}}"/>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col form-group mb-3">
-                <label for="dni" class="form-label">{{__("DNI")}}</label>
-                <input type="text" class="form-control" id="dni" name="dni" required
-                    value="{{$user->dni}}"/>
-            </div>
-            <div class="col form-group mb-3">
-                <label for="phone_number1" class="form-label">{{__("PhoneNumber1")}}</label>
-                <input type="text" class="form-control" id="phone_number1" name="phone_number1" required
-                    value="{{$user->phone_number1}}"/>
-            </div>
-            <div class="col form-group mb-3">
-                <label for="phone_number2" class="form-label">{{__("PhoneNumber2")}}</label>
-                <input type="text" class="form-control" id="phone_number2" name="phone_number2" required
-                    value="{{$user->phone_number2}}"/>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col form-group mb-3">
-                <label for="address" class="form-label">{{__("Address")}}</label>
-                <input type="text" class="form-control" id="address" name="address" required
-                    value="{{$user->address}}"/>
-            </div>
-            @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()) && Route::currentRouteName() == 'admin.users.edit')
+
+            <div class="row">
                 <div class="col form-group mb-3">
+                    <label for="phone_number1" class="form-label">{{__("PhoneNumber1")}}</label>
+                    <input type="text" class="form-control" id="phone_number1" name="phone_number1" required
+                        value="{{$user->phone_number1}}"/>
+                </div>
+                <div class="col form-group mb-3">
+                    <label for="phone_number2" class="form-label">{{__("PhoneNumber2")}}</label>
+                    <input type="text" class="form-control" id="phone_number2" name="phone_number2" required
+                        value="{{$user->phone_number2}}"/>
+                </div>
+                @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
+                <div id="departmentContainer" class="col form-group mb-3">
                     <label for="department" class="form-label">{{__("Department")}}</label>
-                    <select class="form-control" name="department">
+                    <select class="form-control" name="department" onchange="handleDropdownChange()">
+                        <option value="0">{{__("Department")}}</option>
                         @foreach ($departments as $department)
                         <option value={{$department->id}}
                         @if($department->id == $user->department_id)
@@ -83,208 +115,54 @@
                         @endforeach
                     </select>
                 </div>
-            @elseif (Route::currentRouteName() == 'admin.users.edit')
-                <div class="col form-group mb-3">
-                    <label for="dual" class="form-label">{{__("Dual")}}</label>
-                    <select class="form-control" name="dual">
-                        <option value="1" <?= ($user->dual == 1) ? 'selected' : '' ?>>{{__("Yes")}}</option>
-                        <option value="0" <?= ($user->dual == 0) ? 'selected' : '' ?>>{{__("No")}}</option>
-                    </select>
-                </div>
-                <div class="col form-group mb-3">
-                    <label for="year" class="form-label">{{__("Year")}}</label>
-                    <select class="form-control" name="year">
-                        <option value="1" <?= ($user->year == 1) ? 'selected' : '' ?>>{{__("FirstYear")}}</option>
-                        <option value="2" <?= ($user->year == 0) ? 'selected' : '' ?>>{{__("SecondYear")}}</option>
-                    </select>
-                </div>
-            @endif
-        </div>
-        <hr>
-
-        <hr class="my-4">
-        @if(Route::currentRouteName() == 'admin.users.create')
+                @endif
+            </div>
             <div class="row">
-                <div id="rolesContainer" class="col-4 form-group mb-3" style="max-height: 200px; overflow-y: auto;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3>{{__("Roles")}}</h3>
-                    </div>
-                    @foreach ($roles as $role)
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="roles[]" id="role_{{ $role->id }}" value="{{ $role->id }}"
-                                @if((str_contains(url()->previous(),'teachers') && $role->name == 'PROFESOR') || (str_contains(url()->previous(),'students') && $role->name == 'ALUMNO'))
-                                    checked
-                                @endif
-                            >
-                            <label class="form-check-label" for="role_{{ $role->id }}">
-                                {{ $role->name }}
-                            </label>
+                <div class="col form-group mb-3">
+                    <label for="address" class="form-label">{{__("Address")}}</label>
+                    <input type="text" class="form-control" id="address" name="address" required
+                        value="{{$user->address}}"/>
+                </div>
+            </div>
+        </div>
+        @if(Route::currentRouteName() == 'admin.users.create')
+        <hr>
+        <div class="row">
+            <div id="modulesContainer" class="col-6 form-group mb-3">
+                <label for="modules" class="form-label">{{__("Modules")}}</label>
+                <div style="max-height: 200px; overflow-y: auto;">
+                    @foreach($cycles as $cycle)
+                        <div class="mb-2 department-block department_{{$cycle->department_id}}">
+                            <label class="fw-bold">{{$cycle->name}}</label>
+                            @foreach($cycle->modules as $module)
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="modules[]" value="{{$cycle->id}}/{{$module->id}}" id="module_{{$module->id}}">
+                                    <label class="form-check-label" for="module_{{$module->id}}">{{$module->name}}</label>
+                                </div>
+                            @endforeach
                         </div>
                     @endforeach
                 </div>
             </div>
-        </div>
-        @endif
-
-
-        <!-- Si viene del edit -->
-        @if(Route::currentRouteName() == 'admin.users.edit')
-        <div class="form-group mb-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h3>{{__("Roles")}}</h3>
-                <input type="hidden" id="selectedRolesInput" name="selectedRoles" value="">
-                <input type="hidden" id="hiddenRoleIds" value="{{ implode(',', $user->roles->pluck('id')->toArray()) }}">
-                <button type="button" style="border: none; background: none;" id="roleEdit" data-bs-toggle="modal" data-bs-target="#rolesModal" data-role-ids="sad">
-                    <i class="bi bi-pencil fs-3"></i>
-                </button>
-            </div>
-            <select id="roles" name="roles[]" class="form-control" multiple>
-                @foreach ($user->roles as $role)
-                    <option value="{{ $role->id }}">
-                        {{ $role->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <hr class="my-4">
-        <div class="form-group mb-2">
-            <div class="d-flex justify-content-between align-items-center">
-                <h3>{{__("Cycles")}}</h3>
-                <input type="hidden" id="selectedCyclesInput" name="selectedCycles" value="">
-                <input type="hidden" id="hiddenCycleIds" value="{{ implode(',', $user->cycles->pluck('id')->toArray()) }}">
-                <button type="button" style="border: none; background: none;" id="cycleEdit" data-bs-toggle="modal" data-bs-target="#cyclesModal">
-                    <i class="bi bi-pencil fs-3"></i>
-                </button>
-            </div>
-            <div>
-                @foreach ($user['cycles'] as $cycle)
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h4>{{ $cycle['name'] }}</h4>
-                                <a class="text-decoration-none">
-                                    <i class="bi bi-pencil fs-4"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5>{{__('Modules')}}</h5>
-                            <ul>
-                                @foreach ($cycle['modules'] as $module)
-                                    <li>{{ $module['code'] }} - {{ $module['name'] }}  ({{ $module['hours'] }} {{__('Hours')}})</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                @endforeach
+            <div id="cyclesContainer" class="col-6 form-group mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>{{__("Cycles")}}</h3>
+                </div>
+                <div class= "col mb-3">
+                    <select id="cycle" name="cycle" class="form-control">
+                    @foreach ($cycles as $cycle)
+                        <option value="{{ $cycle->id }}">
+                        {{ $cycle['name'] }}
+                        </option>
+                    @endforeach
+                    </select>
+                </div>
             </div>
         </div>
-        @endif
-
+         @endif
         
 
-
-        <!-- Modals -->
-
-        <!-- Si viene del edit -->
-        @if(Route::currentRouteName() == 'admin.users.edit')
-        <div class="modal fade" id="rolesModal" tabindex="-1" aria-labelledby="rolesModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="rolesModalLabel">{{__('Roles')}}</h1>
-                    </div>
-                    <div class="modal-body">
-                        @foreach ($roles as $role)
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="roles[]" id="role_{{ $role->id }}" value="{{ $role->id }}">
-                                <label class="form-check-label" for="role_{{ $role->id }}">
-                                    {{ $role->name }}
-                                </label>
-                            </div>
-                        @endforeach
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                        <form id="editRolesForm" action="{{ route('admin.users.editRoles', ['user' => $user]) }}" method="POST" style="display: none;">
-                        @method('PUT')
-                        @csrf
-                        </form>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="editRolesBtn">{{__('Edit')}}</button>
-                        <form id="editRolesForm" action="{{ route('admin.users.editRoles', ['user' => $user]) }}" method="POST">
-                        @method('PUT')
-                        @csrf
-                            <input type="hidden" name="selectedRoles" id="selectedRolesInput" value="">
-                            <button type="submit" id="editListDeRoles" class="btn btn-primary" style="display: none;">{{__('Edit')}}</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div> 
-
-        <div class="modal fade" id="cyclesModal" tabindex="-1" aria-labelledby="cyclesModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="cyclesModalLabel">{{__('Cycles')}}</h1>
-                    </div>
-                    <div class="modal-body">
-                        @foreach ($cycles_modules as $ciclo)
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="ciclos[]" id="cycle_{{ $ciclo->id }}" value="{{ $ciclo->id }}">
-                                <label class="form-check-label" for="cycle_{{ $ciclo->id }}">
-                                    {{ $ciclo->name }}
-                                </label>
-                            </div>
-                        @endforeach
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                        <form id="editCyclesForm" action="{{ route('admin.users.editCycles', $user) }}" method="GET" style="display: none;">
-                        </form>
-                        <button type="button" class="btn btn-primary" id="editCyclesBtn">{{__('Edit')}}</button>
-
-                        <form id="editCyclesFormSubmit" action="{{ route('admin.users.editCycles', $user) }}" method="POST">
-                            @method('PUT')
-                            @csrf
-                            <input type="hidden" name="selectedCycles" id="selectedCyclesInput" value="">
-                            <button type="submit" id="editListDeCycles" class="btn btn-primary" style="display: none;">{{__('Edit')}}</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-       {{-- <div class="modal fade" id="modulesModal" tabindex="-1" aria-labelledby="modulesModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="modulesModalLabel">{{__('Modules')}}</h1>
-                    </div>
-                    <div class="modal-body">
-                        @foreach ($cycles_modules->modules as $module)
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="modules[]" id="module_{{ $module->id }}" value="{{ $module->id }}">
-                                <label class="form-check-label" for="module_{{ $module->id }}">
-                                    {{ $module->name }}
-                                </label>
-                            </div>
-                        @endforeach
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('cancel')}}</button>
-                        <form id="editModulesForm" action="{{ route('admin.users.editModules', $user) }}" method="GET" style="display: none;">
-                        </form>
-                        <button type="button" class="btn btn-primary" id="editModulesBtn">{{__('Edit')}}</button>
-
-                        <form id="editModulesFormSubmit" action="{{ route('admin.users.editModules', $user) }}" method="GET">
-                            <input type="hidden" name="selectedModules" id="selectedModulesInput" value="">
-                            <button type="submit" id="editListDeModules" class="btn btn-primary" style="display: none;">{{__('Edit')}}</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-        @endif
+        
 
 
         <button type="submit" class="btn btn-primary" name="">
@@ -296,11 +174,140 @@
         </button>
     </form>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+@if(Route::currentRouteName() == 'admin.users.create')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var departmentContainer = document.getElementById('departmentContainer');
+        var modulesContainer = document.getElementById('modulesContainer');
+        var cyclesContainer = document.getElementById('cyclesContainer');
+
+        var alumnoCheckbox = document.getElementById('role_ALUMNO');
+        var profesorCheckbox = document.getElementById('role_PROFESOR');
+
+        if (alumnoCheckbox) {
+            handleAlumnoCheckbox(alumnoCheckbox);
+        }
+
+        if (profesorCheckbox) {
+            handleProfesorCheckbox(profesorCheckbox);
+        }
 
 
+        /////////////////FILTRAR MODULOS POR DEPARTAMENTO/////////////////////////
 
-@endsection
-@section('scripts')
-    <script src="{{ asset('js/admin/users/teachers/index.js') }}"></script>
+
+        // Obtiene el elemento del menú desplegable de departamentos
+        var departmentDropdown = document.getElementById('department');
+
+        if (departmentDropdown) {
+            departmentDropdown.addEventListener('change', function () {
+                var selectedDepartmentId = departmentDropdown.value;
+                filterModulesByDepartment(selectedDepartmentId);
+            });
+        }
+    });
+    
+
+    function handleAlumnoCheckbox(alumnoCheckbox) {
+        var departmentContainer = document.getElementById('departmentContainer'); // Fix the ID
+        var modulesContainer = document.getElementById('modulesContainer');
+        var checkboxes = document.querySelectorAll('input[name="roles[]"]');
+        var cyclesContainer = document.getElementById('cyclesContainer');
+
+        // Disable other checkboxes and uncheck them
+        checkboxes.forEach(function (checkbox) {
+            if (checkbox !== alumnoCheckbox) {
+                checkbox.disabled = alumnoCheckbox.checked;
+                checkbox.checked = false;
+            }
+        });
+        
+        departmentContainer.style.display = alumnoCheckbox.checked ? 'none' : 'block';
+        cyclesContainer.style.display = alumnoCheckbox.checked ? 'block' : 'none';
+
+        // Clear values for both containers
+        if (alumnoCheckbox.checked) {
+            //clearContainerValues(departmentContainer);
+            //clearContainerValues(modulesContainer);
+            modulesContainer.style.display = 'none';
+        } else {
+            departmentContainer.value = "0";
+            //clearContainerValues(cyclesContainer);
+        }
+    }
+
+    function handleProfesorCheckbox(profesorCheckbox) {
+        var modulesContainer = document.getElementById('modulesContainer');
+        var cyclesContainer = document.getElementById('cyclesContainer');
+
+
+        // Show/hide the modules container based on the PROFESOR checkbox state
+        modulesContainer.style.display = profesorCheckbox.checked ? 'block' : 'none';
+
+        //clearContainerValues(cyclesContainer);
+    }
+
+    function clearContainerValues(container) {
+        // Clear values inside the specified container
+        var inputFields = container.querySelectorAll('input, select, textarea');
+        inputFields.forEach(function (field) {
+            if (field.type !== 'checkbox') {
+                field.value = '';
+            } else {
+                field.checked = false;
+            }
+        });
+    }
+
+
+    function filterModulesByDepartment(departmentId) {
+        var departmentBlocks = document.querySelectorAll('.department-block');
+        var modulesCheckboxes = document.querySelectorAll('input[name="modules[]"]');
+
+        departmentBlocks.forEach(function (block) {
+            block.style.display = 'none';
+
+            if (block.classList.contains('department_' + departmentId)) {
+                block.style.display = 'block';
+            }
+        });
+
+        modulesCheckboxes.forEach(function (checkbox) {
+            checkbox.checked = false;
+        });
+    }
+
+    
+</script>
+@else
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+        // Execute code when the page is loaded
+        var alumnoCheckbox = document.getElementById('role_ALUMNO');
+
+        if (alumnoCheckbox.checked) {
+            handleAlumnoCheckbox(alumnoCheckbox);
+        }
+
+    });
+
+    function handleAlumnoCheckbox(alumnoCheckbox) {
+        var checkboxes = document.querySelectorAll('input[name="roles[]"]');
+        var departmentContainer = document.getElementById('departmentContainer');
+        
+        // Disable other checkboxes and uncheck them
+        checkboxes.forEach(function (checkbox) {
+            if (checkbox !== alumnoCheckbox) {
+                checkbox.disabled = alumnoCheckbox.checked;
+                checkbox.checked = false;
+            }
+        });
+
+        departmentContainer.style.display = alumnoCheckbox.checked ? 'none' : 'block';
+    }
+</script>
+@endif
 
 @endsection
