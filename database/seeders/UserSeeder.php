@@ -19,9 +19,10 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         //Alumnos - Deben de ser 1000
-        RoleUser::factory()->count(51)->create(['role_id' => "3"]);
+        RoleUser::factory()->count(1000)->create(['role_id' => "3"]);
         //Profesores - Deben de ser 80
-        RoleUser::factory()->count(51)->create(['role_id' => "2"]);
+        RoleUser::factory()->count(80)->create(['role_id' => "2"]);
+
 
         $teachers = User::whereHas('roles', function ($query) {
             $query->where('name', 'PROFESOR');

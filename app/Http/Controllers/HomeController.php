@@ -86,16 +86,16 @@ class HomeController extends Controller
 
             }
 
+    
             // Verificar si el usuario autenticado tiene el rol deseado
             if (User::find($user->id)->roles->first()->id == 2) {
                 // Si tiene el rol deseado, filtrar los usuarios por ese rol
-
                 $usera = User::whereHas('roles', function ($query) {
                     $query->where('id', 2);
                 })->get();
             }
+          
             // Obtener los ciclos y módulos del usuario
-
             $cycles = $user->cycles;
            //dd($cycles);
 

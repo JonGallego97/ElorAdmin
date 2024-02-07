@@ -28,57 +28,6 @@ class UserController extends Controller {
     }
     //$this->ControllerFunctions->checkAdminRoute()
 
-    /**
-     * Display a listing of the resource.
-     */
-/*     public function indexStudent(Request $request)
-    {
-
-        if ($this->ControllerFunctions->checkAdminRoute()) {
-            //si es admin
-            $perPage = $request->input('per_page', App::make('paginationCount'));
-            $users = User::whereHas('roles', function ($query) {
-                $query->where('id', 3);
-            })
-            ->orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
-
-            $totalUsers = User::whereHas('roles', function ($query) {
-                $query->where('id', 3);
-            })->count();
-
-            $users->totalUsers = $totalUsers;
-            return view('admin.users.index',compact('users'));
-        }else {
-            return redirect()->back()->with('error', __('errorNoAdmin'));
-        }
-
-
-    }
-
-    public function indexTeacher(Request $request)
-    {
-        if ($this->ControllerFunctions->checkAdminRoute()){
-            dd(Route::getCurrentRoute());
-            $perPage = $request->input('per_page', App::make('paginationCount'));
-            $users = User::whereHas('roles', function ($query) {
-                $query->where('id', 2);
-            })
-            ->orderBy('name', 'asc')
-            ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
-            $totalUsers = User::whereHas('roles', function ($query) {
-                $query->where('id', 2);
-            })->count();
-
-            $users->totalUsers = $totalUsers;
-            return view('admin.users.index',['users'=>$users]);
-        }else {
-            return redirect()->back()->with('error', __('errorNoAdmin'));
-        }
-
-    } */
-
-
     public function index(Request $request) {
 
         if ($this->ControllerFunctions->checkAdminRoute()) {
@@ -87,18 +36,6 @@ class UserController extends Controller {
             $isStudents = Str::contains($route,'admin/students');
             $hasNoRole = str::contains($route,'admin/withoutRole');
             $personal = str::contains($route,'admin/personal');
-
-            /*
-            en config/pagination.php
-            <?php
-
-            return [
-                'per_page' => 15,
-            ];
-
-            $posts = Post::paginate(config('pagination.per_page'));
-
-            */
 
             $perPage = $request->input('per_page', App::make('paginationCount'));
 
@@ -169,8 +106,6 @@ class UserController extends Controller {
             }
             return view('admin.users.index',compact('users'));
 
-            //Si viene de admin
-
 
         }else{
 
@@ -189,19 +124,7 @@ class UserController extends Controller {
 
             $users->totalUsers = $totalUsers;
             return view('users.index', ['users' => $users]);
-
-            $roleStudent = Role::where('name','ALUMNO')->first();
-            $roleTeacher = Role::where('name','PROFESOR')->first();
-            $logedUserRoles = Auth::user()->roles->pluck('id')->toArray();
-
-            switch(true) {
-                case in_array($roleStudent->id,$logedUserRoles):
-                    break;
-                case in_array($roleTeacher->id,$logedUserRoles):
-                    break;
-                default:
-                    break;
-            }
+          
         }
     }
 
@@ -439,6 +362,8 @@ class UserController extends Controller {
             //Datos Extra
             if(!$isAdmin && !$isStudent) {
                 $user->department_id = $request->department;
+                $user->department_id = $request->department;     
+
             }
             $user->save();
 
@@ -454,19 +379,6 @@ class UserController extends Controller {
                     $module_id = $modulesArray[1];
                     $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
                 }
-                /* if(is_array($request->input('modules'))) {
-                    foreach($modules as $module) {
-                        $modulesArray = explode("/",$module);
-                        $cycle_id = $modulesArray[0];
-                        $module_id = $modulesArray[1];
-                        $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
-                    }
-                } else {
-                    $modulesArray = explode("/",$request->modules);
-                    $cycle_id = $modulesArray[0];
-                    $module_id = $modulesArray[1];
-                    $result =$this->enrollTeacherInModule($user->id, $module_id,$cycle_id);
-                } */
 
             } else {
                 $result = true;
@@ -541,7 +453,6 @@ class UserController extends Controller {
                             $enrollYear = $pivotData->created_at->format('Y');
                             $is_dual = $pivotData->is_dual;
 
-
                             if (!isset($userData[$cycleId])) {
                                 $userData[$cycleId] = [
                                     'id' => $cycleId,
@@ -554,7 +465,6 @@ class UserController extends Controller {
                                 ];
                             }
 
-
                             $module = Module::find($userModule->module_id);
 
                             if ($module) {
@@ -565,7 +475,6 @@ class UserController extends Controller {
                                     'hours' => $module->hours
                                 ];
 
-
                                 $userData[$cycleId]['modules'][] = $moduleData;
                             }
                         }
@@ -574,11 +483,12 @@ class UserController extends Controller {
                     break;
                 case $isTeacher:
                     ////////////////////////////////// PROFESOR //////////////////////////////////////////////////////////
-                    $userModules = $user->modules;
+                
+                    $userModules = $user->modules; 
                     $cyclesWithModules = [];
 
                     foreach ($userModules as $module) {
-                        $moduleCycles = $module->cycles;
+                        $moduleCycles = $module->cycles; 
                         foreach ($moduleCycles as $cycle) {
                             $cycleId = $cycle->id;
                             $cycleName = $cycle->name;
@@ -671,7 +581,8 @@ class UserController extends Controller {
                             break;
                         case $departmentLanguages['name']:
                             ////////////////////////////////// IDIOMAS //////////////////////////////////////////////////////////
-                            $moduleNames = $departmentLanguages['modules'];
+
+                            $moduleNames = $departmentLanguages['modules']; 
 
                             // Obtén los ciclos que coinciden con el departamento del usuario y los módulos con los nombres en el array
                             $cycles = Cycle::with(['modules' => function ($query) use ($moduleNames) {

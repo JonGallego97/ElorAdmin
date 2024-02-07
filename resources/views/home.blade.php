@@ -106,12 +106,10 @@
                                         @foreach ($user->cycles as $cycle)
                                         <div class="accordion-item">
                                             <h2 class="accordion-header" id="heading{{ $cycle->id }}">
-
                                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $cycle->id }}" aria-expanded="true" aria-controls="collapse{{ $cycle->id }}">
                                                     {{ $cycle->name }}
 
                                                     &nbsp;<small class="text-muted">{{ __('Registered') }}: {{ $cycle->created_at->toDateString() }}</small>
-
                                                     &nbsp;<small class="text-muted">{{ __('Year') }}:
                                                         @if($cycle->year == 1)
                                                         1
@@ -127,8 +125,6 @@
                                                             No
                                                         @endif
                                                     </small>
-
-
                                                 </button>
 
                                             </h2>
