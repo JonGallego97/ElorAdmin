@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('surname1');
             $table->string('surname2');
             $table->string('dni');
+            $table->boolean('is_dual')->default(0);
             $table->string('address')->nullable();
             $table->integer('phone_number1')->nullable();
             $table->integer('phone_number2')->nullable();

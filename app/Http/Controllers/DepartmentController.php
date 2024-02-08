@@ -154,7 +154,8 @@ class DepartmentController extends Controller
         if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
             //si es admin
             $department = Department::find($departmentId);
-            if ($department) {
+            $departmentCount = Department::where('id',$departmentId)->count();
+            if ($department && $departmentCount == 0) {
                 $department->delete();
                 return redirect()->route('admin.departments.index')->with('success',__('successDelete'));
             } else {

@@ -13,12 +13,12 @@ use Illuminate\Support\Facades\Request;
 class ControllerFunctions {
 
         
-    protected $administratorName = "ADMINISTRADOR";
+    protected $adminName = "ADMINISTRADOR";
     protected $studentName = "ALUMNO";
     protected $teacherName = "PROFESOR";
 
     public function checkAdminRole(){
-        $roleAdmin = Role::where('name',$this->administratorName)->first();
+        $roleAdmin = Role::where('name',$this->adminName)->first();
         $logedUserRoles = Auth::user()->roles->pluck('name')->toArray();
         if(in_array($roleAdmin->name,$logedUserRoles)) {
             return true;
@@ -44,6 +44,11 @@ class ControllerFunctions {
     public function getTeacherRoleId(){
         $teacherRoleId = Role::where('name',$this->teacherName)->pluck('id')->first();
         return $teacherRoleId;
+    }
+
+    public function getAdminRoleId(){
+        $adminRoleId = Role::where('name',$this->adminName)->pluck('id')->first();
+        return $adminRoleId;
     }
 
     public function replaceAccents($string) {

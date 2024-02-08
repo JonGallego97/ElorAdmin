@@ -128,7 +128,7 @@ class UserController extends Controller {
         }
     }
 
-    public function staff(Request $request)
+/*     public function staff(Request $request)
     {
         //Ya esta pasado
         $user = Auth::user(); // Obtener el usuario autenticado
@@ -149,9 +149,9 @@ class UserController extends Controller {
 
         }
         return view('staff.index', ['users' => $users]);
-    }
+    } */
 
-    public function staffShow(Request $request, $user1, $user2)
+/*     public function staffShow(Request $request, $user1, $user2)
     {
         // Lógica para obtener la información de los usuarios según sus identificadores ($user1 y $user2)
         $user1Data = User::findOrFail($user1);
@@ -162,7 +162,7 @@ class UserController extends Controller {
 
         // Retornar la vista con los datos de los usuarios
     return view('staff.show', compact('user1Data', 'user2Data'), ['user1' => $user1]);
-    }
+    } */
 
     /**
      * Show the form for creating a new resource.
@@ -308,8 +308,10 @@ class UserController extends Controller {
             
             $user = User::where('id', $request->user_id)->first();
             
+            $userRoles = $request->input('roles', []);
+
             switch (true) {
-                case $user->hasRole("ALUMNO"):
+                case in_array($this->ControllerFunctions->getStudentRoleId(),$userRoles):
                     $request->validate([
                         'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
                         'surname1' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
@@ -334,7 +336,7 @@ class UserController extends Controller {
                     ], $messages);
                     break;
             
-                case $user->hasRole("PROFESOR"):
+                case in_array($this->ControllerFunctions->getTeacherRoleId(),$userRoles):
                     $request->validate([
                         'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
                         'surname1' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
@@ -386,14 +388,6 @@ class UserController extends Controller {
                     break;
             }
 
-            $userRoles = $request->input('roles', []);
-
-
-            $userRolesNames = Array();
-            foreach ($userRoles as $userRole) {
-                $roleName = Role::select('name')->where('id',$userRole)->first();
-                $userRolesNames[$userRole] = $roleName->name;
-            }
 
             $user = new User();
             $user->name = ucfirst(strtolower($request->name));
@@ -423,32 +417,24 @@ class UserController extends Controller {
                 'Ñ' => 'N'
             );
             
-            $userName = strtr($userName, $tilesList);
+            $userName = strtolower(strtr($userName, $tilesList));
             $domainName = "@elorrieta-errekamari.com";
 
-            $user->email = strtolower($userName . $domainName);
+            $user->email = $userName . $domainName;
 
             $user->password = bcrypt(str_replace(".","",$userName) . date("Y"));
 
-            $userRoles = $user->roles->pluck('id')->toArray();
+            $isStudent = in_array($this->ControllerFunctions->getStudentRoleId(),$userRoles,false);
 
-            $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
-            $isStudent = in_array($studentRole->id,$userRoles,false);
-            $teacherRole = Role::select('id','name')->where('name','PROFESOR')->first();
-            $isTeacher = in_array($teacherRole->id,$userRoles,false);
-            $adminRole = Role::select('id','name')->where('name','ADMINISTRADOR')->first();
-            $isAdmin = in_array($adminRole->id,$userRoles,false);
-
-
-            if(!$isAdmin && !$isStudent) {
+            if(!$isStudent) {
                 $user->department_id = $request->department; 
-
             }
 
             $user->save();
 
             $user->roles()->attach($userRoles);
 
+            $user->load('roles');
             // Ciclos            
             if($user->hasRole("ALUMNO")){
                 $result = $this->enrollStudentInCycle($user->id,$request->newCycle,$request->year,$request->is_dual);
@@ -804,12 +790,23 @@ class UserController extends Controller {
             $user->address = $request->address;
             $user->phone_number1 = $request->phone_number1;
             $user->phone_number2 = $request->phone_number2;
-            $user->department_id = $request->department;
+
+            $userRoles = $request->input('roles', []);
+            $isStudent = in_array($this->ControllerFunctions->getStudentRoleId(),$userRoles,false);
+            $isTeacher = in_array($this->ControllerFunctions->getTeacherRoleId(),$userRoles,false);
+            $isAdmin = in_array($this->ControllerFunctions->getAdminRoleId(),$userRoles,false);
+
+
+            if(!$isStudent) {
+                $user->department_id = $request->department; 
+            } else {
+                $user->department_id = null;
+            }
 
             $result = $user->save();
 
             if($result) {
-                $arraysAreEqual = ($request->roles == $user->roles());
+                /* $arraysAreEqual = ($request->roles == $user->roles());
                 if (!$arraysAreEqual) {
                     switch(true) {
                         case !in_array($this->ControllerFunctions->getStudentRoleId(),$request->roles):
@@ -819,6 +816,17 @@ class UserController extends Controller {
                         case !in_array($this->ControllerFunctions->getTeacherRoleId(),$request->roles):
                             $user->modules()->detach();
                             break;
+                    } */
+
+                    //Si cambia de rol de profesor o de alumno, le quita los modulos y los ciclos
+                    switch (true) {
+                        case $user->hasRole("ALUMNO") && !$isStudent:
+                            $user->cycles()->detach();
+                            $user->modules()->detach();
+                            break;
+                        case $user->hasRole("PROFESOR") && !$isTeacher:
+                            $user->modules()->detach();
+                            break;
                     }
                     $user->roles()->sync($request->roles);
                 }
@@ -826,13 +834,6 @@ class UserController extends Controller {
             } else {
                 return redirect()->back()->withErrors('error','Already in that cycle');
             }
-
-            $this->enrollStudentInCycle($user->id,$request->newCycle,$request->year,$request->is_dual);
-
-            
-            //return view('cycles.show',['user'=>$user]);
-        }
-
     }
 
     /**

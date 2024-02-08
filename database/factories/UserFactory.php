@@ -71,6 +71,7 @@ class UserFactory extends Factory
             'phone_number1' => $fakerSpain->numerify('#########'),
             'phone_number2' => $fakerSpain->numerify('#########'),
             'image' => null,
+            'is_dual' => false,
             'first_login' => $fakerSpain->boolean,
             'created_at' => now(),
             'updated_at' => now(),

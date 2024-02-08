@@ -100,10 +100,9 @@
                     <input type="text" class="form-control" id="phone_number2" name="phone_number2" required
                         value="{{$user->phone_number2}}"/>
                 </div>
-                @if(!in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
                 <div id="departmentContainer" class="col form-group mb-3">
                     <label for="department" class="form-label">{{__("Department")}}</label>
-                    <select class="form-control" name="department" onchange="handleDropdownChange()">
+                    <select class="form-control" name="department">
                         <option value="0">{{__("Department")}}</option>
                         @foreach ($departments as $department)
                         <option value={{$department->id}}
@@ -115,7 +114,6 @@
                         @endforeach
                     </select>
                 </div>
-                @endif
             </div>
             <div class="row">
                 <div class="col form-group mb-3">

@@ -111,5 +111,6 @@
     "errorMessageYearEmpty": "Es necesario seleccionar un año.",
     "Personal": "Personal",
     "TotalPersonal": "Total de personal:",
-    "errorAttachCycle": "Error al asignarle el cycle"
+    "errorAttachCycle": "Error al asignarle el cycle",
+    "enrollYear": "Año matriculacion"
 }
