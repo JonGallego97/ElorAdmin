@@ -47,13 +47,28 @@
                     <td>{{$user->surname2}}</td>
                     <td>{{$user->email}}</td>
                     <td>
-                        <div class="d-flex">
+                        {{--<div class="d-flex">
                             <a href="{{ route('admin.users.edit', $user) }}" class="me-2" role="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
-                            </button>
+                            </button>--}}
+                        <div class="d-flex">
+                            <div class="btn-group" role="group">
+                                <!-- Botón para visualizar -->
+                                <a href="{{ route('admin.users.show', $user) }}" class="btn btn-info me-2" role="button">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <!-- Botón para editar -->
+                                <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-warning me-2" role="button">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <!-- Botón para eliminar -->
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </div>
 
                         </div>
                     </td>

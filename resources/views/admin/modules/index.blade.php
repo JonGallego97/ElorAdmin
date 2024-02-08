@@ -39,10 +39,22 @@
                     <td>{{$module->count_students}}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="{{ route('admin.modules.edit', $module) }}" class="me-2" role="button">
+                            {{--<a href="{{ route('admin.modules.edit', $module) }}" class="me-2" role="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="modules/destroy" data-type="{{__('module')}}" data-id="{{ $module->id }}" data-name="{{ $module->name }}" id="openModalBtn">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                            --}}
+                            <a href="{{route('admin.modules.show', $module)}}" class="btn btn-info me-2" role="button">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <!-- Botón para editar -->
+                            <a href="{{ route('admin.modules.edit', $module) }}" class="btn btn-warning me-2" role="button">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <!-- Botón para eliminar -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="modules/destroy" data-type="{{__('module')}}" data-id="{{ $module->id }}" data-name="{{ $module->name }}" id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
                             </button>
 

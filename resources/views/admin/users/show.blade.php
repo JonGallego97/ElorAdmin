@@ -15,7 +15,7 @@
                         <h1>{{__('Students')}}</h1>
                             @break
                     @endswitch
-                    
+
                 </h1>
             </div>
             <div class="col text-end">
@@ -36,7 +36,7 @@
                         </a>
                         @break
                 @endswitch
-                
+
 
             </div>
         </div>
@@ -52,11 +52,19 @@
                     </div>
                     @endif
                     <div class="col d-flex justify-content-end">
-                        <a href="{{ route('admin.users.edit', $user) }}" class="me-2" role="button">
+                        {{--<a href="{{ route('admin.users.edit', $user) }}" class="me-2" role="button">
                             <i class="bi bi-pencil-square fs-3"></i>
                         </a>
                         <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
                             <i class="bi bi-trash3 fs-3"></i>
+                        </button>--}}
+
+                        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-warning me-2" role="button">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <!-- Botón para eliminar -->
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
+                            <i class="bi bi-trash3"></i>
                         </button>
                     </div>
                 </div>
@@ -116,7 +124,7 @@
                             <button type="submit" class="col-2 ml-3 btn btn-primary" name="">{{__("addCycle")}}</button>
                         </div>
                     </form>
-                    
+
                     @foreach ($cyclesWithModules as $cycle)
                         <div class="card mb-3">
                             <div class="card-header">
@@ -194,9 +202,14 @@
                                         <a href="{{ route('admin.cycles.show', $cycle['id']) }}" role="button">
                                             <h4>{{ $cycle['name'] }}</h4>
                                         </a>
-                                        <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
+                                        {{--<button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
                                             <i class="bi bi-trash3 fs-5"></i>
+                                        </button>--}}
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserCycle" data-type="" data-id="{{ $cycle['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $cycle['name'] }}" id="openModalBtn">
+                                            <i class="bi bi-trash3"></i>
                                         </button>
+
+
                                     </div>
                                     <div class="row">
                                         <div class="ml-3 col-1">
@@ -223,6 +236,12 @@
                                         <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserModule" data-type="" data-id="{{ $module['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $module['name'] }}" id="openModalBtn">
                                             <i class="bi bi-trash3 fs-6"></i>
                                         </button>
+                                       {{--
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroyUserModule" data-type="" data-id="{{ $module['id'] }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $module['name'] }}"  id="openModalBtn">
+                                            <i class="bi bi-trash3 bi-sm"></i>
+                                        </button>
+                                        --}}
+
                                     </div>
                                     @endforeach
                                 </ul>
@@ -253,7 +272,7 @@
             });
 
             document.addEventListener("DOMContentLoaded", function() {
-                
+
             });
         </script>
 
