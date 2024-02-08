@@ -33,10 +33,23 @@
                     <td>{{$department->count_people}}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="{{ route('admin.departments.edit', $department) }}" class="me-2" Department="button">
+                          {{-- <a href="{{ route('admin.departments.edit', $department) }}" class="me-2" Department="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments/destroy" data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                            --}}
+                            <!-- Botón para visualizar -->
+                            <a href="{{ route('admin.departments.show', $department)}}" class="btn btn-info me-2" role="button">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <!-- Botón para editar -->
+                            <a href="{{ route('admin.departments.edit', $department) }}" class="btn btn-warning me-2" role="button">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <!-- Botón para eliminar -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments/destroy"  data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
                             </button>
 

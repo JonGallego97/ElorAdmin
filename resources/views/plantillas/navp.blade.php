@@ -3,36 +3,37 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
+            <div class="sidebar col-md-3 col-lg-2 p-0 bg-body-tertiary">
                 <div class="offcanvas-md offcanvas-start bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
                     <div class="offcanvas-header">
                         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
                     </div>
+                    <div class="d-flex align-items-start">
+                        <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            <ul class="nav flex-column mb-auto">
+                                <li class="nav-item" style="text-align: center; margin-top: 10px;margin-bottom: 10px;">
+                                    <img src="{{ asset('images/admin/Elorrieta_Logo.svg') }}" style="max-width: 80%; margin: 0 auto; display: block;" />
+                                </li>
 
-                    <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
-                        <ul class="nav flex-column mb-auto">
-                            <li class="nav-item" style="text-align: center; margin-top: 10px;margin-bottom: 10px;">
-                                <img src="{{ asset('images/admin/Elorrieta_Logo.svg') }}" style="max-width: 80%; margin: 0 auto; display: block;" />
-                            </li>
-                            <li class="nav-item">
-                            <a class="nav-link{{ Route::is('users.index') ? ' font-weight-bold' : '' }}" href="{{ route('users.index') }}">
-                                    {{__('Personal')}}
-                                </a>
+                                <a class="nav-link{{ Route::is('users.index') ? ' font-weight-bold' : '' }}" href="{{ route('users.index') }}">
+                                        {{__('Personal')}}
+                                    </a>
 
-                            </li>
-                            <li class="nav-item">
-                            <a class="nav-link{{ Route::is('departments.index') ? ' font-weight-bold' : '' }}" href="{{ route('departments.index') }}">
-                                    {{__('Departments')}}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                            <a class="nav-link{{ Route::is('cycles.index') ? ' font-weight-bold' : '' }}" href="{{ route('cycles.index') }}">
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link{{ Route::is('departments.index') ? ' font-weight-bold' : '' }}" href="{{ route('departments.index') }}">
+                                        {{__('Departments')}}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link{{ Route::is('cycles.index') ? ' font-weight-bold' : '' }}" href="{{ route('cycles.index') }}">
 
-                                    {{__('Cycles')}}
-                                </a>
-                            </li>
+                                        {{__('Cycles')}}
+                                    </a>
+                                </li>
 
-                        </ul>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
