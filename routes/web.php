@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Password;
 |
 */
 
+URL::forceScheme('https');
+
 Route::get('/', function () {
     return view('auth.login');
 });
