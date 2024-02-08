@@ -3,8 +3,8 @@
 @section('nav')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
+        <div class="w-100 mb-4">
+            <div class="card ">
                 <!-- div class="card-header">{{ __('Dashboard') }}</div>
 
                 <div class="card-body">
@@ -34,8 +34,8 @@
                         @endif
                     @endauth
                 </div> -->
-                <div class="card">
-                    <div class="card-header">
+                <div class="card border-0">
+                    <div class="card-header ">
                         <h2>{{ $user['name'] }} {{ $user['surname1'] }} {{ $user['surname2'] }}</h2>
                     </div>
                     <div class="card-body">

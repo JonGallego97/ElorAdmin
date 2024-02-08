@@ -3,11 +3,19 @@
 <div class="row p-3 mb-2 bg-secondary-subtle rounded-pill">
     <div class="col d-flex align-items-center">
         <h1 class="me-2 mb-0" style="white-space: nowrap;">{{ __('Department') }}{{ __('Colon') }} {{ $department->name }}</h1>
-        <a href="{{ route('admin.departments.edit', $department) }}" class="me-2" role="button">
+        {{--<a href="{{ route('admin.departments.edit', $department) }}" class="me-2" role="button">
             <i class="bi bi-pencil-square fs-2"></i>
         </a>
         <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments/destroy" data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">
             <i class="bi bi-trash3 fs-2"></i>
+        </button>
+        --}}
+        <a href="{{ route('admin.departments.edit', $department) }}" class="btn btn-warning me-2" role="button">
+            <i class="bi bi-pencil-square"></i>
+        </a>
+        <!-- Botón para eliminar -->
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments/destroy"  data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">
+            <i class="bi bi-trash3"></i>
         </button>
     </div>
     <div class="col text-end">
@@ -49,10 +57,22 @@
                     <td>{{ $user->dni }}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="{{ route('admin.users.edit', $user) }}" class="me-2" role="button">
+                            {{--<a href="{{ route('admin.users.edit', $user) }}" class="me-2" role="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments/destroyDepartmentUser" data-type="" data-id="{{ $department->id }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $department->name }}" id="openModalBtn">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                             --}}
+                            <a href="{{ route('admin.users.show', $user)}}" class="btn btn-info me-2" role="button">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <!-- Botón para editar -->
+                            <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-warning me-2" role="button">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <!-- Botón para eliminar -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"  data-action="departments/destroyDepartmentUser" data-type="" data-id="{{ $department->id }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $department->name }}"id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
                             </button>
                         </div>
