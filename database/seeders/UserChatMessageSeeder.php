@@ -19,56 +19,5 @@ class UserChatMessageSeeder extends Seeder
             "updated_at" => now(),
         
         ]);
-
-        DB::table('chats')->insert([
-            'name' => 'Public',
-            'is_Public' => '1',
-            "created_at" => now(),
-            "updated_at" => now(),
-        
-        ]);
-        DB::table('chats')->insert([
-            'name' => 'Admin',
-            'is_Public' => '1',
-            "created_at" => now(),
-            "updated_at" => now(),
-        
-        ]);
-        DB::table('user_chat')->insert([
-            'user_id' => '0',
-            'chat_id' => '1',
-            'is_admin' => '1',
-            "created_at" => now(),
-            "updated_at" => now(),
-        
-        ]);
-
-        DB::table('user_chat')->insert([
-            'user_id' => '1',
-            'chat_id' => '1',
-            'is_admin' => '1',
-            "created_at" => now(),
-            "updated_at" => now(),
-        
-        ]);
-
-        DB::table('user_chat')->insert([
-            'user_id' => '1',
-            'chat_id' => '2',
-            'is_admin' => '1',
-            "created_at" => now(),
-            "updated_at" => now(),
-        
-        ]);
-
-        DB::table('user_chat')->insert([
-            'user_id' => '2',
-            'chat_id' => '1',
-            'is_admin' => '1',
-            "created_at" => now(),
-            "updated_at" => now(),
-        
-        ]);
-
     }
 }
