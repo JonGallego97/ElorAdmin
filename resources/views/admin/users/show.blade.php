@@ -69,7 +69,7 @@
                         <p><strong>{{__('Address')}}{{__('Colon')}}</strong> {{ $user['address'] }}</p>
                         <p><strong>{{__('PhoneNumber1')}}{{__('Colon')}}</strong> {{ $user['phone_number1'] }}</p>
                         <p><strong>{{__('PhoneNumber2')}}{{__('Colon')}}</strong> {{ $user['phone_number2'] }}</p>
-                        @if(!in_array('ADMINISTRADOR',$user->roles->pluck('name')->toArray()) && !in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
+                        @if(!$user->hasRole('ALUMNO'))
                         <p><strong>{{__('Department')}}{{__('Colon')}}</strong> {{ $user['department']['name'] }}</p>
                         @endif
                         <!-- Otros detalles del usuario -->
@@ -151,34 +151,41 @@
                 <!-- Si tiene el rol de Alumno -->
                 @if(in_array('ALUMNO',$user->roles->pluck('name')->toArray()))
                 <form class="row form" name="add_cycle" action="{{ route('admin.users.addCycle',$user) }}" method="POST">
-                        @method('PUT')
-                        @csrf
-                        <div class="col-5 mb-3">
-                            <h3>{{__('Cycles')}}</h3>
-                        </div>
-                        <div class="col-6 d-flex justify-content-end mb-3">
+                    @method('PUT')
+                    @csrf
+                    <div class="col-3">
+                        <h3>{{__('Cycles')}}</h3>
+                    </div>
+                    <div class="col-6 d-flex justify-content-end">
+                        <div class="mb-3 mr-1">
                             <select class="form-control" id="newCycle" name="newCycle">
-                                <option value="null">{{__('Cycles')}}</optgroup>
+                                <option value="null">{{__('Cycles')}}</option>
                                 @foreach($departmentsWithCycles as $department)
                                     <optgroup label="{{$department->name}}">
-                                    @foreach($department->cycles as $cycle)
-                                        <option value="{{$cycle->id}}">{{$cycle->name}}</option>
-                                    @endforeach
+                                        @foreach($department->cycles as $cycle)
+                                            <option value="{{$cycle->id}}">{{$cycle->name}}</option>
+                                        @endforeach
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="col-2 mb-3 mr-1">
                             <select class="form-control" id="year" name="year">
-                                <option value="null">{{__('Year')}}</optgroup>
+                                <option value="null">{{__('Year')}}</option>
                                 <option value="1">{{__('FirstYear')}}</option>
                                 <option value="2">{{__('SecondYear')}}</option>
                             </select>
+                        </div>
+                        <div class="col-2 mb-3 mr-1">
                             <select class="form-control" id="is_dual" name="is_dual" disabled="true">
-                                <option value="null">{{__('Dual')}}</optgroup>
+                                <option value="null">{{__('Dual')}}</option>
                                 <option value="1">{{__('Yes')}}</option>
                                 <option value="0">{{__('No')}}</option>
                             </select>
-                            <button type="submit" class="col-2 ml-3 btn btn-primary" name="">{{__("addCycle")}}</button>
                         </div>
-                    </form>
+                        <button type="submit" class="col-2 btn btn-primary">{{__("addCycle")}}</button>
+                    </div>
+                </form>
+
                     @foreach ($userData as $cycle)
                         <div class="card mb-3">
                             <div class="card-header align-items-center">
@@ -191,17 +198,17 @@
                                             <i class="bi bi-trash3 fs-5"></i>
                                         </button>
                                     </div>
-                                    <div>
-                                        <div>
-                                            {{ $cycle['year'] == 1 ? __('FirstYear') : ($cycle['year'] == 2 ? __('SecondYear') : '') }}
+                                    <div class="row">
+                                        <div class="ml-3 col-1">
+                                            <b>{{__('Year')}}:</b> {{ $cycle['year'] == 1 ? __('FirstYear') : ($cycle['year'] == 2 ? __('SecondYear') : '') }}
                                         </div>
                                         @if ($cycle['year'] == 2)
-                                        <div>
-                                            {{ $cycle['is_dual'] == 1 ? __('Yes') : ($cycle['is_dual'] == 0 ? __('no') : '') }}
+                                        <div class="col-1">
+                                            <b>{{_('Dual')}}:</b> {{ $cycle['is_dual'] == 1 ? __('Yes') : ($cycle['is_dual'] == 0 ? __('no') : '') }}
                                         </div>
                                         @endif
-                                        <div>
-                                            {{$cycle['enrollYear']}}
+                                        <div class="col-2">
+                                            <b>{{__('enrollYear')}}:</b> {{$cycle['enrollYear']}}
                                         </div>
                                     </div>
                                 </div>
