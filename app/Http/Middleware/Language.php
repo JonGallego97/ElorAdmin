@@ -15,7 +15,7 @@ final class Language
     public function handle(Request $request, Closure $next)
     {
         $language = session('language');
-
+        
         app()->setLocale($language);
 
         return $next($request);
