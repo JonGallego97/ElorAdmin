@@ -1045,7 +1045,7 @@
                     {
                         "name": "surname1",
                         "in": "query",
-                        "description": "{{__('Surname1')}}",
+                        "description": "First Surname",
                         "required": true,
                         "schema": {
                             "type": "string"

@@ -92,7 +92,7 @@ class UserController extends Controller
     *   @OA\Parameter(
     *       name="surname1",
     *       in="query",
-    *       description="{{__('Surname1')}}",
+    *       description="First Surname",
     *       required=true,
     *       @OA\Schema(
     *           type="string"
