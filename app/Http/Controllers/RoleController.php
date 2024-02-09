@@ -12,23 +12,13 @@ use Illuminate\Support\Facades\App;
 
 class RoleController extends Controller
 {
-
-    private $ControllerFunctions;
-
-    function __construct() {
-        $this->ControllerFunctions = new ControllerFunctions;
-    }
-    //$this->ControllerFunctions->checkAdminRoute()
-    //$this->ControllerFunctions->checkAdminRole()
-    //$this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()
-
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
 
-        if ($this->ControllerFunctions->checkAdminRoute()) {
+        if ($this->checkAdminRoute()) {
             $perPage = $request->input('per_page', App::make('paginationCount'));
             $roles = Role::orderBy('name', 'asc')->paginate($perPage);
             foreach ($roles as $role) {
@@ -36,8 +26,7 @@ class RoleController extends Controller
             }
             return view('admin.roles.index', compact('roles'));
         }else {
-            //si no es admin
-
+            return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
     }
 
@@ -46,7 +35,7 @@ class RoleController extends Controller
      */
     public function create(Request $request)
     {
-        if($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()){
+        if($this->checkAdminRole() && $this->checkAdminRoute()){
             $role = new Role();
             return view('admin.roles.create', ['role' => $role]);
         } else {
@@ -60,7 +49,7 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        if($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()){
+        if($this->checkAdminRole() && $this->checkAdminRoute()){
             
             $messages = [
                 'name.required' => __('errorMessageNameEmpty'),
@@ -103,7 +92,7 @@ class RoleController extends Controller
      */
     public function show(Request $request, Role $role)
     {
-        if ($this->ControllerFunctions->checkAdminRoute()){
+        if ($this->checkAdminRoute()){
             $role->users = $this->getRoleUsers($request, $role);
             return view('admin.roles.show',['role'=>$role]);
         } else {
@@ -117,7 +106,7 @@ class RoleController extends Controller
      */
     public function edit(Request $request,Role $role)
     {
-        if($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()){
+        if($this->checkAdminRole() && $this->checkAdminRoute()){
             return view('admin.roles.create', ['role' => $role]);
         } else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
@@ -126,12 +115,10 @@ class RoleController extends Controller
     }
 
     public function destroyRoleUser(Request $request, $roleId, $userId){
-        if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
+        if ($this->checkAdminRole() && $this->checkAdminRoute()) {
             $role = Role::find($roleId);
-            if ($role) {
+            if ($role && $userId != 0) {
                 $role->users()->detach($userId);
-                /* $role->users = $this->getRoleUsers($request, $role);
-                return view('admin.roles.show',['role'=>$role]); */
                 return redirect()->route('admin.roles.show',['role'=>$role])->with('success',__('successUpdate'));
             } else {
                 return redirect()->back()->withErrors('error', __('errorDelete'));
@@ -147,7 +134,7 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        if($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()){
+        if($this->checkAdminRole() && $this->checkAdminRoute()){
             $messages = [
                 'name.required' => __('errorMessageNameEmpty'),
                 'name.unique' => __('errorMessageCreateRole'),
@@ -169,8 +156,6 @@ class RoleController extends Controller
             } else {
                 return redirect()->back()->withErrors('error', __('errorUpdate'));
             }
-            /* $role->users = $this->getRoleUsers($request, $role);
-            return view('admin.roles.show',['role'=>$role]); */
         } else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
         }
@@ -182,10 +167,10 @@ class RoleController extends Controller
      */
     public function destroy(Request $request, $roleId)
     {
-        if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
+        if ($this->checkAdminRole() && $this->checkAdminRoute()) {
             $role = Role::find($roleId);
             if ($role) {
-                if($role->name != 'ADMINISTRADOR' && $role->name!= 'ALUMNO' && $role->name!= 'PROFESOR'){
+                if($this->checkIfDeleteForbiddenRole($role)){
                     $role->delete();
                     return redirect()->route('admin.roles.index')->with('success', 'Rol eliminado exitosamente.');
                 }else{

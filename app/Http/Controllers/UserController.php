@@ -10,7 +10,6 @@ use App\Models\Module;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Cycle;
-use App\Http\Controllers\ControllerFunctions;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -21,16 +20,10 @@ use Illuminate\Support\Facades\App;
 
 class UserController extends Controller {
 
-    private $ControllerFunctions;
-
-    function __construct() {
-        $this->ControllerFunctions = new ControllerFunctions;
-    }
-    //$this->ControllerFunctions->checkAdminRoute()
 
     public function index(Request $request) {
 
-        if ($this->ControllerFunctions->checkAdminRoute()) {
+        if ($this->checkAdminRoute()) {
             $route = Route::getCurrentRoute()->uri;
             $isTeachers = Str::contains($route,'admin/teachers');
             $isStudents = Str::contains($route,'admin/students');
@@ -40,37 +33,40 @@ class UserController extends Controller {
             $perPage = $request->input('per_page', App::make('paginationCount'));
 
             switch(true) {
-
+                
                 case $isTeachers:
+                    // En caso de que la ruta venga de TEACHERS
                     $users = User::whereHas('roles', function ($query) {
-                        $query->where('id', $this->ControllerFunctions->getTeacherRoleId());
+                        $query->where('id', $this->getTeacherRoleId());
                     })
                     ->orderBy('name', 'asc')
                     ->paginate($perPage);
                     $totalUsers = User::whereHas('roles', function ($query) {
-                        $query->where('id', $this->ControllerFunctions->getTeacherRoleId());
+                        $query->where('id', $this->getTeacherRoleId());
                     })->count();
 
                     $users->totalUsers = $totalUsers;
-                    //return view('admin.users.index',['users'=>$users]);
+
                     break;
 
                 case $isStudents:
+                    // En caso de que la ruta venga de STUDENTS
                     $users = User::whereHas('roles', function ($query) {
-                        $query->where('id', $this->ControllerFunctions->getStudentRoleId());
+                        $query->where('id', $this->getStudentRoleId());
                     })
                     ->orderBy('name', 'asc')
                     ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'first_login', 'created_at', 'updated_at']);
 
                     $totalUsers = User::whereHas('roles', function ($query) {
-                        $query->where('id', $this->ControllerFunctions->getStudentRoleId());
+                        $query->where('id', $this->getStudentRoleId());
                     })->count();
 
                     $users->totalUsers = $totalUsers;
-                    //return view('admin.users.index',compact('users'));
+
                     break;
 
                 case $hasNoRole:
+                    // En caso de que la ruta venga de NO ROLES
                     $users = User::doesntHave('roles')
                         ->orderBy('name', 'asc')
                         ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'first_login', 'created_at', 'updated_at']);
@@ -78,11 +74,11 @@ class UserController extends Controller {
                     $totalUsers = User::doesntHave('roles')->count();
 
                     $users->totalUsers = $totalUsers;
+
                     break;
 
                 case $personal:
-                    $perPage = $request->input('per_page', App::make('paginationCount'));
-
+                    // En caso de que la ruta venga de PERSONAL
                     $users = User::whereHas('roles', function ($query) {
                         $query->whereNotIn('name', ['alumno', 'profesor','administrador']);
                     })
@@ -95,6 +91,7 @@ class UserController extends Controller {
                     ->count();
 
                     $users->totalUsers = $totalUsers;
+
                     break;
 
                 default:
@@ -102,14 +99,12 @@ class UserController extends Controller {
                     ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'first_login', 'created_at', 'updated_at']);
 
                     break;
-                    //return view('admin.users.index',compact('users'));
             }
             return view('admin.users.index',compact('users'));
 
 
         }else{
 
-            $perPage = $request->input('per_page', App::make('paginationCount'));
             $users = User::whereHas('roles', function ($query) {
                 $query->where('id', 2);
             })
@@ -128,48 +123,13 @@ class UserController extends Controller {
         }
     }
 
-/*     public function staff(Request $request)
-    {
-        //Ya esta pasado
-        $user = Auth::user(); // Obtener el usuario autenticado
-
-        if (User::find($user->id)->roles->first()->id == 2) {
-            $perPage = $request->input('per_page', App::make('paginationCount'));
-            $users = User::whereHas('roles', function ($query) {
-                $query->where('id', 2);
-            })
-                ->orderBy('name', 'asc')
-                ->paginate($perPage, ['id', 'email', 'name', 'surname1', 'surname2', 'DNI', 'address', 'phone_number1', 'phone_number2', 'image', 'is_dual', 'first_login', 'year', 'created_at', 'updated_at']);
-            $totalUsers = User::whereHas('roles', function ($query) {
-                $query->where('id', 2);
-            })->count();
-
-            $users->totalUsers = $totalUsers;
-        } else {
-
-        }
-        return view('staff.index', ['users' => $users]);
-    } */
-
-/*     public function staffShow(Request $request, $user1, $user2)
-    {
-        // Lógica para obtener la información de los usuarios según sus identificadores ($user1 y $user2)
-        $user1Data = User::findOrFail($user1);
-        $user2Data = User::findOrFail($user2);
-
-        $user1= Auth::user(); // Obtener el usuario autenticado
-        // Lógica adicional...
-
-        // Retornar la vista con los datos de los usuarios
-    return view('staff.show', compact('user1Data', 'user2Data'), ['user1' => $user1]);
-    } */
 
     /**
      * Show the form for creating a new resource.
      */
     public function create(Request $request)
     {
-        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if ($this->checkAdminRoute() && $this->checkAdminRole()) {
             //si es admin
             $user = new User();
 
@@ -190,13 +150,12 @@ class UserController extends Controller {
         }
     }
 
-    public function extra_create(Request $request) {
+    /* public function extra_create(Request $request) {
 
         $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
         $teacherRole = Role::select('id','name')->where('name','PROFESOR')->first();
 
-        
-
+    
         $userRoles = $request->input('roles', []);
 
 
@@ -269,7 +228,7 @@ class UserController extends Controller {
             return view('admin.users.extra_create', ['user_id'=>$user->id,'userRolesNames'=>$userRolesNames,'languageModules' => $languageModules, 'roles'=> $roles,'departments' => $departments,'cycles' => $cycles]);
         }
 
-    }
+    } */
 
 
     /**
@@ -277,7 +236,7 @@ class UserController extends Controller {
      */
     public function store(Request $request)
     {
-        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if ($this->checkAdminRoute() && $this->checkAdminRole()) {
 
             $messages = [
                 'name.required' => __('errorMessageNameEmpty'),
@@ -311,24 +270,22 @@ class UserController extends Controller {
             $userRoles = $request->input('roles', []);
 
             switch (true) {
-                case in_array($this->ControllerFunctions->getStudentRoleId(),$userRoles):
+                case in_array($this->getStudentRoleId(),$userRoles):
                     $request->validate([
                         'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
                         'surname1' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
                         'surname2' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
                         'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
-                            if (!$this->ControllerFunctions->checkDni($value)) {
+                            if (!$this->checkDni($value)) {
                                 $fail(__('errorInvalidDNI'));
                             }
                         }],
                         'address' => ['required', 'string'],
                         'phone_number1' => ['required', 'integer'],
                         'phone_number2' => ['required', 'integer'],
-                        'year' => ['nullable', 'integer'],
-                        'is_dual' => ['boolean'],
                         'roles' => ['required', 'array', function ($attribute, $value, $fail) use ($request) {
                             $userRoles = $request->input('roles', []);
-                            if (in_array($this->ControllerFunctions->getStudentRoleId(), $userRoles, false) && count($userRoles) != 1) {
+                            if (in_array($this->getStudentRoleId(), $userRoles, false) && count($userRoles) != 1) {
                                 $fail(__('errorStudentCantHaveMoreRoles'));
                             }
                         }],
@@ -336,24 +293,22 @@ class UserController extends Controller {
                     ], $messages);
                     break;
             
-                case in_array($this->ControllerFunctions->getTeacherRoleId(),$userRoles):
+                case in_array($this->getTeacherRoleId(),$userRoles):
                     $request->validate([
                         'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
                         'surname1' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
                         'surname2' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
                         'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
-                            if (!$this->ControllerFunctions->checkDni($value)) {
+                            if (!$this->checkDni($value)) {
                                 $fail(__('errorInvalidDNI'));
                             }
                         }],
                         'address' => ['required', 'string'],
                         'phone_number1' => ['required', 'integer'],
                         'phone_number2' => ['required', 'integer'],
-                        'year' => ['nullable', 'integer'],
-                        'is_dual' => ['boolean'],
                         'roles' => ['required', 'array', function ($attribute, $value, $fail) use ($request) {
                             $userRoles = $request->input('roles', []);
-                            if (in_array($this->ControllerFunctions->getStudentRoleId(), $userRoles, false) && count($userRoles) != 1) {
+                            if (in_array($this->getStudentRoleId(), $userRoles, false) && count($userRoles) != 1) {
                                 $fail(__('errorStudentCantHaveMoreRoles'));
                             }
                         }],
@@ -368,18 +323,16 @@ class UserController extends Controller {
                         'surname1' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
                         'surname2' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
                         'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
-                            if (!$this->ControllerFunctions->checkDni($value)) {
+                            if (!$this->checkDni($value)) {
                                 $fail(__('errorInvalidDNI'));
                             }
                         }],
                         'address' => ['required', 'string'],
                         'phone_number1' => ['required', 'integer'],
                         'phone_number2' => ['required', 'integer'],
-                        'year' => ['nullable', 'integer'],
-                        'is_dual' => ['boolean'],
                         'roles' => ['required', 'array', function ($attribute, $value, $fail) use ($request) {
                             $userRoles = $request->input('roles', []);
-                            if (in_array($this->ControllerFunctions->getStudentRoleId(), $userRoles, false) && count($userRoles) != 1) {
+                            if (in_array($this->getStudentRoleId(), $userRoles, false) && count($userRoles) != 1) {
                                 $fail(__('errorStudentCantHaveMoreRoles'));
                             }
                         }],
@@ -424,7 +377,7 @@ class UserController extends Controller {
 
             $user->password = bcrypt(str_replace(".","",$userName) . date("Y"));
 
-            $isStudent = in_array($this->ControllerFunctions->getStudentRoleId(),$userRoles,false);
+            $isStudent = in_array($this->getStudentRoleId(),$userRoles,false);
 
             if(!$isStudent) {
                 $user->department_id = $request->department; 
@@ -474,9 +427,9 @@ class UserController extends Controller {
         $isTeacher = in_array($teacherRole->id,$userRoles,false);
 
         $user = User::with('roles','cycles.modules','department','modules','cycles')->where('id', $user->id)->first();
-        $fileName =    $this->ControllerFunctions->createImageFromBase64($user);
+        $fileName =    $this->createImageFromBase64($user);
 
-        if ($this->ControllerFunctions->checkAdminRoute()) {
+        if ($this->checkAdminRoute()) {
             //si es admin
             switch (true) {
                 ////////////////////////////////// ALUMNO //////////////////////////////////////////////////////////
@@ -722,7 +675,7 @@ class UserController extends Controller {
      */
     public function edit(Request $request,User $user)
     {
-        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if ($this->checkAdminRoute() && $this->checkAdminRole()) {
             //si es admin
             $departments = Department::select('id','name')->orderBy("name")->get();
             $roles = Role::all();
@@ -738,9 +691,7 @@ class UserController extends Controller {
      */
     public function update(Request $request, User $user)
     {
-        if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
-            
-            $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
+        if ($this->checkAdminRole() && $this->checkAdminRoute()) {
 
             $messages = [
                 'name.required' => __('errorMessageNameEmpty'),
@@ -760,29 +711,65 @@ class UserController extends Controller {
                 'phone_number2.integer' => __('errorTelephoneMustBeInteger'),
                 'roles.required' => __('errorRoleRequired'),
                 'roles.array' => __('errorRoleRequired'),
+                'department.required' => __('errorMessageDepartmentEmpty'),
+                'department.not_in' => __('errorMessageDepartmentEmpty'),
             ];
-    
-            $request->validate([
-                'name' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
-                'surname1' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
-                'surname2' =>['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
-                'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
-                    if (!$this->ControllerFunctions->checkDni($value)) {
-                        $fail(__('errorInvalidDNI'));
-                    }
-                }],
-                'address' =>['required','string'],
-                'phone_number1' =>['required','integer'],
-                'phone_number2' =>['required','integer'],
-                'roles' => ['required','array',function ($attribute, $value, $fail) use ($request,$studentRole) {
-                    $userRoles = $request->input('roles', []);
-                    if (in_array($studentRole->id,$userRoles,false) && count($userRoles)!=1) {
-                        $fail(__('errorStudentCantHaveMoreRoles'));
-                    }
-                }],
-            ],$messages);
 
+            $userRoles = $request->input('roles', []);
+            $isStudent = in_array($this->getStudentRoleId(),$userRoles,false);
+            $isTeacher = in_array($this->getTeacherRoleId(),$userRoles,false);
+            $isAdmin = in_array($this->getAdminRoleId(),$userRoles,false);
 
+            switch (true) {
+            
+                case $isStudent:
+                    // Si hay elegido rol Estudiante
+                    $request->validate([
+                        'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'surname1' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'surname2' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
+                            if (!$this->checkDni($value)) {
+                                $fail(__('errorInvalidDNI'));
+                            }
+                        }],
+                        'address' => ['required', 'string'],
+                        'phone_number1' => ['required', 'integer'],
+                        'phone_number2' => ['required', 'integer'],
+                        'roles' => ['required', 'array', function ($attribute, $value, $fail) use ($request) {
+                            $userRoles = $request->input('roles', []);
+                            if (in_array($this->getStudentRoleId(), $userRoles, false) && count($userRoles) != 1) {
+                                $fail(__('errorStudentCantHaveMoreRoles'));
+                            }
+                        }],
+                    ], $messages);
+                    break;
+            
+                default:
+                    $request->validate([
+                        'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'surname1' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'surname2' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+                        'dni' => ['required', 'regex:/^[a-zA-Z0-9]+$/', function ($attribute, $value, $fail) {
+                            if (!$this->checkDni($value)) {
+                                $fail(__('errorInvalidDNI'));
+                            }
+                        }],
+                        'address' => ['required', 'string'],
+                        'phone_number1' => ['required', 'integer'],
+                        'phone_number2' => ['required', 'integer'],
+                        'roles' => ['required', 'array', function ($attribute, $value, $fail) use ($request) {
+                            $userRoles = $request->input('roles', []);
+                            if (in_array($this->getStudentRoleId(), $userRoles, false) && count($userRoles) != 1) {
+                                $fail(__('errorStudentCantHaveMoreRoles'));
+                            }
+                        }],
+                        'department' => ['required', 'not_in:0'],
+                    ], $messages);
+                    break;
+            }
+
+            
             $user->name = $request->name;
             $user->surname1 = $request->surname1;
             $user->surname2 = $request->surname2;
@@ -790,12 +777,6 @@ class UserController extends Controller {
             $user->address = $request->address;
             $user->phone_number1 = $request->phone_number1;
             $user->phone_number2 = $request->phone_number2;
-
-            $userRoles = $request->input('roles', []);
-            $isStudent = in_array($this->ControllerFunctions->getStudentRoleId(),$userRoles,false);
-            $isTeacher = in_array($this->ControllerFunctions->getTeacherRoleId(),$userRoles,false);
-            $isAdmin = in_array($this->ControllerFunctions->getAdminRoleId(),$userRoles,false);
-
 
             if(!$isStudent) {
                 $user->department_id = $request->department; 
@@ -805,25 +786,16 @@ class UserController extends Controller {
 
             $result = $user->save();
 
-            if($result) {
-                /* $arraysAreEqual = ($request->roles == $user->roles());
-                if (!$arraysAreEqual) {
-                    switch(true) {
-                        case !in_array($this->ControllerFunctions->getStudentRoleId(),$request->roles):
-                            $user->cycles()->detach();
-                            $user->modules()->detach();
-                            break;
-                        case !in_array($this->ControllerFunctions->getTeacherRoleId(),$request->roles):
-                            $user->modules()->detach();
-                            break;
-                    } */
+            $user->load('roles');
 
-                    //Si cambia de rol de profesor o de alumno, le quita los modulos y los ciclos
+            if($result) {
                     switch (true) {
+
                         case $user->hasRole("ALUMNO") && !$isStudent:
                             $user->cycles()->detach();
                             $user->modules()->detach();
                             break;
+
                         case $user->hasRole("PROFESOR") && !$isTeacher:
                             $user->modules()->detach();
                             break;
@@ -832,16 +804,18 @@ class UserController extends Controller {
                 }
                 return redirect()->route('admin.users.show',['user'=>$user]);
             } else {
-                return redirect()->back()->withErrors('error','Already in that cycle');
+                return redirect()->back()->withErrors('error',__('errorMessageCantUpdate'));
             }
     }
 
+
+    
     /**
      * Update the specified resource in storage.
      */
     public function addCycle(Request $request, User $user)
     {
-        if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
+        if ($this->checkAdminRole() && $this->checkAdminRoute()) {
 
             $messages = [
                 'newCycle.regex' => __('errorMessageCyclesEmpty'),
@@ -856,7 +830,7 @@ class UserController extends Controller {
             if(!in_array($request->newCycle,$user->cycles->pluck('id')->toArray())){
                 $this->enrollStudentInCycle($user->id,$request->newCycle,$request->year,$request->is_dual);
             } else {
-                return redirect()->back()->withErrors('error','Already in that cycle');
+                return redirect()->back()->withErrors('error',__('errorMessageAlreadyInThatCycle'));
             }
             return redirect()->route('admin.users.show',['user'=>$user]);
         }
@@ -868,7 +842,7 @@ class UserController extends Controller {
      */
     public function addModule(Request $request, User $user)
     {
-        if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
+        if ($this->checkAdminRole() && $this->checkAdminRoute()) {
 
             $modulesArray = explode("/",$request->newModule);
             $cycleId = $modulesArray[0];
@@ -899,17 +873,17 @@ class UserController extends Controller {
     public function destroy(Request $request,$userId)
     {
 
-        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if ($this->checkAdminRoute() && $this->checkAdminRole()) {
             $user = User::find($userId);
-            if($user->id != 0){
-                if ($user) {
+            if ($user) {
+                if(!$this->checkIfDeleteForbiddenUser($user)){
                     $user->delete();
                     return redirect()->route('admin.users.index');
                 } else {
-                    return redirect()->back()->withErrors('error', __('errorDelete'));
+                    return redirect()->back()->withErrors('error', __('errorAdminCantBeDeleted'));
                 }
             } else {
-                return redirect()->back()->withErrors('error', __('errorAdminCantBeDeleted'));
+                return redirect()->back()->withErrors('error', __('errorDelete'));
             }
 
         }else {
@@ -919,7 +893,7 @@ class UserController extends Controller {
 
     public function enrollStudentInCycle($userId, $cycleId,$year,$dual)
     {
-        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if($this->checkAdminRoute() && $this->checkAdminRole()) {
             $user = User::findOrFail($userId);
             $cycle = Cycle::findOrFail($cycleId);
             if ($user->hasRole('ALUMNO')) {
@@ -949,7 +923,7 @@ class UserController extends Controller {
 
     public function enrollTeacherInModule($userId, $moduleId,$cycleId)
     {
-        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if($this->checkAdminRoute() && $this->checkAdminRole()) {
             $user = User::findOrFail($userId);
             $module = Module::findOrFail($moduleId);
 
@@ -977,7 +951,7 @@ class UserController extends Controller {
 
     public function editRoles(Request $request, User  $user) {
 
-        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if($this->checkAdminRoute() && $this->checkAdminRole()) {
             $roleList = $request->input('selectedRoles');
             $rolesArray = explode(',', $roleList);
 
@@ -995,7 +969,7 @@ class UserController extends Controller {
 
     public function editCycles(Request $request, User $user) {
 
-        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if($this->checkAdminRoute() && $this->checkAdminRole()) {
             $cycleList = $request->input('selectedCycles');
             $cyclesArray = explode(',', $cycleList);
 
@@ -1014,7 +988,7 @@ class UserController extends Controller {
     }
 
     public function destroyUserCycle(Request $request, $cycleId, $userId){
-        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if ($this->checkAdminRoute() && $this->checkAdminRole()) {
             $user = User::find($userId);
             if ($user) {
 
@@ -1038,7 +1012,7 @@ class UserController extends Controller {
     }
 
     public function destroyUserModule(Request $request, $moduleId, $userId){
-        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if ($this->checkAdminRoute() && $this->checkAdminRole()) {
             $user = User::find($userId);
             if ($user) {
                 $user->modules()->detach($moduleId);

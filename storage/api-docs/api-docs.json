@@ -223,7 +223,7 @@
             },
             "put": {
                 "tags": [
-                    "Roles"
+                    "Cycles"
                 ],
                 "summary": "Edit a cycle",
                 "operationId": "99f6e0db8eef90833b85119f766063a8",
@@ -244,6 +244,15 @@
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "description": "Department ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {

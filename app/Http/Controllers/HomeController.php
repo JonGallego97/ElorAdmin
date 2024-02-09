@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    private $ControllerFunctions;
 
     /**
      * Create a new controller instance.
@@ -23,9 +22,7 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->ControllerFunctions = new ControllerFunctions;
     }
-    //$this->ControllerFunctions->checkAdminRoute()
 
     /**
      * Show the application dashboard.
@@ -36,8 +33,8 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        if($this->ControllerFunctions->checkAdminRole()) {
-            $fileName =    $this->ControllerFunctions->createImageFromBase64($user);
+        if($this->checkAdminRole()) {
+            $fileName =    $this->createImageFromBase64($user);
             return view('admin.home',compact('user'))->with('imagePath','images/'.$fileName);;
         } else {
             $usera = User::All();
@@ -102,7 +99,7 @@ class HomeController extends Controller
 
             //obtener el departamento del usuario
             $usersInSameDepartment=[];
-            if ($this->ControllerFunctions->checkAdminRole()) {
+            if ($this->checkAdminRole()) {
                 // ... (código existente para administradores)
             } else {
                 // Obtener el departamento del usuario autenticado

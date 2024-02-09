@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Request;
 
-class ControllerFunctions {
+/* class ControllerFunctions {
 
         
     protected $adminName = "ADMINISTRADOR";
@@ -90,7 +90,19 @@ class ControllerFunctions {
         }
     }
 
-}
+    public function checkIfDeleteForbiddenRole(Role $role){
+        $studentRoleId = $this->getStudentRoleId();
+        $teacherRoleId = $this->getTeacherRoleId();
+        $adminRoleId = $this->getAdminRoleId();
+        $forbiddenRoles = [$studentRoleId,$teacherRoleId,$adminRoleId];
+        if (!in_array($role->id,$forbiddenRoles)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+} */
 
 
 ?>

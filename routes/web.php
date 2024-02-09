@@ -60,33 +60,33 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'checkRole'])->group
     // Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::post('/users/{user}/{userRoles}', [UserController::class, 'store'])->name('users.store');
     Route::post('/users/extra', [UserController::class, 'extra_create'])->name('users.extra_create');
-    Route::resource('/users', UserController::class)->names(['create'=> 'users.create',
+    Route::resource('/users', UserController::class)->except(['store','destroy'])->names(['create'=> 'users.create',
                                                              'show'=>'users.show',
                                                              'edit'=>'users.edit',
                                                              'index'=>'users.index']);
     //Roles
     Route::delete('roles/destroyRoleUser/{roleId}/{userId}', [RoleController::class, 'destroyRoleUser'])->name('roles.destroyRoleUser');
     Route::delete('roles/destroy/{roleId}', [RoleController::class, 'destroy'])->name('roles.destroy');
-    Route::resource('roles', RoleController::class)->names(['index'=>'roles.index']);
+    Route::resource('roles', RoleController::class)->except(['destroy'])->names(['index'=>'roles.index']);
     //Departaments
     Route::resource('departments', DepartmentController::class);
     Route::controller(DepartmentController::class)->group(function () {
         Route::delete('/departments/destroyDepartmentUser/{departmentId}/{userId}', 'destroyDepartmentUser')->name('departments.destroyDepartmentUser');
-        Route::delete('/departments/destroy/{departmentId}', 'destroy')->name('departments.destroy');
+        //Route::delete('/departments/destroy/{departmentId}', 'destroy')->name('departments.destroy');
         Route::post('/departments/create','create')->name('departments.edit_create');
-        Route::get('/departments','index')->name('departments.index');
+        //Route::get('/departments','index')->name('departments.index');
     });
 
     //Modules
     Route::delete('modules/destroyModuleUser/{moduleId}/{userId}', [ModuleController::class, 'destroyModuleUser'])->name('modules.destroyModuleUser');
-    Route::delete('modules/destroy/{moduleId}', [ModuleController::class, 'destroy'])->name('modules.destroy');
+    //Route::delete('modules/destroy/{moduleId}', [ModuleController::class, 'destroy'])->name('modules.destroy');
     Route::resource('modules', ModuleController::class);
     //Cycles
     Route::resource('cycles', CycleController::class)->except(['delete']);
     Route::get('/cycles/getCyclesByDepartment/{department_id}',[CycleController::class,'getCyclesByDepartment'])->name('cycles.getCyclesByDepartment');
     Route::controller(CycleController::class)->group(function () {
         Route::delete('/cycles/destroyCycleModule/{cycleId}/{userId}','destroyCycleModule')->name('cycles.destroyCycleModule');
-        Route::delete('/cycles/destroy/{cycleId}','destroy')->name('cycles.destroy');
+        //Route::delete('/cycles/destroy/{cycleId}','destroy')->name('cycles.destroy');
         Route::get('/cycles','index')->name('cycles.index');
     });
     // Route::delete('cycles/destroyCycleModule/{cycleId}/{userId}', [CycleController::class, 'destroyCycleModule'])->name('cycles.destroyCycleModule');
@@ -95,13 +95,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'checkRole'])->group
 });
 
 Route::middleware(['auth'])->group(function () {
-    //Route::get('/users/{user}', [UserController::class, 'index'])->name('users.index');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
-    //Route::get('/users/{staff}', [UserController::class, 'staff'])->name('users.staff.index');
-    //He cambiado admin por person por que sino se petaba con el index normal
     Route::get('/departments', [DepartmentController::class, 'index'])->name('departments.index');
-    //He cambiardo admin por person person por que sino se petaba con el index normal
     Route::get('/cycles', [CycleController::class, 'index'])->name('cycles.index');
 
 });

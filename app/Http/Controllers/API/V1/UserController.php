@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\ControllerFunctions;
 use App\Models\User;
 use App\Models\Cycle;
 use App\Models\Module;
@@ -16,12 +15,6 @@ use Illuminate\Validation\ValidationException;
 class UserController extends Controller
 {
 
-    private $ControllerFunctions;
-
-    function __construct() {
-        $this->ControllerFunctions = new ControllerFunctions;
-    }
-    //$this->ControllerFunctions->checkAdminRoute()
     
 
     /**
@@ -473,7 +466,7 @@ class UserController extends Controller
     */
     public function destroy(User $user)
     {
-        if($this->ControllerFunctions->checkAdminRole() && $user->id != 0){
+        if($this->checkAdminRole() && $user->id != 0){
             $deleted = $user->delete();
             if ($deleted) {
                 return response()->json(['user'=>$user])->setStatusCode(Response::HTTP_NO_CONTENT);

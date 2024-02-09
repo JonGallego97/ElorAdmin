@@ -11,17 +11,11 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    private $ControllerFunctions;
-
-    function __construct() {
-        $this->ControllerFunctions = new ControllerFunctions;
-    }
-    //$this->ControllerFunctions->checkAdminRoute()
 
     public function index()
     {
-        $roleIdAlumno = $this->ControllerFunctions->getStudentRoleId();
-        $roleIdProfesor = $this->ControllerFunctions->getTeacherRoleId();
+        $roleIdAlumno = $this->getStudentRoleId();
+        $roleIdProfesor = $this->getTeacherRoleId();
 
         $students = User::whereHas('roles', function ($query) use ($roleIdAlumno) {
             $query->where('id', $roleIdAlumno);

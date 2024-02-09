@@ -67,19 +67,16 @@
                                 @if((str_contains(url()->previous(),'teachers') && $role->name == 'PROFESOR') || (str_contains(url()->previous(),'students') && $role->name == 'ALUMNO'))
                                     checked
                                 @endif
-                                @if($role->name == 'ALUMNO')
-                                    onclick="handleAlumnoCheckbox(this)"
-                                @endif
-                                @if($role->name == 'PROFESOR')
-                                    onclick="handleProfesorCheckbox(this)"
-                                @endif
                             @elseif(Route::currentRouteName() == 'admin.users.edit')
-                                @if($role->name == 'ALUMNO')
-                                    onclick="handleAlumnoCheckbox(this)"
-                                @endif
                                 @if($user->hasRole($role->name))
                                     checked
                                 @endif
+                            @endif
+                            @if($role->name == 'ALUMNO')
+                                onclick="handleAlumnoCheckbox(this)"
+                            @endif
+                            @if($role->name == 'PROFESOR')
+                                onclick="handleProfesorCheckbox(this)"
                             @endif
                         >
                         <label class="form-check-label" for="role_{{ $role->id }}">
@@ -183,27 +180,19 @@
         var alumnoCheckbox = document.getElementById('role_ALUMNO');
         var profesorCheckbox = document.getElementById('role_PROFESOR');
 
-        if (alumnoCheckbox) {
-            handleAlumnoCheckbox(alumnoCheckbox);
+        switch (true) {
+            case alumnoCheckbox.checked:
+                handleAlumnoCheckbox(alumnoCheckbox);
+                break;
+            case profesorCheckbox.checked:
+                handleProfesorCheckbox(profesorCheckbox);
+                break;
+            default:
+                modulesContainer.style.display = 'none';
+                cyclesContainer.style.display = 'none';
+                break;
         }
 
-        if (profesorCheckbox) {
-            handleProfesorCheckbox(profesorCheckbox);
-        }
-
-
-        /////////////////FILTRAR MODULOS POR DEPARTAMENTO/////////////////////////
-
-
-        // Obtiene el elemento del menú desplegable de departamentos
-        var departmentDropdown = document.getElementById('department');
-
-        if (departmentDropdown) {
-            departmentDropdown.addEventListener('change', function () {
-                var selectedDepartmentId = departmentDropdown.value;
-                filterModulesByDepartment(selectedDepartmentId);
-            });
-        }
     });
     
 
@@ -226,12 +215,9 @@
 
         // Clear values for both containers
         if (alumnoCheckbox.checked) {
-            //clearContainerValues(departmentContainer);
-            //clearContainerValues(modulesContainer);
             modulesContainer.style.display = 'none';
         } else {
             departmentContainer.value = "0";
-            //clearContainerValues(cyclesContainer);
         }
     }
 
@@ -239,43 +225,14 @@
         var modulesContainer = document.getElementById('modulesContainer');
         var cyclesContainer = document.getElementById('cyclesContainer');
 
-
-        // Show/hide the modules container based on the PROFESOR checkbox state
         modulesContainer.style.display = profesorCheckbox.checked ? 'block' : 'none';
 
-        //clearContainerValues(cyclesContainer);
+        if (profesorCheckbox.checked) {
+            modulesContainer.style.display = 'block';
+            cyclesContainer.style.display = 'none';
+        }
+
     }
-
-    function clearContainerValues(container) {
-        // Clear values inside the specified container
-        var inputFields = container.querySelectorAll('input, select, textarea');
-        inputFields.forEach(function (field) {
-            if (field.type !== 'checkbox') {
-                field.value = '';
-            } else {
-                field.checked = false;
-            }
-        });
-    }
-
-
-    function filterModulesByDepartment(departmentId) {
-        var departmentBlocks = document.querySelectorAll('.department-block');
-        var modulesCheckboxes = document.querySelectorAll('input[name="modules[]"]');
-
-        departmentBlocks.forEach(function (block) {
-            block.style.display = 'none';
-
-            if (block.classList.contains('department_' + departmentId)) {
-                block.style.display = 'block';
-            }
-        });
-
-        modulesCheckboxes.forEach(function (checkbox) {
-            checkbox.checked = false;
-        });
-    }
-
     
 </script>
 @else
