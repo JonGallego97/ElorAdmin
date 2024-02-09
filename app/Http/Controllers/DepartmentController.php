@@ -111,8 +111,8 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, Department $department)
     {
-
         if($this->checkAdminRole() && $this->checkAdminRoute()){
+            
             $messages = [
                 'name.required' => __('errorMessageNameEmpty'),
                 'name.regex' => __('errorMessageNameLettersOnly'),
@@ -144,8 +144,8 @@ class DepartmentController extends Controller
 
         if ($this->checkAdminRole() && $this->checkAdminRoute()) {
             //si es admin
-            $department = Department::find($departmentId);
-            $departmentCount = Department::where('id',$departmentId)->count();
+            $department = Department::with('users')->find($departmentId);
+            $departmentCount = $department->users()->count();
             if ($department) {
                 if($departmentCount == 0) {
                     $department->delete();

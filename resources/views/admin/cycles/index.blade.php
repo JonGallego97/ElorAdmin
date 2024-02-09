@@ -38,7 +38,7 @@
                             {{--<a href="{{ route('admin.cycles.edit', $cycle) }}" class="me-2" role="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="cycles/destroy" data-type="{{__('cycle')}}" data-id="{{ $cycle->id }}" data-name="{{ $cycle->name }}" id="openModalBtn">
+                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="cycles" data-type="{{__('cycle')}}" data-id="{{ $cycle->id }}" data-name="{{ $cycle->name }}" id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
                             </button>
                             --}}
@@ -50,7 +50,7 @@
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <!-- Botón para eliminar -->
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"  data-action="cycles/destroy" data-type="{{__('cycle')}}" data-id="{{ $cycle->id }}" data-name="{{ $cycle->name }}" id="openModalBtn">
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"  data-action="cycles" data-type="{{__('cycle')}}" data-id="{{ $cycle->id }}" data-name="{{ $cycle->name }}" id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
                             </button>
 

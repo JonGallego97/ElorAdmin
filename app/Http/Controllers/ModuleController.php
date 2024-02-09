@@ -103,8 +103,8 @@ class ModuleController extends Controller
             
             if($created) {
                 $cycles = $request->input('cycles', []);
-                $attached = $module->cycles()->attach($cycles);
-                if($attached) {
+                $synced = $module->cycles()->sync($cycles);
+                if($synced) {
                     return redirect()->route('admin.modules.show',['module'=>$module])->with('success',__('successCreate'));
                 } else {
                     $module->delete();

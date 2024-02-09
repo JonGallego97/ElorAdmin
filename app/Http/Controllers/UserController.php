@@ -23,6 +23,8 @@ class UserController extends Controller {
 
     public function index(Request $request) {
 
+        $perPage = $request->input('per_page', App::make('paginationCount'));
+
         if ($this->checkAdminRoute()) {
             $route = Route::getCurrentRoute()->uri;
             $isTeachers = Str::contains($route,'admin/teachers');
@@ -30,8 +32,7 @@ class UserController extends Controller {
             $hasNoRole = str::contains($route,'admin/withoutRole');
             $personal = str::contains($route,'admin/personal');
 
-            $perPage = $request->input('per_page', App::make('paginationCount'));
-
+        
             switch(true) {
                 
                 case $isTeachers:
@@ -150,85 +151,6 @@ class UserController extends Controller {
         }
     }
 
-    /* public function extra_create(Request $request) {
-
-        $studentRole = Role::select('id','name')->where('name','ALUMNO')->first();
-        $teacherRole = Role::select('id','name')->where('name','PROFESOR')->first();
-
-    
-        $userRoles = $request->input('roles', []);
-
-
-        $userRolesNames = Array();
-        foreach ($userRoles as $userRole) {
-            $roleName = Role::select('name')->where('id',$userRole)->first();
-            $userRolesNames[$userRole] = $roleName->name;
-        }
-
-
-
-        $user = new User();
-        $user->name = ucfirst(strtolower($request->name));
-        $user->surname1 = ucfirst(strtolower($request->surname1));
-        $user->surname2 = ucfirst(strtolower($request->surname2));
-        $user->dni = $request->dni;
-        $user->address = ucwords(strtolower($request->address));
-        $user->phone_number1 = $request->phone_number1;
-        $user->phone_number2 = $request->phone_number2;
-        $user->first_login = false;
-        $user->image = null;
-
-        $userName =  $user->name . "." . $user->surname1 . substr($user->surname2,0,2);
-        $userName = str_replace(" ","",$userName);
-        $tilesList = array(
-            'á' => 'a',
-            'é' => 'e',
-            'í' => 'i',
-            'ó' => 'o',
-            'ú' => 'u',
-            'ñ' => 'n',
-            'Á' => 'A',
-            'É' => 'E',
-            'Í' => 'I',
-            'Ó' => 'O',
-            'Ú' => 'U',
-            'Ñ' => 'N'
-        );
-
-        $userName = strtr($userName, $tilesList);
-        $domainName = "@elorrieta-errekamari.com";
-
-        $user->email = strtolower($userName . $domainName);
-
-        $user->password = bcrypt(str_replace(".","",$userName) . date("Y"));
-
-        $user->save();
-        try {
-            foreach ($userRoles as $role) {
-                $role_user = new RoleUser();
-                $role_user->role_id = $role;
-                $role_user->user_id = $user->id;
-                $role_user->save();
-            }
-        } catch (QueryException $ex){
-            dd($ex->getMessage());
-        }
-
-        $roles = Role::select('id','name')->orderBy("id")->get();
-        $departments = Department::select('id','name')->orderBy("name")->get();
-        $cycles = Cycle::with('modules')->orderBy('department_id')->get();
-
-        $languageModulesCodes = Module::whereIn('name', ['Inglés Técnico', 'Inglés', 'Segunda lengua extranjera'])->pluck('code')->toArray();
-        $languageModules = Cycle::with(['modules' => function ($query) use ($languageModulesCodes) {
-            $query->where('code', $languageModulesCodes);
-        }])->get();
-        if($user->hasRole("ADMINISTRADOR")){
-            return redirect()->route('admin.users.show',['user'=>$user]);
-        } else {
-            return view('admin.users.extra_create', ['user_id'=>$user->id,'userRolesNames'=>$userRolesNames,'languageModules' => $languageModules, 'roles'=> $roles,'departments' => $departments,'cycles' => $cycles]);
-        }
-
-    } */
 
 
     /**

@@ -55,7 +55,7 @@
                         {{--<a href="{{ route('admin.users.edit', $user) }}" class="me-2" role="button">
                             <i class="bi bi-pencil-square fs-3"></i>
                         </a>
-                        <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
+                        <button class="me-2" type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
                             <i class="bi bi-trash3 fs-3"></i>
                         </button>--}}
 
@@ -63,7 +63,7 @@
                             <i class="bi bi-pencil-square"></i>
                         </a>
                         <!-- Botón para eliminar -->
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
                             <i class="bi bi-trash3"></i>
                         </button>
                     </div>
@@ -71,7 +71,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col d-flex justify-content-start">
+                    <div class="col d-flex justify-content-center">
                         <!-- photos -->
                         <img src="{{ asset($imagePath) }}" alt="Imagen" style="max-width: 100%; max-height: 200px;" />
                     </div>

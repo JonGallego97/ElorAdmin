@@ -42,38 +42,31 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/set_language/{language}', [LanguageController::class, 'setLanguage'])->name('set_language');
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'checkRole'])->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('index');
     //Users
     Route::get('users/{user}/editRoles', [UserController::class, 'editRoles'])->name('users.editRoles');
-    Route::put('users/{user}/editCycles', [UserController::class, 'editCycles'])->name('users.editCycles');
-    Route::put('users/{user}/addCycle',[UserController::class,'addCycle'])->name('users.addCycle');
-    Route::delete('users/destroyUserModule/{module}/{user}',[UserController::class,'destroyUserModule'])->name('users.destroyUserModule');
-    Route::delete('users/destroyUserCycle/{cycle}/{user}',[UserController::class,'destroyUserCycle'])->name('users.destroyUserCycle');
-    Route::put('users/{user}/addModule',[UserController::class,'addModule'])->name('users.addModule');
-    Route::delete('users/destroy/{userId}', [UserController::class, 'destroy'])->name('users.destroy');
-    Route::get('/', [AdminController::class, 'index'])->name('index');
-    /* Route::get('/students', [UserController::class, 'indexStudent'])->name('students.index');
-    Route::get('/teachers', [UserController::class, 'indexTeacher'])->name('teachers.index'); */
+
     Route::get('/students', [UserController::class, 'index'])->name('students.index');
     Route::get('/teachers', [UserController::class, 'index'])->name('teachers.index');
     Route::get('/withoutRole', [UserController::class, 'index'])->name('withoutRole.index');
     Route::get('/personal', [UserController::class, 'index'])->name('personal.index');
+    Route::put('users/{user}/editCycles', [UserController::class, 'editCycles'])->name('users.editCycles');
+    Route::put('users/{user}/addCycle',[UserController::class,'addCycle'])->name('users.addCycle');
+    Route::put('users/{user}/addModule',[UserController::class,'addModule'])->name('users.addModule');
     // Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
-    Route::post('/users/{user}/{userRoles}', [UserController::class, 'store'])->name('users.store');
-    Route::post('/users/extra', [UserController::class, 'extra_create'])->name('users.extra_create');
-    Route::resource('/users', UserController::class)->except(['store','destroy'])->names(['create'=> 'users.create',
-                                                             'show'=>'users.show',
-                                                             'edit'=>'users.edit',
-                                                             'index'=>'users.index']);
+    Route::delete('users/destroyUserModule/{module}/{user}',[UserController::class,'destroyUserModule'])->name('users.destroyUserModule');
+    Route::delete('users/destroyUserCycle/{cycle}/{user}',[UserController::class,'destroyUserCycle'])->name('users.destroyUserCycle');
+    Route::resource('/users', UserController::class);
     //Roles
     Route::delete('roles/destroyRoleUser/{roleId}/{userId}', [RoleController::class, 'destroyRoleUser'])->name('roles.destroyRoleUser');
-    Route::delete('roles/destroy/{roleId}', [RoleController::class, 'destroy'])->name('roles.destroy');
-    Route::resource('roles', RoleController::class)->except(['destroy'])->names(['index'=>'roles.index']);
+    //Route::delete('roles/destroy/{roleId}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    Route::resource('roles', RoleController::class);
     //Departaments
     Route::resource('departments', DepartmentController::class);
     Route::controller(DepartmentController::class)->group(function () {
         Route::delete('/departments/destroyDepartmentUser/{departmentId}/{userId}', 'destroyDepartmentUser')->name('departments.destroyDepartmentUser');
         //Route::delete('/departments/destroy/{departmentId}', 'destroy')->name('departments.destroy');
-        Route::post('/departments/create','create')->name('departments.edit_create');
+        //Route::post('/departments/create','create')->name('departments.edit_create');
         //Route::get('/departments','index')->name('departments.index');
     });
 
