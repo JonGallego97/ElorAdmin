@@ -29,4 +29,13 @@ class LanguageController extends Controller
             abort(404, 'Idioma no válido');
         }
     }
+
+    public function handle(Request $request, Closure $next): Response
+    {
+        $language = session('language');
+
+        app()->setLocale($language);
+
+        return $next($request);
+    }
 }
