@@ -133,6 +133,18 @@
                                 "type": "integer"
                             }
                         }
+                    },
+                    {
+                        "name": "modules[]",
+                        "in": "query",
+                        "description": "Modules",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
                     }
                 ],
                 "responses": {

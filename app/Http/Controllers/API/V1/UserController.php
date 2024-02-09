@@ -466,7 +466,7 @@ class UserController extends Controller
     */
     public function destroy(User $user)
     {
-        if($this->checkAdminRole() && $user->id != 0){
+        if($this->checkAdminRole() && !$this->checkIfDeleteForbiddenUser($user)){
             $deleted = $user->delete();
             if ($deleted) {
                 return response()->json(['user'=>$user])->setStatusCode(Response::HTTP_NO_CONTENT);

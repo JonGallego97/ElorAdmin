@@ -57,7 +57,7 @@
                     <ul class="navbar-nav ms-auto">
                         <div class="dropdown">
                             <a class="nav-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{ strtoupper(app()->getLocale()) }}
+                                {{ strtoupper(session('language')) }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="languageDropdown">
                                 @foreach(config('languages') as $locale => $data)

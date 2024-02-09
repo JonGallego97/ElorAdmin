@@ -72,9 +72,10 @@
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <!-- Botón para eliminar -->
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"  data-action="departments/destroyDepartmentUser" data-type="" data-id="{{ $department->id }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $department->name }}"id="openModalBtn">
+                            <!-- Se comenta por que no se puede tener un usuario sin departamento -->
+<!--                             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"  data-action="departments/destroyDepartmentUser" data-type="" data-id="{{ $department->id }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $department->name }}"id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
-                            </button>
+                            </button> -->
                         </div>
                     </td>
                 </tr>

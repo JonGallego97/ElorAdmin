@@ -6,7 +6,7 @@ return [
         'lc' => 'es_ES',
     ],
     'en' => [
-        'language' => 'Inglés',
+        'language' => 'English',
         'lc' => 'en_US',
     ],
     'eu' => [

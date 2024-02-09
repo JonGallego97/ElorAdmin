@@ -155,14 +155,13 @@ class ModuleController extends Controller
             'hours.required' => __('errorMessageHoursEmpty'),
             'hours.integer' => __('errorMessageHoursInteger'),
             'cycles.required' => __('errorCycleRequired'),
-            'cycles.array' => __('errorCycleRequired'),
         ];
 
         $request->validate([
             'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
             'code' => ['required', 'integer', 'unique:modules'],
             'hours' => ['required', 'integer'],
-            'cycles' => ['required','array'],
+            'cycles' => ['required'],
         ], $messages);
 
         $module = new Module();
@@ -304,14 +303,13 @@ class ModuleController extends Controller
             'hours.required' => __('errorMessageHoursEmpty'),
             'hours.integer' => __('errorMessageHoursInteger'),
             'cycles.required' => __('errorCycleRequired'),
-            'cycles.array' => __('errorCycleRequired'),
         ];
 
         $request->validate([
             'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
             'code' => ['required', 'integer', Rule::unique('modules')->ignore($module->id)],
             'hours' => ['required', 'integer'],
-            'cycles' => ['required','array'],
+            'cycles' => ['required'],
         ], $messages);
 
         $module->code = $request->code;

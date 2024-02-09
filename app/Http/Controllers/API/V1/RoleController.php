@@ -238,8 +238,7 @@ class RoleController extends Controller
     */
     public function update(Request $request, Role $role)
     {
-        $role->name = $request['name'];
-
+            $role->name = $request['name'];
             $updated = $role->save();
             if($updated) {
                 return response()->json(['role'=>$role])->setStatusCode(Response::HTTP_CREATED);
@@ -286,7 +285,7 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
-        if($role->name != 'ADMINISTRADOR' && $role->name!= 'ALUMNO' && $role->name!= 'PROFESOR'){
+        if($this->checkIfDeleteForbiddenRole($role)){
             $deleted = $role->delete();
             if ($deleted) {
                 return response()->json(['role'=>$role])->setStatusCode(Response::HTTP_NO_CONTENT);

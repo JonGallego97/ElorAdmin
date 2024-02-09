@@ -114,6 +114,18 @@ class CycleController extends Controller
     *           )
     *       )
     *   ),
+    *   @OA\Parameter(
+    *       name="modules[]",
+    *       in="query",
+    *       description="Modules",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="array",
+    *           @OA\Items(
+    *               type="integer"
+    *           )
+    *       )
+    *   ),
     *   @OA\Response(
     *       response=201,
     *       description="Cycle created.",
@@ -155,11 +167,29 @@ class CycleController extends Controller
     */
     public function store(Request $request)
     {
+        $messages = [
+            'name.required' => __('errorMessageNameEmpty'),
+            'name.regex' => __('errorMessageNameLettersOnly'),
+            'department_id.required' => __('errorMessageDepartmentEmpty'),
+            'department_id.integer' => __('errorMessageDepartmentEmpty'),
+            'modules.required' => __('errorCycleRequired'),
+            'modules.integer' => __('errorCycleRequired'),
+        ];
+
+        $request->validate([
+            'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+            'name' => ['required', 'integer'],
+            'modules' => ['required','array','integer'],
+        ], $messages);
+
         $cycle = new Cycle();
         $cycle->name = $request['name'];
+        $cycle->department_id = $request['department_id'];
 
         $created = $cycle->save();
         if($created) {
+            $cycle->modules()->attach($request->input('modules', []));
+            $cycle->load('modules');
             return response()->json(['cycle'=>$cycle])->setStatusCode(Response::HTTP_CREATED);
         } else {
             return response()->json(['cycle'=>$cycle])->setStatusCode(Response::HTTP_BAD_REQUEST);
@@ -282,12 +312,28 @@ class CycleController extends Controller
     */
     public function update(Request $request, Cycle $cycle)
     {
+        $messages = [
+            'name.required' => __('errorMessageNameEmpty'),
+            'name.regex' => __('errorMessageNameLettersOnly'),
+            'department_id.required' => __('errorMessageDepartmentEmpty'),
+            'department_id.integer' => __('errorMessageDepartmentEmpty'),
+            'modules.required' => __('errorCycleRequired'),
+            'modules.integer' => __('errorCycleRequired'),
+        ];
+
+        $request->validate([
+            'name' => ['required', 'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$/u'],
+            'department_id' => ['required', 'integer'],
+            'modules' => ['required','array','integer'],
+        ], $messages);
+
         $cycle->name = $request['name'];
         $cycle->department_id = $request['department_id'];
 
         $updated = $cycle->save();
         if($updated) {
-            $cycle->modules()->sync($request['modules']);
+            $$cycle->modules()->sync($request->input('modules', []));
+            $cycle->load('modules');
             return response()->json(['cycle'=>$cycle])->setStatusCode(Response::HTTP_CREATED);
         } else {
             return response()->json(['cycle'=>$cycle])->setStatusCode(Response::HTTP_BAD_REQUEST);
