@@ -2,13 +2,22 @@
 
 namespace App\Http\Middleware;
 use App\Http\Controllers\LanguageController;
+use Illuminate\Http\Request;
 use Closure;
 
 final class Language
 {
-    public function handle($request, Closure $next)
+    /* public function handle(Request $request, Closure $next)
     {
         setCurrentLanguage();
+        return $next($request);
+    } */
+    public function handle(Request $request, Closure $next)
+    {
+        $language = session('language');
+
+        app()->setLocale($language);
+
         return $next($request);
     }
 }

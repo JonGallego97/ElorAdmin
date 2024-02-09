@@ -11,21 +11,12 @@ use Illuminate\Support\Facades\App;
 class DepartmentController extends Controller
 {
 
-    private $ControllerFunctions;
-
-    function __construct() {
-        $this->ControllerFunctions = new ControllerFunctions;
-    }
-    //$this->ControllerFunctions->checkAdminRoute()
-    //$this->ControllerFunctions->checkAdminRole()
-    //$this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()
-
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        if ($this->ControllerFunctions->checkAdminRoute()) {
+        if ($this->checkAdminRoute()) {
             $perPage = $request->input('per_page', App::make('paginationCount'));
             $departments = Department::orderBy('name', 'asc')->paginate($perPage);
             foreach ($departments as $department) {
@@ -42,7 +33,7 @@ class DepartmentController extends Controller
 
     public function create(Request $request)
     {
-        if($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()){
+        if($this->checkAdminRole() && $this->checkAdminRoute()){
             return view('admin.departments.edit_create');
         }else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
@@ -62,7 +53,7 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        if($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()){
+        if($this->checkAdminRole() && $this->checkAdminRoute()){
             $messages = [
                 'name.required' => __('errorMessageNameEmpty'),
                 'name.regex' => __('errorMessageNameLettersOnly'),
@@ -93,7 +84,7 @@ class DepartmentController extends Controller
      */
     public function show(Request $request, Department $department)
     {
-        if($this->ControllerFunctions->checkAdminRoute()){
+        if($this->checkAdminRoute()){
             $perPage = $request->input('per_page', App::make('paginationCount'));
             $department->users = User::where('department_id', $department->id)->paginate($perPage);
 
@@ -106,7 +97,7 @@ class DepartmentController extends Controller
 
     public function edit(Request $request,Department $department)
     {
-        if($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()){
+        if($this->checkAdminRole() && $this->checkAdminRoute()){
             return view('admin.departments.edit_create',['department' => $department]);
         } else {
             return redirect()->back()->withErrors('error', __('errorNoAdmin'));
@@ -121,7 +112,7 @@ class DepartmentController extends Controller
     public function update(Request $request, Department $department)
     {
 
-        if($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()){
+        if($this->checkAdminRole() && $this->checkAdminRoute()){
             $messages = [
                 'name.required' => __('errorMessageNameEmpty'),
                 'name.regex' => __('errorMessageNameLettersOnly'),
@@ -151,13 +142,18 @@ class DepartmentController extends Controller
     public function destroy($departmentId)
     {
 
-        if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
+        if ($this->checkAdminRole() && $this->checkAdminRoute()) {
             //si es admin
             $department = Department::find($departmentId);
             $departmentCount = Department::where('id',$departmentId)->count();
-            if ($department && $departmentCount == 0) {
-                $department->delete();
-                return redirect()->route('admin.departments.index')->with('success',__('successDelete'));
+            if ($department) {
+                if($departmentCount == 0) {
+                    $department->delete();
+                    return redirect()->route('admin.departments.index')->with('success',__('successDelete'));
+                } else {
+                    return redirect()->back()->withErrors('error', __('errorDepartmentIsNotEmpty'));
+                }
+                
             } else {
                 return redirect()->back()->withErrors('error', __('errorDelete'));
             }
@@ -167,7 +163,7 @@ class DepartmentController extends Controller
     }
 
     public function destroyDepartmentUser(Request $request, $departmentId, $userId){
-        if ($this->ControllerFunctions->checkAdminRole() && $this->ControllerFunctions->checkAdminRoute()) {
+        if ($this->checkAdminRole() && $this->checkAdminRoute()) {
             $user = User::find($userId);
             if ($user) {
                 $user->department_id = null;

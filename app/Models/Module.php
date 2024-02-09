@@ -19,7 +19,7 @@ class Module extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class,'module_user_cycle','module_id','user_id')->withPivot('cycle_id');
     }
      //relacion con modulos y ciclos para users no admin, no alumnos
      public function users1() {

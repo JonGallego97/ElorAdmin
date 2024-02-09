@@ -144,7 +144,7 @@
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
                                     <!-- Botón para eliminar -->
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"  id="openModalBtn">
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="modules/destroyModuleUser" data-type="" data-id="{{ $module->id }}/{{ $user->id}}" data-name="{{ $user->name }} {{__('from')}} {{ $module->name }}" id="openModalBtn">
                                         <i class="bi bi-trash3"></i>
                                     </button>
 

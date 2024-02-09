@@ -16,20 +16,13 @@ use Illuminate\Support\Facades\App;
 
 class ModuleController extends Controller
 {
-    private $ControllerFunctions;
-
-    function __construct() {
-        $this->ControllerFunctions = new ControllerFunctions;
-    }
-    //$this->ControllerFunctions->checkAdminRoute()
-    //$this->ControllerFunctions->checkAdminRole()
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if ($this->checkAdminRoute() && $this->checkAdminRole()) {
             $perPage = $request->input('per_page', App::make('paginationCount'));
             $modules = Module::orderBy('name','asc')->paginate($perPage);
 
@@ -61,7 +54,7 @@ class ModuleController extends Controller
 
     public function create(Request $request)
     {
-        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()){
+        if($this->checkAdminRoute() && $this->checkAdminRole()){
             $module = new Module();
             $departmentsWithCycles = Department::has('cycles')->with('cycles')->get();
             $moduleCyclesIds = $module->cycles->pluck('id')->toArray();
@@ -79,7 +72,7 @@ class ModuleController extends Controller
      */
     public function store(Request $request)
     {
-        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if($this->checkAdminRoute() && $this->checkAdminRole()) {
             $messages = [
                 'name.required' => __('errorMessageNameEmpty'),
                 'name.regex' => __('errorMessageNameLettersOnly'),
@@ -133,10 +126,11 @@ class ModuleController extends Controller
      */
     public function show(Request $request, Module $module)
     {
-        if($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()){
+        if($this->checkAdminRoute() && $this->checkAdminRole()){
             $module->teachers = $this->teachers($request, $module);
             $module->students = $this->students($request, $module);
 
+            $resultArray = [];
 
             foreach ($module->cycles as $cycle) {
                 $studentCount = User::whereHas('cycles', function ($query) use ($cycle) {
@@ -162,7 +156,7 @@ class ModuleController extends Controller
     }
     public function edit(Request $request,Module $module)
     {
-        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()){
+        if ($this->checkAdminRoute() && $this->checkAdminRole()){
             $departmentsWithCycles = Department::has('cycles')->with('cycles')->get();
             $moduleCyclesIds = $module->cycles->pluck('id')->toArray();
             return view('admin.modules.edit_create', ['module' => $module,'departmentsWithCycles' => $departmentsWithCycles,'moduleCyclesIds'=>$moduleCyclesIds]);
@@ -198,7 +192,7 @@ class ModuleController extends Controller
      */
     public function update(Request $request, Module $module)
     {
-        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()){
+        if ($this->checkAdminRoute() && $this->checkAdminRole()){
             $messages = [
                 'name.required' => __('errorMessageNameEmpty'),
                 'name.regex' => __('errorMessageNameLettersOnly'),
@@ -249,7 +243,7 @@ class ModuleController extends Controller
     public function destroy($moduleId)
     {
 
-        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if ($this->checkAdminRoute() && $this->checkAdminRole()) {
             //si es admin
             $module = Module::find($moduleId);
             if ($module) {
@@ -264,12 +258,12 @@ class ModuleController extends Controller
     }
 
     public function destroyModuleUser(Request $request, $moduleId, $userId){
-        if ($this->ControllerFunctions->checkAdminRoute() && $this->ControllerFunctions->checkAdminRole()) {
+        if ($this->checkAdminRoute() && $this->checkAdminRole()) {
             $module = Module::find($moduleId);
             if ($module) {
                 $module->users()->detach($userId);
                 
-                return redirect()->route('admin.modules.show',['$module'=>$module])->with('success',__('successDelete'));
+                return redirect()->route('admin.modules.show',['module'=>$module])->with('success',__('successDelete'));
             } else {
                 return redirect()->back()->withErrors('error',__('errorDelete'));
             }

@@ -68,14 +68,6 @@
                         <td>{{$module->count_students}}</td>
                         <td>
                             <div class="d-flex">
-                                {{--<a href="{{ route('admin.modules.edit', $module) }}" class="me-2" role="button">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="cycles/destroy" data-type="{{__('cycle')}}" data-id="{{ $cycle->id }}" data-name="{{ $cycle->name }}" id="openModalBtn">
-                                    <i class="bi bi-trash3"></i>
-                                </button>
-                                --}}
-
                                 <a href="{{ route('admin.modules.show', $module)}}" class="btn btn-info me-2" role="button">
                                     <i class="bi bi-eye"></i>
                                 </a>
@@ -84,7 +76,7 @@
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
                                 <!-- Botón para eliminar -->
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="cycles/destroy" data-type="{{__('cycle')}}" data-id="{{ $cycle->id }}" data-name="{{ $cycle->name }}"id="openModalBtn">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="cycles/destroyCycleModule" data-type="" data-id="{{ $cycle->id }}/{{ $module->id}}" data-name="{{ $module->name }} {{__('from')}} {{ $cycle->name }}" id="openModalBtn">
                                     <i class="bi bi-trash3"></i>
                                 </button>
 

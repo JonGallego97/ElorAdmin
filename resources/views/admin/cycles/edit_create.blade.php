@@ -1,7 +1,7 @@
 @extends('admin.plantillas.nav')
     @section('nav')
     <div class="container">
-        @if(Route::currentRouteName() == 'cycles.edit')
+        @if(Route::currentRouteName() == 'admin.cycles.edit')
             <h1>{{__('Edit')}} {{__('Cycle')}} {{__('Colon')}} {{$cycle->name}}</h1>
             <form class="mt-2" name="create_platform" action="{{route('admin.cycles.update', $cycle)}}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -54,14 +54,6 @@
                         @endforeach
                     </select>
                 </div>
-                <!-- <div class="form-group mb-3">
-                    <label for="modules" class="form-label">{{__('Modules')}}</label>
-                    <select id="modules" name="modules[]" class="form-control" multiple>
-                        @foreach ($modules as $module)
-                        <option value="{{ $module->id }}">{{ $module['name'] }}</option>
-                        @endforeach
-                    </select>
-                </div> -->
                 <div class="form-group mb-3" style="max-height: 200px; overflow-y: auto;">
                     <label for="modules" class="form-label">{{__('Modules')}}</label>
 
