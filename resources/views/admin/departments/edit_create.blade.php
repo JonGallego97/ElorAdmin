@@ -2,7 +2,7 @@
     @section('nav')
     <div class="container">
 
-        @if(Route::currentRouteName() == 'departments.edit')
+        @if(Route::currentRouteName() == 'admin.departments.edit')
             <h1>{{__('Edit')}} {{__('department')}} {{__('Colon')}} {{$department->name}}</h1>
             <form class="mt-2" name="create_platform" action="{{route('admin.departments.update', $department)}}" method="POST" enctype="multipart/form-data">
                 @csrf

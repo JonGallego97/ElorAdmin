@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\PasswordResetController;
+use App\Http\Controllers\API\V1\PasswordResetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\DepartmentController;
@@ -13,7 +13,6 @@ use App\Http\Controllers\API\V1\ModuleController;
 use App\Http\Controllers\API\V1\AuthController;
 use App\Http\Controllers\API\V1\RetoController as RetoControllerV1;
 use App\Http\Controllers\API\V2\RetoController as RetoControllerV2;
-use App\Http\Controllers\Auth\ForgotPasswordController;
 
 
 
@@ -34,6 +33,8 @@ use Illuminate\Support\Str;
 |
 */
 
+URL::forceScheme('https');
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -45,18 +46,18 @@ Route::group(['middleware' => 'auth'], function() {
     });
 });
 
-Route::put('users/{user}/update-password', UserController::class.'@updatePassword');
+/* Route::put('users/{user}/update-password', UserController::class.'@updatePassword');
 Route::post('/users/{userId}/enroll/{cycleId}', [UserController::class, 'enrollStudentInCycle']);
-Route::post('/password/reset', [PasswordResetController::class, 'sendResetLinkEmail']);
 
 
 //FIREBASE
-Route::get('/firebase/fmcTesting', [FirebaseController::class, 'fcmTesting']);
+Route::get('/firebase/fmcTesting', [FirebaseController::class, 'fcmTesting']); */
 
 
 Route::group(['prefix' => 'v1'], function() {
 
-
+    Route::post('/password/reset', [PasswordResetController::class, 'sendResetLinkEmail']);
+    
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::resources([
             'departments' => DepartmentController::class,
@@ -69,8 +70,8 @@ Route::group(['prefix' => 'v1'], function() {
         Route::post('logout',[AuthController::class,'logout']);
     });
 
-    Route::put('users/{user}/update-password', [UserController::class.'@updatePassword']);
-    Route::post('/users/{userId}/enroll/{cycleId}', [UserController::class, 'enrollStudentInCycle']);
+    /* Route::put('users/{user}/update-password', [UserController::class.'@updatePassword']);
+    Route::post('/users/{userId}/enroll/{cycleId}', [UserController::class, 'enrollStudentInCycle']); */
 
     Route::group(['prefix' => 'auth'], function() {
         Route::post('login',[AuthController::class,'login'])->withoutMiddleware(['auth:sanctum']);

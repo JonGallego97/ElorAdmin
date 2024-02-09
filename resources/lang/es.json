@@ -112,5 +112,19 @@
     "Personal": "Personal",
     "TotalPersonal": "Total de personal:",
     "errorAttachCycle": "Error al asignarle el cycle",
-    "enrollYear": "Año matriculacion"
+    "enrollYear": "Año matriculacion",
+    "errorMessageCantUpdate":"Error al actualizar",
+    "errorMessageAlreadyInThatCycle": "Error, el usuario ya se encuentra apuntado en ese ciclo",
+    "errorDepartmentIsNotEmpty": "El departamento no puede ser borrado porque tiene usuarios.",
+    "Login":"Conectarse",
+    "Forgot Your Password?": "Has olvidado la contraseña?",
+    "Email Address":"Correo Electronico",
+    "Password":"Contraseña",
+    "Remember Me": "Recuerdame",
+    "Reset Password": "Recuperar Contraseña",
+    "Send Password Reset Link": "Enviar enlace para recuperar la contraseña",
+    "Confirm Password": "Confirma la contraseña",
+    "English": "Inglés",
+    "Basque": "Euskera",
+    "Spanish": "Español"
 }

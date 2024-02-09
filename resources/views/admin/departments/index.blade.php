@@ -10,7 +10,9 @@
                 <a href="{{ route('admin.departments.create') }}" class="me-2" Department="button">
                     <i class="bi bi-person-plus fs-3"></i>
                 </a>
-
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal" data-id="create" data-mensaje="Hola, Mundo!">
+                    Abrir Modal
+                </button>
             </div>
         </div>
 
@@ -84,6 +86,5 @@
                 {!! $departments->links() !!}
             </div>
         </div>
-
 
         @endsection

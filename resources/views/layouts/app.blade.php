@@ -57,7 +57,7 @@
                     <ul class="navbar-nav ms-auto">
                         <div class="dropdown">
                             <a class="nav-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{ strtoupper(app()->getLocale()) }}
+                                {{ strtoupper(session('language')) }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="languageDropdown">
                                 @foreach(config('languages') as $locale => $data)
@@ -68,7 +68,7 @@
 
                         <!-- Authentication Links -->
                         @guest
-                            @if (Route::has('login'))
+                            <!-- @if (Route::has('login'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                                 </li>
@@ -78,7 +78,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
-                            @endif
+                            @endif -->
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
