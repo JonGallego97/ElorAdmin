@@ -10,9 +10,6 @@
                 <a href="{{ route('admin.departments.create') }}" class="me-2" Department="button">
                     <i class="bi bi-person-plus fs-3"></i>
                 </a>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal" data-id="create" data-mensaje="Hola, Mundo!">
-                    Abrir Modal
-                </button>
             </div>
         </div>
 
@@ -38,7 +35,7 @@
                           {{-- <a href="{{ route('admin.departments.edit', $department) }}" class="me-2" Department="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments/destroy" data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">
+                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments" data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
                             </button>
                             --}}
@@ -51,7 +48,7 @@
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                             <!-- Botón para eliminar -->
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments/destroy"  data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="departments"  data-type="{{__('department')}}" data-id="{{ $department->id }}" data-name="{{ $department->name }}" id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
                             </button>
 

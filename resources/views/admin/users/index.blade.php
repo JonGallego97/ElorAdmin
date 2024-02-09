@@ -51,7 +51,7 @@
                             <a href="{{ route('admin.users.edit', $user) }}" class="me-2" role="button">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
+                            <button type="button" style="border: none; background: none;" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
                                 <i class="bi bi-trash3"></i>
                             </button>--}}
                         <div class="d-flex">
@@ -65,7 +65,7 @@
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
                                 <!-- Botón para eliminar -->
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users/destroy" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="users" data-type="{{__('user')}}" data-id="{{ $user->id }}" data-name="{{ $user->name }}" id="openModalBtn">
                                     <i class="bi bi-trash3"></i>
                                 </button>
                             </div>
