@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\V1;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -8,6 +8,34 @@ use Illuminate\Validation\ValidationException;
 
 class PasswordResetController extends Controller
 {
+    /**
+    * @OA\Post(
+    *   path="/api/v1/password/reset",
+    *   summary="Request reset password",
+    *   tags={"Auth"},
+    *   @OA\Parameter(
+    *       name="email",
+    *       in="query",
+    *       description="Email",
+    *       required=true,
+    *       @OA\Schema(
+    *           type="string"
+    *       )
+    *   ),
+    *   @OA\Response(
+    *       response=200,
+    *       description="successful operation",
+    *       @OA\JsonContent(
+    *           type="string"
+    *       ),
+    *   ),
+    *   @OA\Response(
+    *       response=401,
+    *       description="Unauthenticated"
+    *   ),
+
+    * )
+    */
     public function sendResetLinkEmail(Request $request)
     {
         $this->validateEmail($request);
@@ -20,7 +48,7 @@ class PasswordResetController extends Controller
             return response()->json(['status' => 'success', 'message' => trans($response)]);
         } else {
             return response()->json(['status' => 'error', 'message' => trans($response)], 422);
-        }
+        } 
     }
 
     protected function sendResetLinkFailedResponse(Request $request, $response)

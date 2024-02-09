@@ -46,6 +46,10 @@ use Illuminate\Support\Facades\Request;
 *@OA\Tag(
 *     name="Modules",
 *     description="CRUD of Modules"
+* ),
+*@OA\Tag(
+*     name="Cycles",
+*     description="CRUD of Cycles"
 * )
 */
 
