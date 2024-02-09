@@ -170,7 +170,7 @@ class RoleController extends Controller
         if ($this->checkAdminRole() && $this->checkAdminRoute()) {
             $role = Role::find($roleId);
             if ($role) {
-                if($this->checkIfDeleteForbiddenRole($role)){
+                if(!$this->checkIfDeleteForbiddenRole($role)){
                     $role->delete();
                     return redirect()->route('admin.roles.index')->with('success', 'Rol eliminado exitosamente.');
                 }else{

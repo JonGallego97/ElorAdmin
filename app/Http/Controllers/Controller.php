@@ -150,7 +150,7 @@ class Controller extends BaseController
     }
 
     public function checkIfDeleteForbiddenRole(Role $role){
-        if (!in_array($role->id,$deleteForbiddenRoles)) {
+        if (in_array($role->id,$this->deleteForbiddenRoles)) {
             return true;
         } else {
             return false;
