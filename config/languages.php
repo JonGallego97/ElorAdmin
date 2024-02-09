@@ -8,6 +8,10 @@ return [
     'en' => [
         'language' => 'Inglés',
         'lc' => 'en_US',
+    ],
+    'eu' => [
+        'language' => 'Euskera',
+        'lc' => 'eu',
     ]
 ];
 
