@@ -71,6 +71,10 @@
             </div>
             <div class="card-body">
                 <div class="row">
+                    <div class="col d-flex justify-content-start">
+                        <!-- photos -->
+                        <img src="{{ asset($imagePath) }}" alt="Imagen" style="max-width: 100%; max-height: 200px;" />
+                    </div>
                     <div class="col-md-6">
                         <p><strong>{{__('DNI')}}{{__('Colon')}}</strong> {{ $user['dni'] }}</p>
                         <p><strong>{{__('Mail')}}{{__('Colon')}}</strong> {{ $user['email'] }}</p>
@@ -82,7 +86,7 @@
                         @endif
                         <!-- Otros detalles del usuario -->
                     </div>
-                    <div class="col-md-3">
+                    <!-- <div class="col-md-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>{{__("Roles")}}</h3>
                         </div>
@@ -93,16 +97,18 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>
-                    <div class="col d-flex justify-content-end">
-                        <!-- photos -->
-                        <img src="{{ asset($imagePath) }}" alt="Imagen" style="max-width: 100%; max-height: 200px;" />
+                    </div> -->
+                    <div class="col-md-3">
+                        <h3>{{__("Roles")}}</h3>
+                        @foreach ($user->roles as $role)
+                            - {{$role->name}}
+                        @endforeach
                     </div>
                 </div>
                 <hr>
                 <!-- Si tiene el rol de Profesor -->
                 @if($user->hasRole("PROFESOR"))
-                    <form class="row form" name="add_module" action="{{ route('admin.users.addModule',$user) }}" method="POST">
+                    <form class="row form mb-3" name="add_module" action="{{ route('admin.users.addModule',$user) }}" method="POST">
                         @method('PUT')
                         @csrf
                         <div class="col-5 mb-3">
@@ -164,9 +170,9 @@
                     <div class="col-3">
                         <h3>{{__('Cycles')}}</h3>
                     </div>
-                    <div class="col-6 d-flex justify-content-end">
-                        <div class="mb-3 mr-1">
-                            <select class="form-control" id="newCycle" name="newCycle">
+                    <div class="col-9 d-flex justify-content-end align-items-center">
+                        <div style="margin-bottom: 5px;">
+                            <select class="form-control mb-2" id="newCycle" name="newCycle" style="height: 38px;"> <!-- Añadido style="height: 38px;" -->
                                 <option value="null">{{__('Cycles')}}</option>
                                 @foreach($departmentsWithCycles as $department)
                                     <optgroup label="{{$department->name}}">
@@ -176,23 +182,26 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-2 mb-3 mr-1">
-                            <select class="form-control" id="year" name="year">
+                        <div style="margin-bottom: 5px;">
+                            <select class="form-control mb-2" id="year" name="year" style="height: 38px;"> <!-- Añadido style="height: 38px;" -->
                                 <option value="null">{{__('Year')}}</option>
                                 <option value="1">{{__('FirstYear')}}</option>
                                 <option value="2">{{__('SecondYear')}}</option>
                             </select>
                         </div>
-                        <div class="col-2 mb-3 mr-1">
-                            <select class="form-control" id="is_dual" name="is_dual" disabled="true">
+                        <div style="margin-bottom: 5px;">
+                            <select class="form-control mb-2" id="is_dual" name="is_dual" disabled="true" style="height: 38px;"> <!-- Añadido style="height: 38px;" -->
                                 <option value="null">{{__('Dual')}}</option>
                                 <option value="1">{{__('Yes')}}</option>
                                 <option value="0">{{__('No')}}</option>
                             </select>
                         </div>
-                        <button type="submit" class="col-2 btn btn-primary">{{__("addCycle")}}</button>
+                        <div style="margin-left: 10px;">
+                            <button type="submit" class="btn btn-primary" style="height: 38px;">{{__("addCycle")}}</button> <!-- Añadido style="height: 38px;" -->
+                        </div>
                     </div>
                 </form>
+
 
                     @foreach ($userData as $cycle)
                         <div class="card mb-3">
